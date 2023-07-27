@@ -2,5 +2,5 @@
 *.nc
 *.RData
 *.csv
-
+data/shapefiles/*
 
