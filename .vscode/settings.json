@@ -1,0 +1,8 @@
+{
+	"r.bracketedPaste": true,
+	"r.alwaysUseActiveTerminal": true,
+	"r.lsp.diagnostics": false,
+	"r.plot.useHttpgd": true,
+	"r.lsp.debug": true,
+	"r.lsp.promptToInstall": true
+}
