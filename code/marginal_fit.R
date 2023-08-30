@@ -1,0 +1,153 @@
+rm(list=ls())
+load("data/precip.RData")
+load("data/temperature.RData")
+library(parallel)
+library(mgcv)
+library(ggplot2)
+library(lubridate)
+library(evgam)
+library(evd)
+ls()
+## prepare the dataframe for marginal fit ##
+idx = 1 # select region for processing
+## prepare the time covariate: year and date
+ind.data = date.df$date >= START.date & date.df$date <= END.date
+y.ind = date.df$year[ind.data];y.ind = y.ind - y.ind[1] + 1
+d.ind = yday(date.df$date[ind.data])
+ind.station = station$group.id==region.id[idx]
+alt <- station$elev[ind.station]/1000 ## elevation of the station
+lon <- station$Y[ind.station]
+lat <- station$X[ind.station]
+
+## compute the consective temperature averages 
+tep.covariate <- temperature[[idx]][ind.data]
+D = sum(ind.station);Dt = sum(ind.data) # dimensions
+y = unlist(precip[[idx]])
+y.thres <- 10;y = y - y.thres ## remove the values that are below y.thres
+## generate the data frame for marginal fitting
+data.df <- data.frame(y=y,
+                      temp = rep(tep.covariate,times=D),
+                      day = rep(d.ind,times=D),
+                      year = rep(y.ind,times=D),
+                      alt = rep(alt,each=Dt),
+                      lon = rep(lon,each=Dt),
+                      lat = rep(lat,each=Dt),
+                      col=rep(1:D,each=Dt),
+                      row=rep(1:Dt,times=D))[!is.na(y) & y>0 & y < 1490,]
+data.df = data.df[complete.cases(data.df),] ## select the complete dataframe
+
+## start fitting the marginal model ##
+## WARNING! Long time to run ##
+message("start Gamma fitting")
+formula = y ~ temp + s(day,k=10) + ti(lon,lat,k=10) + s(alt,k=10)
+results.gam = gam(formula,family=Gamma(link="log"),data=data.df)
+est.sig2 <- results.gam$sig2;est.mean <- results.gam$fitted.values
+#est.scale <- est.sig2/est.mean;est.shape = est.mean/est.scale
+est.shape = 1/est.sig2;est.scale <- est.mean/est.shape;
+data.df$est.quantile <- qgamma(0.9,shape = est.shape,scale=est.scale)
+
+message("start binominal fitting")
+data.df$y.bin <- as.numeric(data.df$y > data.df$est.quantile)
+formula.bin = y.bin ~ temp + s(day,k=10) + ti(lon,lat,k=10) + s(alt,k=10)
+results.bin <- gam(formula.bin,family = binomial(link="logit"),data=data.df)
+est.prob.exceed <- fitted(results.bin) ## fitted exceeding probability
+
+message("start GPD fitting")
+data.df$y.gpd <- data.df$y - data.df$est.quantile
+data.df.gpd <- data.df[data.df$y.gpd>0,]
+formula.gpd = list(y.gpd ~ log(est.quantile) + temp + s(day,k=10) + ti(lon,lat,k=10) + s(alt,k=10),~1)
+results.gpd <- evgam(formula.gpd,data=data.df.gpd,family="gpd")
+est.scale.gpd = exp(fitted(results.gpd)[,1]);est.shape.gpd = fitted(results.gpd)[1,2]
+
+## transform the data to pseudo uniform scores  ##
+est.prob <- pgamma(data.df$y,shape=est.shape,scale=est.scale)
+est.prob[data.df$y.bin] <- 1 - est.prob.exceed[data.df$y.bin] + 
+est.prob.exceed[data.df$y.bin]*pgpd(data.df.gpd$y.gpd,loc = 0,scale = est.scale.gpd,shape = est.shape.gpd)
+
+U <- U.gpd <- matrix(NA,nrow=Dt,ncol=D)
+U[cbind(data.df$row,data.df$col)] <- est.prob/(1+1e-10) ## avoid computational issues
+
+
+## the pesudo-uniform scores based on this marginal fit 
+## is stored in the list U.data
+load("data/marginal_fit.RData")
+## plot the marginal return level ##
+  model.selected <- c("AWI","MIROC","NorESM","AVG") #selected climate models with their averages
+  season = c("Winter" ,"Spring" ,"Summer" ,"Fall")
+  regions <- c("danube","mississippi")
+  lab.regions <- c("Danube","Mississippi")
+  y.thres=10
+  count = 1
+  p.list <- list()
+  for(r in 1:2){
+    load(paste0("data/marginal_model_for_",regions[r],".RData"))
+    for(s in 1:4){
+    data = precip.ts.df[[r*2-1]][,-c(1:3)]
+    data[data > 1500] = NA
+    loc.ind <- which.max(colMeans(data,na.rm = T))
+    ### prepare the data frame to predict ###
+    data <- rbind(data.mean.obs.hist.day[[r]][[s]],data.mean.tep.245.day[[r]][[s]],
+			data.mean.tep.585.day[[r]][[s]])
+    data$type = c(rep("Obs",nrow(data.mean.obs.hist.day[[r]][[s]])),
+                  rep("SSP 2-4.5",nrow(data.mean.tep.245.day[[r]][[s]])),
+                  rep("SSP 5-8.5",nrow(data.mean.tep.585.day[[r]][[s]])))
+    days <- data$date
+    d.ind = yday(days)
+    y.ind = year(days);y.ind = y.ind - y.ind[1] + 1
+    alt <- station.df[[r*2-1]]$elev[loc.ind]/1000
+    lon <- station.df[[r*2-1]]$Y[loc.ind]
+    lat <- station.df[[r*2-1]]$X[loc.ind]
+    main = paste0(lab.regions[r],"; ",model.selected[s],"; ","Station ",loc.ind," (", round(lat,2) ,"N°,",round(lon,2),"E°" ,") ")
+    D = length(lat);Dt = length(days)
+    data.pred <- data.frame(temp = rep(data$tep,times=D),
+                            day = rep(d.ind,times=D),
+                            year = rep(y.ind,times=D),
+                            alt = rep(alt,each=Dt),
+                            lon = rep(lon,each=Dt),
+                            lat = rep(lat,each=Dt),
+                            col=rep(1:D,each=Dt),
+                            row=rep(1:Dt,times=D))
+    ind = !is.na(data.pred$temp);data.pred <- data.pred[ind,]
+    mean.pred  <- exp(predict.gam(results.gam,newdata = data.pred))
+    sig2.pred <- results.gam$sig2
+    shape.pred = 1/sig2.pred;scale.pred <- mean.pred/shape.pred;
+    quantile.pred <- qgamma(0.9,shape = shape.pred,scale=scale.pred)
+    data.pred$est.quantile = quantile.pred
+    prob.exceed.pred <- predict.gam(results.bin,newdata=data.pred,type="response")
+    gpd.pred <- predict(results.gpd,newdata=data.pred)
+    scale.gpd.pred = exp(gpd.pred[,1]);shape.gpd.pred = gpd.pred[1,2]
+    return.level = (1-1/(100*365)) 
+    prob.gpd <- (return.level - (1-prob.exceed.pred))/prob.exceed.pred
+    
+    return.value <- y.thres + quantile.pred + qgpd(prob.gpd,loc=0,scale=scale.gpd.pred,shape=shape.gpd.pred)
+    by.list = list(season=getSeason(days)[ind],year=sapply(days,getYear)[ind],type=data$type[ind])
+    data <-aggregate(return.value,by=by.list,FUN=mean)
+	data$season <- as.factor(data$season)
+	data$type <- as.factor(data$type)
+	data$x[data$type == "Obs" & data$season == "Winter" & data$year == 2016] = NA
+    p <- ggplot(data,aes(x=year,y=x,color=season,linetype=type)) + geom_line(alpha=1,size=0.6) 
+    p <- p + scale_linetype_manual(values=c("solid","dashed","dotted"),labels=c("Obs","SSP 2-4.5","SSP 5-8.5"))
+    p <- p +  xlab("Year") + ylab ("Return level (mm)") 
+    p <- p + labs(color="Season",linetype="Group") 
+    #p <- p + scale_color_manual(values=hcl.colors(4, "Berlin")) 
+    p <- p + ggtitle(main)
+    p <- p + theme(axis.text = element_text(size=10), 
+                   axis.title.x = element_text(size=14), 
+                  axis.title.y = element_text(size=14),
+                   plot.title = element_text(hjust = 0.5),
+                   panel.border = element_rect(fill = "transparent", # Needed to add the border
+                                               color = "black",            # Color of the border
+                                               size = 1),
+                   panel.background = element_rect(fill = "transparent")) 
+    
+    #if(count %% 4 != 0){p <- p + theme(legend.position="none")}
+    p.list[[count]] <- p;count = count + 1
+    print(count)
+    }
+    }
+
+  pdf("figures/return_level_margins.pdf",width = 6,height = 3,onefile = TRUE)
+  for(i in 1:8){
+    show(p.list[i])
+  }
+  dev.off()

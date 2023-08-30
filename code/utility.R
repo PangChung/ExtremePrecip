@@ -72,12 +72,16 @@ solve.h.BR <- function(par,temp,logval=FALSE){
 ## function to determine if locations are inside the shapefile
 locate2shape <- function(loc,shape){
 	colnames(loc) <- c("x", "y")
+    sf::sf_use_s2(FALSE)
 	loc_sf <- sf::st_as_sf(loc, coords = c('x', 'y'), crs = st_crs(shape))
 	#browser()
 	val = st_intersects(loc_sf, shape)
-	return(val)
+    ind = which(!sapply(val,is.integer0))
+    loc_df = data.frame(id = ind, group.id =  unlist(val[ind]) )
+	return(loc_df)
 }
 
 is.integer0 <- function(x){ is.integer(x) && length(x) == 0L }
+
 extract_func <- function(id,res,data,vari="2t"){ncvar_get(data,varid=vari,
 				start=c( (id - 1) %% res + 1, (id - 1) %/% res + 1, 1),count=c(1, 1,-1))}

@@ -7,8 +7,8 @@ year <- 1956
 for (arg in args) eval(parse(text = arg)) #input is the year
 
 ## prepare the data and files ##
-filename1 = paste0("~/Desktop/Temperatures/2t_day_era5-land_",year,".nc")
-filename2 = paste0("~/Desktop/Temperatures/temp_EUROPE/",year,"_daily_temp.nc")
+filename1 = paste0("data/2t_day_era5-land_",year,".nc")
+filename2 = paste0("data/temp_EUROPE/",year,"_daily_temp.nc")
 file2save = paste0("data/temperature_",year,".RData")
 data1 <- nc_open(filename1)
 data2 <- nc_open(filename2)
