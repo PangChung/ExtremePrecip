@@ -11,7 +11,7 @@ library(evd)
 ls()
 for (arg in args) eval(parse(text = arg))
 ## prepare the dataframe for marginal fit ##
-#for(idx in 1:length(region.id)){
+for(idx in 1:length(region.id)){
 print(idx)
 #idx = 4 # select region for processing
 ## prepare the time covariate: year and date
@@ -28,6 +28,8 @@ tep.covariate <- temperature.covariate[[idx]][ind.data]
 D = sum(ind.station);Dt = sum(ind.data) # dimensions
 y = unlist(precip[[idx]])
 y.thres <- 10;y = y - y.thres ## remove the values that are below y.thres
+print(quantile(y[!is.na(y) & y>0 & y<2000],0.99))
+}
 ## generate the data frame for marginal fitting
 data.df <- data.frame(y=y,temp = rep(tep.covariate,times=D),
                       day = rep(d.ind,times=D),
@@ -36,7 +38,7 @@ data.df <- data.frame(y=y,temp = rep(tep.covariate,times=D),
                       lon = rep(lon,each=Dt),
                       lat = rep(lat,each=Dt),
                       col=rep(1:D,each=Dt),
-                      row=rep(1:Dt,times=D))[!is.na(y) & y > 0 & y < 1490,]
+                      row=rep(1:Dt,times=D))[!is.na(y) & y > 0 & y < 1000,]
 data.df = data.df[complete.cases(data.df),] ## select the complete dataframe
 
 ## start fitting the marginal model ##
