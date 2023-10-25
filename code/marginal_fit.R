@@ -66,7 +66,7 @@ data.df.gpd$est.scale.gpd = est.scale.gpd;data.df.gpd$est.shape.gpd = est.shape.
 
 ## transform the data to pseudo uniform scores  ##
 est.prob <- pgamma(data.df$y,shape=est.shape,scale=est.scale)
-est.prob[data.df$y.bin]
+head(est.prob[data.df$y.bin])
 est.prob[data.df$y.bin] <- 1 - est.prob.exceed[data.df$y.bin] + 
 est.prob.exceed[data.df$y.bin]*pgpd(data.df.gpd$y.gpd,loc = 0,scale = est.scale.gpd,shape = est.shape.gpd)
 data.df$est.prob <- est.prob
