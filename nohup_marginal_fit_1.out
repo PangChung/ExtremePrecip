@@ -1,0 +1,17 @@
+nohup: ignoring input
+Loading required package: nlme
+This is mgcv 1.8-40. For overview type 'help("mgcv-package")'.
+
+Attaching package: ‘lubridate’
+
+The following objects are masked from ‘package:base’:
+
+    date, intersect, setdiff, union
+
+ [1] "args"                  "date.df"               "END.date"             
+ [4] "loc_df"                "precip"                "region.id"            
+ [7] "region.name"           "START.date"            "station"              
+[10] "temperature"           "temperature.covariate"
+[1] 1
+start Gamma fitting
+start binominal fitting
