@@ -7,3 +7,4 @@ data/shapefiles/*
 figures/*
 */settings.json
 *.dly
+*.out
