@@ -3,4 +3,4 @@
 *.RData
 *.csv
 data/shapefiles/*
-
+figures/*

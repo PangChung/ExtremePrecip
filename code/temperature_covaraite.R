@@ -13,9 +13,12 @@ for(f in files){
 	print(f)
 }
 
+temperature.covariate = temperature
+temperature.covariate <- lapply(temperature,function(x) sapply(1:length(x),consective.mean,val=x,n=30))
 date.df = data.frame(date=date,year=getYear(date),season=getSeason(date)) 
 
-save(temperature,date.df,loc_df,file="data/temperature.RData")
+
+save(temperature,temperature.covariate,date.df,loc_df,file="data/temperature.RData")
 
 
 
