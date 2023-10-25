@@ -2,5 +2,8 @@
 *.nc
 *.RData
 *.csv
+*settings.json
 data/shapefiles/*
 figures/*
+*/settings.json
+*.dly

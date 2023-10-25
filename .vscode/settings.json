@@ -4,5 +4,10 @@
 	"r.lsp.diagnostics": false,
 	"r.plot.useHttpgd": true,
 	"r.lsp.debug": true,
-	"r.lsp.promptToInstall": true
+	"r.lsp.promptToInstall": true,
+    "r.bracketedPaste": true,
+    "r.lsp.diagnostics": false,
+    "r.plot.useHttpgd": true,
+    "r.rterm.linux": "/home/z3536974/Downloads/conda/envs/RVecchia/bin/radian",
+    "r.rpath.linux": "/home/z3536974/Downloads/conda/envs/RVecchia/bin/R"
 }
