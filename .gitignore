@@ -5,6 +5,6 @@
 *settings.json
 data/shapefiles/*
 figures/*
-*/settings.json
+settings.json
 *.dly
 *.out
