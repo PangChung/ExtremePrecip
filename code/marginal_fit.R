@@ -42,7 +42,7 @@ data.df = data.df[complete.cases(data.df),] ## select the complete dataframe
 ## start fitting the marginal model ##
 ## WARNING! Long time to run ##
 message("start Gamma fitting")
-formula = y ~ s(temp,5) + s(day,k=10) + ti(lon,lat,k=10) + s(alt,k=10)
+formula = y ~ s(temp,k=5) + s(day,k=10) + ti(lon,lat,k=10) + s(alt,k=10)
 results.gam = gam(formula,family=Gamma(link="log"),data=data.df)
 est.sig2 <- results.gam$sig2;est.mean <- results.gam$fitted.values
 est.shape = 1/est.sig2;est.scale <- est.mean/est.shape
@@ -52,7 +52,7 @@ data.df$est.shape = est.shape;data.df$est.scale = est.scale
 message("start binominal fitting")
 data.df$y.bin <- data.df$y > data.df$est.quantile
 summary(pgamma(data.df$y,shape=est.shape,scale=est.scale)[data.df$y.bin])
-formula.bin = y.bin ~ s(temp,5) + s(day,k=10) + ti(lon,lat,k=10) + s(alt,k=10)
+formula.bin = y.bin ~ s(temp,k=5) + s(day,k=10) + ti(lon,lat,k=10) + s(alt,k=10)
 results.bin <- gam(formula.bin,family = binomial(link="logit"),data=data.df)
 est.prob.exceed <- fitted(results.bin) ## fitted exceeding probability
 data.df$est.prob.exceed <- est.prob.exceed
@@ -60,7 +60,7 @@ data.df$est.prob.exceed <- est.prob.exceed
 message("start GPD fitting")
 data.df$y.gpd <- data.df$y - data.df$est.quantile
 data.df.gpd <- data.df[data.df$y.gpd>0,]
-formula.gpd = list(y.gpd ~ s(temp,5) + s(day,k=10) + ti(lon,lat,k=10) + s(alt,k=10),~1)
+formula.gpd = list(y.gpd ~ s(temp,k=5) + s(day,k=10) + ti(lon,lat,k=10) + s(alt,k=10),~1)
 results.gpd <- evgam(formula.gpd,data=data.df.gpd,family="gpd")
 est.scale.gpd = exp(fitted(results.gpd)[,1]);est.shape.gpd = fitted(results.gpd)[1,2]
 data.df.gpd$est.scale.gpd = est.scale.gpd;data.df.gpd$est.shape.gpd = est.shape.gpd
