@@ -1,6 +1,6 @@
 #!/bin/bash
 cd ~/Desktop/ExtremePrecip/
-for i in {1..8}
+for i in {2..8}
 do Rscript code/marginal_fit.R "idx=$i"
 done
 
