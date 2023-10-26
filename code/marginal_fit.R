@@ -12,7 +12,6 @@ ls()
 for (arg in args) eval(parse(text = arg))
 ## prepare the dataframe for marginal fit ##
 #for(idx in 1:length(region.id)){
-print(idx)
 #idx = 4 # select region for processing
 ## prepare the time covariate: year and date
 ind.data = date.df$date >= START.date & date.df$date <= END.date
@@ -36,7 +35,7 @@ data.df <- data.frame(y=y,temp = rep(tep.covariate,times=D),
                       lon = rep(lon,each=Dt),
                       lat = rep(lat,each=Dt),
                       col=rep(1:D,each=Dt),
-                      row=rep(1:Dt,times=D))[!is.na(y) & y > 0 & y < 1000,]
+                      row=rep(1:Dt,times=D))[!is.na(y) & y > 0 & y < 500,]
 data.df = data.df[complete.cases(data.df),] ## select the complete dataframe
 
 ## start fitting the marginal model ##
@@ -67,13 +66,12 @@ data.df.gpd$est.scale.gpd = est.scale.gpd;data.df.gpd$est.shape.gpd = est.shape.
 
 ## transform the data to pseudo uniform scores  ##
 est.prob <- pgamma(data.df$y,shape=est.shape,scale=est.scale)
-head(est.prob[data.df$y.bin])
 est.prob[data.df$y.bin] <- 1 - est.prob.exceed[data.df$y.bin] + 
 est.prob.exceed[data.df$y.bin]*pgpd(data.df.gpd$y.gpd,loc = 0,scale = est.scale.gpd,shape = est.shape.gpd)
 data.df$est.prob <- est.prob
 
 U <- matrix(NA,nrow=Dt,ncol=D)
-U[cbind(data.df$row,data.df$col)] <- est.prob/(1+1e-10) ## avoid computational issues
+U[cbind(data.df$row,data.df$col)] <- data.df$est.prob ## avoid computational issues
 
 save(results.gam,results.gpd,results.bin,data.df,data.df.gpd,U,file=paste0("data/marginal_fit_",idx,".RData"))
 #}
@@ -84,7 +82,8 @@ load(paste0("data/marginal_fit_",idx,".RData"))
 print(idx)
 print(range(data.df$est.prob[data.df$y.bin]))
 print(range(pgamma(data.df$y,shape=data.df$est.shape,scale=data.df$est.scale)[data.df$y.bin]))
-set.seed(1000)
+print(range(data.df$est.prob))
+set.seed(1034)
 idx.list = sample(1:sum(station$group.id==region.id[idx]),8,replace = F,prob=apply(U,2,function(x){sum(!is.na(x))}))
 png(file = paste0("figures/qqplot_marginal_",idx,".png"),height=4*3,width=4*3,units="cm",res=300, pointsize=6)
 par(mfrow=c(3,3),mar=c(5,5,3,1),mgp=c(2.5,1,0),cex.lab=2,cex.axis=1.5,cex.main=2)
@@ -103,8 +102,6 @@ abline(0,1,col=2,lwd=2)
 }        
 dev.off() 
 #}
-
-
 ## the pesudo-uniform scores based on this marginal fit 
 ## is stored in the list U.data
 # load("data/marginal_fit.RData")
