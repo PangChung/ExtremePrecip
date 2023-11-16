@@ -15,24 +15,24 @@ init = c(-1.5,4,0);fixed=c(F,F,F)
 bootstrap=FALSE;
 region.ind = 1;bootstrap.ind = 1;season.ind=1
 season = c("Winter" ,"Spring" ,"Summer" ,"Fall")
+norm.ind = 1;seaon.ind = 1
 for (arg in args) eval(parse(text = arg))
 ## load the data from marginal fit##
 load(paste0("data/marginal_fit_",idx.region,".RData"))
 ## file where the data should be stored ##
-file = paste0("data/fit_pot_ST_",season.ind,"_",regions[region.ind],".Rdata") 
+file = paste0("data/fit_pot_ST_",season.ind,"_",region.name[idx.region],".Rdata") 
 ncores = detectCores()/2
 
 ## choose the r risk functional...##
 if(norm.ind==1){
-  est.shape.gpd <- est.shape.gpd[region.ind]
+    est.shape.gpd <- data.df.gpd$est.shape.gpd[1]
 }else{
-  est.shape.gpd <- 1}
+    est.shape.gpd <- 1
+}
 
-#Define locations
-# for(region.ind in c(1,3)){
-#  for(season.ind in 1:4){
+# Define locations
 n.skip = 30
-loc.trans = loc.list[[region.ind]]
+loc.trans = 
 season.list <- sapply(date.ts,getSeason)
 ind.season = sapply(season.list, function(x){x[1]==season[season.ind]})
 ## load the observations and parameters ## 
