@@ -113,3 +113,6 @@ plot(date.585,temperature.585[[1]][[1]],type="l")
 table(locate.idx.list[[1]][,2])
 table(locate.idx.list[[2]][,2])
 table(locate.idx.list[[3]][,2])
+table(locate.idx.list[[4]][,2])
+table(locate.idx.list[[5]][,2])
+
