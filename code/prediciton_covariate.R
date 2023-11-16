@@ -38,6 +38,7 @@ for(idx in 1:5){
     idx.grid = as.matrix(expand.grid(x=1:n.x,y=1:n.y))
     loc.xy = data.frame(lon=xyt[[i]]$lon[idx.grid[,1]],lat=xyt[[i]]$lat[idx.grid[,2]])
     locate.idx = locate2shape(loc=loc.xy,shape=shape1)
+    locate.idx = locate.idx[locate.idx[,2] %in% region.id,]
     print(lapply(region.id[-1],function(j){sum(locate.idx[,2]==j)}))
     locate.idx.list[[idx]] = locate.idx
     idx.grid.list[[idx]] = list(miss=idx.grid,danube=NULL)
