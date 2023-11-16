@@ -110,4 +110,6 @@ plot(date.hist,temperature.hist[[1]][[1]],type="l")
 plot(date.245,temperature.245[[1]][[1]],type="l")
 plot(date.585,temperature.585[[1]][[1]],type="l")
 
-
+table(locate.idx.list[[1]][,2])
+table(locate.idx.list[[2]][,2])
+table(locate.idx.list[[3]][,2])
