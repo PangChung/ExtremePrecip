@@ -30,26 +30,30 @@ if(norm.ind==1){
     est.shape.gpd <- 1
 }
 
-# Define locations
+# Define locations 
 n.skip = 30
-loc.trans = 
-season.list <- sapply(date.ts,getSeason)
-ind.season = sapply(season.list, function(x){x[1]==season[season.ind]})
+idx.loc = station$group.id == region.id[idx.region]
+loc = cbind(station$X[idx.loc],station$Y[idx.loc])
+idx.season = date.df$season == season[season.ind]
+idx.season = idx.season[date.df$date >= START.date & date.df$date <= END.date]
+
 ## load the observations and parameters ## 
 obs = split(U,row(U))
-obs = subset(obs,ind.season)
+obs = subset(obs,idx.season)
 no.obs = sapply(obs,function(x){sum(!is.na(x))})
 obs[no.obs>1] = lapply(obs[no.obs>1],evd::qgpd,shape=1,loc=1,scale = 1)
-reg.t = tep[[region.ind]][ind.season]
+reg.t = temperature[[idx.region]][idx.season]
+
 r.obs <- suppressWarnings(unlist(lapply(obs,function(x){if(sum(!is.na(x))!=0){rFun(x[!is.na(x)],u=1,
 est.shape.gpd)}else{NA}})))
+
 thres = quantile(r.obs[no.obs > 5],0.95,na.rm=TRUE)
 
 ## select the exceedances
-ind.exc = no.obs > 5 & r.obs > thres 
-stopifnot( sum(ind.exc) > 0 )
+idx.exc = no.obs > 5 & r.obs > thres 
+stopifnot( sum(idx.exc) > 0 )
 
-reg.t = reg.t[ind.exc]
+reg.t = reg.t[idx.exc]
 reg.t = (reg.t - mean(reg.t))/sd(reg.t) 
 exceedances <- obs[ind.exc]
 
@@ -72,7 +76,7 @@ if(bootstrap){
 result = fit.gradientScoreBR(obs=exceedances,loc=loc.trans,init=init,fixed = fixed,
 vario = vario,u = thres,ST = ST,nCores = ncores,weightFun = weightFun,dWeightFun = dWeightFun)
 
-save(ind.exc,code,result,exceedances,reg.t,est.shape.gpd,thres,file=file)
+save(idx.exc,result,exceedances,reg.t,est.shape.gpd,thres,file=file)
 
 
 
