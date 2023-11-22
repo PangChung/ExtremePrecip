@@ -5,12 +5,14 @@ library(ggplot2)
 library(lubridate)
 library(mvPotST)
 library(evd)
+library(fields)
 source("code/utility.R")
 load("data/precip.RData")
+load("data/transformed_coordinates.RData")
 load("data/temperature.RData")
-load("data/temperature_pred.RData")
+#load("data/temperature_pred.RData")
 
-idx.region = 1 
+idx.region = 1;ST = TRUE
 init = c(-1.5,4,0);fixed=c(F,F,F)
 bootstrap=FALSE;
 region.ind = 1;bootstrap.ind = 1;season.ind=1
@@ -31,9 +33,7 @@ if(norm.ind==1){
 }
 
 # Define locations 
-n.skip = 30
-idx.loc = station$group.id == region.id[idx.region]
-loc = cbind(station$X[idx.loc],station$Y[idx.loc])
+loc = loc.trans.list[[idx.region]]
 idx.season = date.df$season == season[season.ind]
 idx.season = idx.season[date.df$date >= START.date & date.df$date <= END.date]
 
@@ -55,26 +55,25 @@ stopifnot( sum(idx.exc) > 0 )
 
 reg.t = reg.t[idx.exc]
 reg.t = (reg.t - mean(reg.t))/sd(reg.t) 
-exceedances <- obs[ind.exc]
+exceedances <- obs[idx.exc]
 
 if(bootstrap){
-  while(!file.exists(file)){Sys.sleep(60)}
-  load(file,e<-new.env())
-  
-  param = e$result$par
-  init = param
-  rm(e)
-  init.seed = as.integer((as.integer(Sys.time())/bootstrap.ind + sample.int(10^5,1))%%10^5)
-  set.seed(init.seed)
-  boot.index = sample(1:length(exceedances),length(exceedances),replace = TRUE)
-  
-  exceedances = exceedances[boot.index]
-  reg.t = reg.t[boot.index]
-  file = paste0("data/fit_pot_ST_bootstrap_",init.seed,"_",season.ind,"_",regions[region.ind],".Rdata")
+    while(!file.exists(file)){Sys.sleep(60)}
+    load(file,e<-new.env())
+    
+    param = e$result$par
+    init = param
+    rm(e)
+    init.seed = as.integer((as.integer(Sys.time())/bootstrap.ind + sample.int(10^5,1))%%10^5)
+    set.seed(init.seed)
+    boot.index = sample(1:length(exceedances),length(exceedances),replace = TRUE)
+    
+    exceedances = exceedances[boot.index]
+    reg.t = reg.t[boot.index]
+    file = paste0("data/fit_pot_ST_bootstrap_",init.seed,"_",season.ind,"_",regions[region.ind],".Rdata")
 }
 
-result = fit.gradientScoreBR(obs=exceedances,loc=loc.trans,init=init,fixed = fixed,
-vario = vario,u = thres,ST = ST,nCores = ncores,weightFun = weightFun,dWeightFun = dWeightFun)
+result = fit.gradientScoreBR(obs=exceedances,loc=loc,init=init,fixed = fixed,vario = vario,u = thres,ST = ST,nCores = ncores,weightFun = weightFun,dWeightFun = dWeightFun)
 
 save(idx.exc,result,exceedances,reg.t,est.shape.gpd,thres,file=file)
 
