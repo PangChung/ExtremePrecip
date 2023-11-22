@@ -4,6 +4,7 @@ load("data/era5_geoinfo.RData")
 load("data/precip.RData")
 library(parallel)
 library(ggplot2)
+library(ggpubr)
 library(lubridate)
 library(sf)
 source("code/utility.R")
@@ -116,3 +117,31 @@ table(locate.idx.list[[3]][,2])
 table(locate.idx.list[[4]][,2])
 table(locate.idx.list[[5]][,2])
 
+load("data/temperatures-mississippi.RData")
+g<-list()
+for(idx in 1:5){
+    i = which(models==idx.models[idx] & periods=="historical") ## 
+    idx.group.id = locate.idx.list[[idx]][locate.idx.list[[idx]][,2]!=19,1]
+    data = data.frame(x = xyt[[i]]$lon[idx.grid.list[[idx]]$miss[,1]],y=xyt[[i]]$lat[idx.grid.list[[idx]]$miss[,2]])[idx.group.id,]
+    data$group.id = locate.idx.list[[idx]][locate.idx.list[[idx]][,2]!=19,2]
+    g[[idx]] <- ggplot() + geom_sf(data=shape1,aes(fill=names),alpha=0.2) + geom_point(data=data,aes(x=x,y=y,col=as.factor(group.id)),size=0.5) + ggtitle(idx.models[idx]) + theme(plot.title = element_text(hjust = 0.5)) + labs(col="Regions",fill="Region names")
+    #g[[idx]] <- g[[idx]] + guides(fill=FALSE,colour=FALSE)
+}
+
+pdf("figures/temperature-mississippi_location.pdf",width=10*5,height=8)
+ggarrange(g[[1]],g[[2]],g[[3]],g[[4]],g[[5]],ncol=5,common.legend=TRUE,legend="bottom")
+dev.off()
+
+load("data/temperatures-danube.RData")
+g1<-list()
+for(idx in 1:5){
+    i = which(models==idx.models[idx] & periods=="historical") ## 
+    idx.group.id = locate.idx.list[[idx]][locate.idx.list[[idx]][,2]==19,1]
+    data = data.frame(x = xyt[[i]]$lon[idx.grid.list[[idx]]$danube[,1]],y=xyt[[i]]$lat[idx.grid.list[[idx]]$danube[,2]],group.id=19)[idx.group.id,]
+    g1[[idx]] <- ggplot() + geom_sf(data=shape3,aes(fill="blue"),alpha=0.2) + geom_point(data=data,aes(x=x,y=y),color="red",size=0.5) + ggtitle(idx.models[idx]) + theme(plot.title = element_text(hjust = 0.5))
+    g1[[idx]] <- g1[[idx]] + guides(fill=FALSE,colour=FALSE)
+}
+
+pdf("figures/temperature-danube_location.pdf",width=10*5,height=8)
+ggarrange(g1[[1]],g1[[2]],g1[[3]],g1[[4]],g1[[5]],ncol=5,common.legend=TRUE,legend="bottom")
+dev.off()
