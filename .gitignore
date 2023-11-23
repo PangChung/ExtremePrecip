@@ -7,3 +7,4 @@ data/shapefiles/*
 settings.json
 *.dly
 *.out
+output_*.txt
