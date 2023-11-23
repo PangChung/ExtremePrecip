@@ -12,6 +12,7 @@ ls()
 for (arg in args) eval(parse(text = arg))
 ## prepare the dataframe for marginal fit ##
 #for(idx in 1:length(region.id)){
+print(idx)
 #idx = 4 # select region for processing
 ## prepare the time covariate: year and date
 ind.data = date.df$date >= START.date & date.df$date <= END.date
@@ -22,11 +23,13 @@ alt <- station$elev[ind.station]/1000 ## elevation of the station
 lon <- station$Y[ind.station]
 lat <- station$X[ind.station]
 
-## compute the consective temperature averages 
-tep.covariate <- temperature.covariate[[idx]][ind.data]
-D = sum(ind.station);Dt = sum(ind.data) # dimensions
-y = unlist(precip[[idx]])
-y.thres <- 10;y = y - y.thres ## remove the values that are below y.thres
+    ## compute the consective temperature averages 
+    tep.covariate <- temperature.covariate[[idx]][ind.data]
+    D = sum(ind.station);Dt = sum(ind.data) # dimensions
+    y = unlist(precip[[idx]])
+    y.thres <- 10;y = y - y.thres ## remove the values that are below y.thres
+    print(quantile(y[!is.na(y) & y>0 & y<2000],0.99))
+}
 ## generate the data frame for marginal fitting
 data.df <- data.frame(y=y,temp = rep(tep.covariate,times=D),
                       day = rep(d.ind,times=D),
@@ -35,7 +38,7 @@ data.df <- data.frame(y=y,temp = rep(tep.covariate,times=D),
                       lon = rep(lon,each=Dt),
                       lat = rep(lat,each=Dt),
                       col=rep(1:D,each=Dt),
-                      row=rep(1:Dt,times=D))[!is.na(y) & y > 0 & y < 500,]
+                      row=rep(1:Dt,times=D))[!is.na(y) & y > 0 & y < 1490,]
 data.df = data.df[complete.cases(data.df),] ## select the complete dataframe
 
 ## start fitting the marginal model ##
