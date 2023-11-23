@@ -19,14 +19,26 @@ run_job() {
     pids+=($!)
 }
 
+is_running() {
+    local pid=$1
+    kill -0 "$pid" >/dev/null 2>&1
+}
+
 # Run multiple jobs in parallel
-for region in {2..8}; do
+for region in {1..8}; do
     for season in {1..4}; do
         for norm in {1..2}; do
-            # Check if the maximum number of parallel jobs has been reached
             while [ ${#pids[@]} -ge $max_jobs ]; do
                 sleep 1
+                # Remove finished jobs from the pids array
+                for ((i=0; i<${#pids[@]}; i++)); do
+                    if ! is_running "${pids[$i]}"; then
+                        unset 'pids[$i]'
+                    fi
+                done
+                pids=("${pids[@]}")    
             done
+            echo ${#pids[@]}
             echo "Running job $region $season $norm"
             run_job $region $season $norm
         done
