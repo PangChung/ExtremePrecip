@@ -25,7 +25,7 @@ load(paste0("data/marginal_fit_",idx.region,".RData"))
 
 ## file where the data should be stored ##
 file = paste0("data/fit_pot_ST_",season.ind,"_",region.name[idx.region],"_",norm.ind,".Rdata") 
-ncores = detectCores()
+ncores = 2 #detectCores()
 
 ## choose the r risk functional...##
 if(norm.ind==1){
