@@ -12,18 +12,20 @@ load("data/transformed_coordinates.RData")
 load("data/temperature.RData")
 #load("data/temperature_pred.RData")
 
-idx.region = 1;ST = TRUE
+idx.region = 2;ST = TRUE
 init = c(-1.5,4,0);fixed=c(F,F,F)
 bootstrap=FALSE;
 region.ind = 1;bootstrap.ind = 1;season.ind=1
 season = c("Winter" ,"Spring" ,"Summer" ,"Fall")
 norm.ind = 1;seaon.ind = 1
 for (arg in args) eval(parse(text = arg))
-## load the data from marginal fit##
+
+## load the data from marginal fit ##
 load(paste0("data/marginal_fit_",idx.region,".RData"))
+
 ## file where the data should be stored ##
 file = paste0("data/fit_pot_ST_",season.ind,"_",region.name[idx.region],".Rdata") 
-ncores = detectCores()/2
+ncores = detectCores()
 
 ## choose the r risk functional...##
 if(norm.ind==1){
@@ -37,7 +39,7 @@ loc = loc.trans.list[[idx.region]]
 idx.season = date.df$season == season[season.ind]
 idx.season = idx.season[date.df$date >= START.date & date.df$date <= END.date]
 
-## load the observations and parameters ## 
+## load the observations and covariates ## 
 obs = split(U,row(U))
 obs = subset(obs,idx.season)
 no.obs = sapply(obs,function(x){sum(!is.na(x))})
@@ -73,7 +75,10 @@ if(bootstrap){
     file = paste0("data/fit_pot_ST_bootstrap_",init.seed,"_",season.ind,"_",regions[region.ind],".Rdata")
 }
 
-result = fit.gradientScoreBR(obs=exceedances,loc=loc,init=init,fixed = fixed,vario = vario,u = thres,ST = ST,nCores = ncores,weightFun = weightFun,dWeightFun = dWeightFun)
+t0 <- proc.time()
+result = fit.gradientScoreBR(obs=exceedances,loc=loc,init=init + runif(3)*0.1,fixed = fixed,vario = vario,u = thres,ST = ST,nCores = ncores,weightFun = weightFun,dWeightFun = dWeightFun)
+t1 <- proc.time() - t0
+print(t1)
 
 save(idx.exc,result,exceedances,reg.t,est.shape.gpd,thres,file=file)
 

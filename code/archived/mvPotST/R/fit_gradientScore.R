@@ -43,6 +43,7 @@ fit.gradientScoreBR <- function(obs,
                                 vario,
                                 u,
                                 ST=FALSE,
+                                method="BFGS",
                                 maxit = 1000,
                                 nCores=1,
                                 weightFun=NULL,
@@ -80,7 +81,7 @@ fit.gradientScoreBR <- function(obs,
   }
   init2 = init[!fixed]
   t1 = proc.time()
-  result <- optim(init2,fun,control = list(trace=TRUE,maxit=maxit),hessian=FALSE)
+  result <- optim(init2,fun,control = list(trace=TRUE,maxit=maxit),method=method,hessian=FALSE)
   t2 = proc.time() - t1
   init[!fixed] = result$par
   result$par =  init
