@@ -5,7 +5,7 @@ library(ggplot2)
 library(lubridate)
 library(mvPotST)
 library(evd)
-library(fields)
+#library(fields)
 source("code/utility.R")
 load("data/precip.RData")
 load("data/transformed_coordinates.RData")
@@ -15,7 +15,7 @@ load("data/temperature.RData")
 idx.region = 2;ST = TRUE
 init = c(-1.5,4,0);fixed=c(F,F,F)
 bootstrap=FALSE;
-region.ind = 1;bootstrap.ind = 1;season.ind=1
+bootstrap.ind = 1;season.ind=1
 season = c("Winter" ,"Spring" ,"Summer" ,"Fall")
 norm.ind = 1;seaon.ind = 1
 for (arg in args) eval(parse(text = arg))
@@ -24,7 +24,7 @@ for (arg in args) eval(parse(text = arg))
 load(paste0("data/marginal_fit_",idx.region,".RData"))
 
 ## file where the data should be stored ##
-file = paste0("data/fit_pot_ST_",season.ind,"_",region.name[idx.region],".Rdata") 
+file = paste0("data/fit_pot_ST_",season.ind,"_",region.name[idx.region],"_",norm.ind,".Rdata") 
 ncores = detectCores()
 
 ## choose the r risk functional...##
@@ -72,7 +72,7 @@ if(bootstrap){
     
     exceedances = exceedances[boot.index]
     reg.t = reg.t[boot.index]
-    file = paste0("data/fit_pot_ST_bootstrap_",init.seed,"_",season.ind,"_",regions[region.ind],".Rdata")
+    file = paste0("data/fit_pot_ST_bootstrap_",init.seed,"_",season.ind,"_",regions[idx.region],".Rdata")
 }
 
 t0 <- proc.time()
