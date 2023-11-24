@@ -38,7 +38,6 @@ for region in {1..8}; do
                 done
                 pids=("${pids[@]}")    
             done
-            echo ${#pids[@]}
             echo "Running job $region $season $norm"
             run_job $region $season $norm
         done
