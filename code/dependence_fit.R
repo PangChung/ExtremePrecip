@@ -20,14 +20,13 @@ season = c("Winter" ,"Spring" ,"Summer" ,"Fall")
 norm.ind = 1;seaon.ind = 1
 for (arg in args) eval(parse(text = arg))
 
-## load the data from marginal fit ##
-load(paste0("data/marginal_fit_",idx.region,".RData"))
-
 ## file where the data should be stored ##
 file = paste0("data/fit_pot_ST_",season.ind,"_",region.name[idx.region],"_",norm.ind,".Rdata") 
 if(file.exists(file)){stop("file already exists")} 
 ncores = 4 #detectCores()
 
+## load the data from marginal fit ##
+load(paste0("data/marginal_fit_",idx.region,".RData"))
 ## choose the r risk functional...##
 if(norm.ind==1){
     est.shape.gpd <- data.df.gpd$est.shape.gpd[1]
