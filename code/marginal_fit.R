@@ -9,9 +9,10 @@ library(lubridate)
 library(evgam)
 library(evd)
 ls()
+idx = 8
 for (arg in args) eval(parse(text = arg))
 ## prepare the dataframe for marginal fit ##
-for(idx in 1:length(region.id)){
+#for(idx in 1:length(region.id)){
     print(idx)
     #idx = 4 # select region for processing
     ## prepare the time covariate: year and date
@@ -29,8 +30,8 @@ for(idx in 1:length(region.id)){
     y = unlist(precip[[idx]])
     y.thres <- 10;y = y - y.thres ## remove the values that are below y.thres
     print(quantile(y[!is.na(y) & y>0 & y<2000],0.99))
-}
-## generate the data frame for marginal fitting
+#}
+## generate the data frame for marginal fitting ## 
 data.df <- data.frame(y=y,temp = rep(tep.covariate,times=D),
                       day = rep(d.ind,times=D),
                       year = rep(y.ind,times=D),
