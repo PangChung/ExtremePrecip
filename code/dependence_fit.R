@@ -1,27 +1,24 @@
 rm(list=ls())
 args <- commandArgs(TRUE)
 library(parallel)
-library(ggplot2)
 library(lubridate)
 library(mvPotST)
 library(evd)
-#library(fields)
 source("code/utility.R")
 load("data/precip.RData")
 load("data/transformed_coordinates.RData")
 load("data/temperature.RData")
-#load("data/temperature_pred.RData")
 
 idx.region = 2;ST = TRUE
 init = c(-1.5,4,0);fixed=c(F,F,F)
 bootstrap=FALSE;
-bootstrap.ind = 1;season.ind=1
+bootstrap.idx = 1;season.idx=1
 season = c("Winter" ,"Spring" ,"Summer" ,"Fall")
-norm.ind = 1;seaon.ind = 1
+norm.idx = 1
 for (arg in args) eval(parse(text = arg))
 
 ## file where the data should be stored ##
-file = paste0("data/fit_pot_ST_",season.ind,"_",region.name[idx.region],"_",norm.ind,".Rdata") 
+file = paste0("data/fit_pot_ST_",season.idx,"_",region.name[idx.region],"_",norm.ind,".Rdata") 
 if(file.exists(file)){stop("file already exists")} 
 ncores = 4 #detectCores()
 
@@ -36,7 +33,7 @@ if(norm.ind==1){
 
 # Define locations 
 loc = loc.trans.list[[idx.region]]
-idx.season = date.df$season == season[season.ind]
+idx.season = date.df$season == season[season.idx]
 idx.season = idx.season[date.df$date >= START.date & date.df$date <= END.date]
 
 ## load the observations and covariates ## 
@@ -62,17 +59,15 @@ exceedances <- obs[idx.exc]
 if(bootstrap){
     while(!file.exists(file)){Sys.sleep(60)}
     load(file,e<-new.env())
-    
     param = e$result$par
     init = param
     rm(e)
     init.seed = as.integer((as.integer(Sys.time())/bootstrap.ind + sample.int(10^5,1))%%10^5)
     set.seed(init.seed)
     boot.index = sample(1:length(exceedances),length(exceedances),replace = TRUE)
-    
     exceedances = exceedances[boot.index]
     reg.t = reg.t[boot.index]
-    file = paste0("data/fit_pot_ST_bootstrap_",init.seed,"_",season.ind,"_",regions[idx.region],".Rdata")
+    file = paste0("data/fit_pot_ST_bootstrap_",init.seed,"_",season.idx,"_",regions[idx.region],".Rdata")
 }
 
 t0 <- proc.time()

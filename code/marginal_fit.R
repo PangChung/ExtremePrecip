@@ -44,8 +44,10 @@ data.df = data.df[complete.cases(data.df),] ## select the complete dataframe
 
 ## start fitting the marginal model ##
 ## WARNING! Long time to run ##
+t0 <- proc.time()
 message("start Gamma fitting")
-formula = y ~ temp + s(day,k=10) + ti(lon,lat,k=10) + s(alt,k=10)
+#formula = y ~ temp + s(day,k=10) + ti(lon,lat,k=10) + s(alt,k=10)
+formula = y ~ temp + s(alt,k=5) + s(day,k=5) + ti(lon,lat,k=5) + ti(day,lon,lat,k=5)
 results.gam = gam(formula,family=Gamma(link="log"),data=data.df)
 est.sig2 <- results.gam$sig2;est.mean <- results.gam$fitted.values
 est.shape = 1/est.sig2;est.scale <- est.mean/est.shape
@@ -54,7 +56,8 @@ data.df$est.shape = est.shape;data.df$est.scale = est.scale
 
 message("start binominal fitting")
 data.df$y.bin <- as.numeric(data.df$y > data.df$est.quantile)
-formula.bin = y.bin ~ temp + s(day,k=10) + ti(lon,lat,k=10) + s(alt,k=10)
+#formula.bin = y.bin ~ temp + s(day,k=10) + ti(lon,lat,k=10) + s(alt,k=10)
+formula.bin = y.bin ~ temp + s(day,k=5) + s(alt,k=5) + ti(lon,lat,k=5) +  ti(day,lon,lat,k=5)
 results.bin <- gam(formula.bin,family = binomial(link="logit"),data=data.df)
 est.prob.exceed <- fitted(results.bin) ## fitted exceeding probability
 data.df$est.prob.exceed <- est.prob.exceed
@@ -62,7 +65,8 @@ data.df$est.prob.exceed <- est.prob.exceed
 message("start GPD fitting")
 data.df$y.gpd <- data.df$y - data.df$est.quantile
 data.df.gpd <- data.df[data.df$y.gpd>0,]
-formula.gpd = list(y.gpd ~ temp + s(day,k=10) + ti(lon,lat,k=10) + s(alt,k=10),~1)
+#formula.gpd = list(y.gpd ~ temp + s(day,k=10) + ti(lon,lat,k=10) + s(alt,k=10),~1)
+formula.gpd = list(y.gpd ~ temp + s(day,k=5) + s(alt,k=5) + ti(lon,lat,k=5) + ti(day,lon,lat,k=5),~1)
 results.gpd <- evgam(formula.gpd,data=data.df.gpd,family="gpd")
 est.scale.gpd = exp(fitted(results.gpd)[,1]);est.shape.gpd = fitted(results.gpd)[1,2]
 data.df.gpd$est.scale.gpd = est.scale.gpd;data.df.gpd$est.shape.gpd = est.shape.gpd
@@ -77,7 +81,10 @@ data.df$est.prob <- est.prob
 U <- matrix(NA,nrow=Dt,ncol=D)
 U[cbind(data.df$row,data.df$col)] <- est.prob/(1+1e-10) ## avoid computational issues
 
+t1 <- proc.time() - t0
+
 save(results.gam,results.gpd,results.bin,data.df,data.df.gpd,U,file=paste0("data/marginal_fit_",idx,".RData"))
+
 #}
 
 ## plot the qqplot for random location ##
