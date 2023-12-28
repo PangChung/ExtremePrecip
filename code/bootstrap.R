@@ -23,6 +23,7 @@ load(paste0("data/marginal_fit_",idx.region,".RData"),e<-new.env())
 data.df <- e$data.df
 rm(e)
 
+
 message("start Gamma fitting")
 formula = y ~ temp + s(day,k=10) + ti(lon,lat,k=10) + s(alt,k=10)
 results.gam = gam(formula,family=Gamma(link="log"),data=data.df)
