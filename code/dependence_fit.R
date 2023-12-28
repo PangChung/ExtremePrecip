@@ -19,18 +19,21 @@ for (arg in args) eval(parse(text = arg))
 
 ## file where the data should be stored ##
 file = paste0("data/fit_pot_ST_",season.idx,"_",region.name[idx.region],"_",norm.ind,".Rdata") 
-if(file.exists(file)){stop("file already exists")} 
+if(file.exists(file)){
+    load(file,e<-new.env())
+    init = e$result$par
+    rm(e)
+    #stop("file already exists")
+} 
 ncores = 4 #detectCores()
-
 ## load the data from marginal fit ##
-load(paste0("data/marginal_fit_",idx.region,".RData"))
+load(paste0("data/marginal_fit_",idx.region,"_model_1.RData"))
 ## choose the r risk functional...##
 if(norm.ind==1){
     est.shape.gpd <- data.df.gpd$est.shape.gpd[1]
 }else{
     est.shape.gpd <- 1
 }
-
 # Define locations 
 loc = loc.trans.list[[idx.region]]
 idx.season = date.df$season == season[season.idx]
