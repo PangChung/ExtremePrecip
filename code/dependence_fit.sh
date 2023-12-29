@@ -5,7 +5,7 @@ cd ~/Desktop/ExtremePrecip/
 declare -a pids
 
 # Maximum number of parallel jobs
-max_jobs=4
+max_jobs=5
 
 # Function to run a job with nohup
 run_job() {

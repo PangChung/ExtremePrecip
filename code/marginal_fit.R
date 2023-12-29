@@ -41,7 +41,6 @@ data.df <- data.frame(y=y,temp = rep(tep.covariate,times=D),
                       row=rep(1:Dt,times=D))[!is.na(y) & y > 0 & y < 1000,]
 data.df = data.df[complete.cases(data.df),] ## select the complete dataframe
 
-hist(data.df$y,50)
 ## start fitting the marginal model ##
 ## WARNING! Long time to run ##
 t0 <- proc.time()
