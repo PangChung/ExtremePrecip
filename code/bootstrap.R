@@ -13,7 +13,7 @@ load("data/precip.RData")
 load("data/transformed_coordinates.RData")
 load("data/temperature.RData")
 
-idx.region = 2;bootstrap.ind = 1
+idx.region = 1;bootstrap.ind = 1
 init = c(-1.5,4,0);fixed=c(F,F,F)
 season = c("Winter" ,"Spring" ,"Summer" ,"Fall")
 for (arg in args) eval(parse(text = arg))
@@ -27,9 +27,11 @@ y.ind = date.df$year[ind.data];y.ind=y.ind - y.ind[1] + 1
 d.ind = yday(date.df$date[ind.data])  
 date.ind = date.df$date[ind.data]
 tep.covariate <- temperature.covariate[[idx.region]][ind.data]
-month_numbers = (year(date.ind) - year(date.ind[1])) * 12 + month(date.ind) - month(date.ind[1]) + 1
-month_sampled = sort((sample(1:max(month_numbers),size = max(month_numbers),replace = TRUE)))
-ind.sample = unlist(lapply(month_sampled,function(x){which(month_numbers==x)}))
+
+## sample the data ##
+idx_numbers = sort(rep(1:300,length.out = sum(ind.data)))
+idx_samples = (1:300)[-bootstrap.ind]
+ind.sample = apply(matrix(unlist(lapply(idx_samples,function(x){idx_numbers==x})),ncol=length(idx_samples),byrow=FALSE),1,any)
 
 ind.station = station$group.id==region.id[idx.region]
 alt <- station$elev[ind.station]/1000 ## elevation of the station
@@ -37,7 +39,7 @@ lon <- station$Y[ind.station]
 lat <- station$X[ind.station]
 
 ## compute the consective temperature averages ## 
-D = sum(ind.station);Dt = length(ind.sample) # dimensions
+D = sum(ind.station);Dt = sum(ind.sample) # dimensions
 y = unlist(lapply(precip[[idx.region]],function(x){x[ind.sample]}))
 y.thres <- 10;y = y-y.thres ## remove the values that are below y.thres
 
@@ -53,7 +55,7 @@ data.df <- data.frame(y=y,
                     lon = rep(lon,time=Dt),
                     lat = rep(lat,time=Dt),
                     col=rep(1:D,time=Dt),
-                    row=rep(1:Dt,each=D))[!is.na(y) & y > 0 & y < 1000,]
+                    row=rep((1:sum(ind.data))[ind.sample],each=D))[!is.na(y) & y > 0 & y < 1000,]
 
 data.df = data.df[complete.cases(data.df),] ## select the complete dataframe
 
@@ -88,19 +90,20 @@ data.df.gpd$est.scale.gpd = est.scale.gpd;data.df.gpd$est.shape.gpd = est.shape.
 est.prob[data.df$y.bin] <- 1 - est.prob.exceed[data.df$y.bin] + 
 est.prob.exceed[data.df$y.bin]*pgpd(data.df.gpd$y.gpd,loc = 0,scale = est.scale.gpd,shape = est.shape.gpd)
 
-U <- matrix(NA,nrow=Dt,ncol=D)
+U <- matrix(NA,nrow=sum(ind.data),ncol=D)
 U[cbind(data.df$row,data.df$col)] <- est.prob/(1+1e-10) ## avoid computational issues
 
 ## depdence fit ##
 result.list <- list(list(),list())
-for(norm.ind in 1:2){
-    for(season.idx in 1:4){
+# for(norm.ind in 1:2){
+#     for(season.idx in 1:4){
+norm.ind = 1;season.idx=2
         file = paste0("data/fit_pot_ST_",season.idx,"_",region.name[idx.region],"_",norm.ind,".Rdata") 
         if(file.exists(file)){
             load(file,e<-new.env())
             init = e$result$par
             rm(e)
-            #stop("file already exists")
+            #stop("file already exists")3
         }
         ## choose the r risk functional...##
         if(norm.ind==1){
@@ -110,16 +113,16 @@ for(norm.ind in 1:2){
         }
         # Define locations 
         loc = loc.trans.list[[idx.region]]
-        date.df = date.df[ind.data,][ind.sample,]
-        idx.season = date.df$season == season[season.idx]
-        idx.season = idx.season[date.df$date >= START.date & date.df$date <= END.date]
+        date.df2 = date.df[ind.data,][ind.sample,]
+        idx.season = date.df2$season == season[season.idx]
 
         ## load the observations and covariates ## 
         obs = split(U,row(U))
         obs = subset(obs,idx.season)
         no.obs = sapply(obs,function(x){sum(!is.na(x))})
         obs[no.obs>1] = lapply(obs[no.obs>1],evd::qgpd,shape=1,loc=1,scale = 1)
-        reg.t = temperature[[idx.region]][ind.sample][idx.season]
+        reg.t = temperature[[idx.region]][ind.data][ind.sample][idx.season]
+        reg.t = (reg.t - mean(reg.t))/sd(reg.t)
 
         r.obs <- suppressWarnings(unlist(lapply(obs,function(x){if(sum(!is.na(x))!=0){rFun(x[!is.na(x)],u=1,
         est.shape.gpd)}else{NA}})))
@@ -131,14 +134,13 @@ for(norm.ind in 1:2){
         stopifnot( sum(idx.exc) > 0 )
 
         reg.t = reg.t[idx.exc]
-        reg.t = (reg.t - mean(reg.t))/sd(reg.t) 
         exceedances <- obs[idx.exc]
 
         result.list[[norm.ind]][[season.idx]] = fit.gradientScoreBR(obs=exceedances,loc=loc,init=init,fixed = fixed,vario = vario,u = thres,ST = TRUE,nCores = ncores,weightFun = weightFun,dWeightFun = dWeightFun)
-    }
-}
+#     }
+# }
 
-file = paste0("data/fit_pot_ST_bootstrap_",init.seed,"_",regions[idx.region],".RData")
-save(result.list,file=file)
+file2save = paste0("data/fit_pot_ST_bootstrap_",init.seed,"_",regions[idx.region],".RData")
+save(result.list,file=file2save)
 
 

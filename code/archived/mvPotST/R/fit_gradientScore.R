@@ -43,7 +43,7 @@ fit.gradientScoreBR <- function(obs,
                                 vario,
                                 u,
                                 ST=FALSE,
-                                method="BFGS",
+                                method="Nelder-Mead",
                                 maxit = 1000,
                                 nCores=1,
                                 weightFun=NULL,
@@ -63,22 +63,15 @@ fit.gradientScoreBR <- function(obs,
       (1 - exp(-(mean(x / u) - 1))) + (x /u/length(x)) * exp( - (mean(x / u) - 1))
     }
   }
-  
+
   fun <- function(par){
     par2 = init
     par2[!fixed] = par 
-    if(ST){
-      vario.fun <- function(h,t){
-        return(vario(h,par2,t))
-      }
-    }else{
-      vario.fun <- function(h){
-        return(vario(h,par2))
-      } 
-    }
-    val = scoreEstimation(obs, loc, vario.fun=vario.fun, weightFun = weightFun, dWeightFun=dWeightFun,u = u,nCores = nCores,ST=ST,...)
+    val = scoreEstimation(par2, obs, loc, vario.fun=vario, weightFun = weightFun, dWeightFun=dWeightFun,u = u,nCores = nCores,ST=ST,...)
+    print(par2)
     return(val)
   }
+  
   init2 = init[!fixed]
   t1 = proc.time()
   result <- optim(init2,fun,control = list(trace=TRUE,maxit=maxit),method=method,hessian=FALSE)

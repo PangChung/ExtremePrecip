@@ -51,7 +51,7 @@
 #' #Evaluate gradient score function
 #' scoreEstimation(exceedances, loc, vario, weightFun = weightFun, dWeightFun, u = threshold)
 #' @export
-scoreEstimation <- function(obs, loc, vario.fun, 
+scoreEstimation <- function(par2, obs, loc, vario.fun, 
                             weightFun = NULL, dWeightFun = NULL, 
                             nCores = 1L,  
                             ST=FALSE,
@@ -84,7 +84,6 @@ scoreEstimation <- function(obs, loc, vario.fun,
   if(!is.numeric(nCores) || nCores < 1) {
     stop('`nCores` must a positive number of cores.')
   }
-
   n <- length(obs)
   dim <- nrow(loc)
   if(!ST){
@@ -97,7 +96,7 @@ scoreEstimation <- function(obs, loc, vario.fun,
       for(j in 1:ncol(loc)){
         h[j] = dists[[j]][k]
       }
-      vario.fun(h)
+      vario.fun(h,par2)
     })
     matrix(computeVarMat, dim, dim)
   }, warning = function(war) {
@@ -108,7 +107,6 @@ scoreEstimation <- function(obs, loc, vario.fun,
   gammaOrigin <- apply(loc, 1, vario)
 
   SigmaS <- (outer(gammaOrigin, gammaOrigin, "+") - gamma)
-  
   computeScores = function(i){
     obs.i = .subset2(obs,i)
     ind = !is.na(obs.i)
@@ -131,8 +129,9 @@ scoreEstimation <- function(obs, loc, vario.fun,
     dWeights  <- do.call(what = "dWeightFun", args = c(ellipsis, x = list(obs.i)))
 
     sum(2 * (weights * dWeights) * gradient + weights^2 * diagHessian + 1 / 2 * weights^2 * gradient^2)
+    }
   }
-  }else{
+  else{
     computeScores = function(i){
       # prepare the data for time i#
       obs.i = .subset2(obs,i)
@@ -149,7 +148,7 @@ scoreEstimation <- function(obs, loc, vario.fun,
           for(j in 1:ncol(loc)){
             h[j] = dists[[j]][k]
           }
-          vario.fun(h,t=i)
+          vario.fun(h,par2,t=i)
         })
         matrix(computeVarMat, dim, dim)
       }, warning = function(war) {
