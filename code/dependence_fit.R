@@ -60,20 +60,6 @@ reg.t = reg.t[idx.exc]
 reg.t = (reg.t - mean(reg.t))/sd(reg.t) 
 exceedances <- obs[idx.exc]
 
-if(bootstrap){
-    while(!file.exists(file)){Sys.sleep(60)}
-    load(file,e<-new.env())
-    param = e$result$par
-    init = param
-    rm(e)
-    init.seed = as.integer((as.integer(Sys.time())/bootstrap.ind + sample.int(10^5,1))%%10^5)
-    set.seed(init.seed)
-    boot.index = sample(1:length(exceedances),length(exceedances),replace = TRUE)
-    exceedances = exceedances[boot.index]
-    reg.t = reg.t[boot.index]
-    file = paste0("data/fit_pot_ST_bootstrap_",init.seed,"_",season.idx,"_",regions[idx.region],".Rdata")
-}
-
 t0 <- proc.time()
 result = fit.gradientScoreBR(obs=exceedances,loc=loc,init=init + runif(3)*0.1,fixed = fixed,vario = vario,u = thres,ST = ST,nCores = ncores,weightFun = weightFun,dWeightFun = dWeightFun)
 t1 <- proc.time() - t0
