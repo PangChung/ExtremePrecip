@@ -36,7 +36,7 @@ is_running() {
 }
 
 # Run multiple jobs in parallel
-for region in {1..4}; do
+for region in {1..3}; do
     while [ ${#pids[@]} -ge $max_jobs ]; do
         sleep 1
         # Remove finished jobs from the pids array

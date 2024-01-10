@@ -136,7 +136,7 @@ for(norm.ind in 1:2){
         reg.t = reg.t[idx.exc]
         exceedances <- obs[idx.exc]
 
-        result.list[[norm.ind]][[season.idx]] = fit.gradientScoreBR(obs=exceedances,loc=loc,init=init,fixed = fixed,vario = vario,u = thres,ST = TRUE,nCores = ncores,weightFun = weightFun,dWeightFun = dWeightFun)
+        result.list[[norm.ind]][[season.idx]] = fit.gradientScoreBR(obs=exceedances,loc=loc,init=init,fixed = fixed,vario = vario,u = thres,method="BFGS",ST = TRUE,nCores = ncores,weightFun = weightFun,dWeightFun = dWeightFun)
     }
 }
 
