@@ -47,7 +47,7 @@ t0 <- proc.time()
 message("start Gamma fitting")
 thres.prob = 0.8
 if(model.id==1){
-    formula = y ~ temp + s(day,k=5) + ti(lon,lat,k=5) + s(alt,k=5)
+    formula = y ~ temp + s(day,k=10) + ti(lon,lat,k=10) + s(alt,k=10)
     results.gam = gam(formula,family=Gamma(link="log"),data=data.df)
     est.sig2 <- results.gam$sig2;est.mean <- results.gam$fitted.values
     est.shape = 1/est.sig2;est.scale <- est.mean/est.shape
@@ -55,7 +55,7 @@ if(model.id==1){
     data.df$est.shape = est.shape;data.df$est.scale = est.scale
     est.prob <- pgamma(data.df$y,shape=est.shape,scale=est.scale)
 }else{
-    formula = list(log(y) ~ temp + s(alt,k=5) + s(day,k=5) + ti(lon,lat,k=5) ,~s(day,k=5)+s(alt,k=5))
+    formula = list(log(y) ~ temp + s(alt,k=10) + s(day,k=10) + ti(lon,lat,k=10) ,~s(day,k=10)+s(alt,k=10))
     results.gam = gam(formula,family=gaulss(link=list("log","logb")),data=data.df)
     est.gam = fitted(results.gam)
     data.df$est.mean = est.gam[,1];data.df$est.sd = 1/est.gam[,2]
@@ -67,7 +67,7 @@ data.df$y.bin <- as.numeric(data.df$y > data.df$est.quantile)
 data.df$est.prob <- est.prob 
 print(summary(est.prob[data.df$y.bin] - thres.prob))
 message("start binominal fitting")
-formula.bin = y.bin ~ temp + s(day,k=5) + s(alt,k=5) + ti(lon,lat,k=5) + ti(alt,)
+formula.bin = y.bin ~ temp + s(day,k=10) + s(alt,k=10) + ti(lon,lat,k=10)
 results.bin <- gam(formula.bin,family = binomial(link="logit"),data=data.df)
 est.prob.exceed <- fitted(results.bin) ## fitted exceeding probability
 data.df$est.prob.exceed <- est.prob.exceed
@@ -75,7 +75,7 @@ data.df$est.prob.exceed <- est.prob.exceed
 message("start GPD fitting")
 data.df$y.gpd <- data.df$y - data.df$est.quantile
 data.df.gpd <- data.df[data.df$y.gpd>0,]
-formula.gpd = list(y.gpd ~ temp + s(day,k=5) + s(alt,k=5) + ti(lon,lat,k=5),~1)
+formula.gpd = list(y.gpd ~ log(est.quantile) + temp + s(day,k=10) + s(alt,k=10) + ti(lon,lat,k=10),~1)
 results.gpd <- evgam(formula.gpd,data=data.df.gpd,family="gpd")
 est.scale.gpd = exp(fitted(results.gpd)[,1]);est.shape.gpd = fitted(results.gpd)[1,2]
 data.df.gpd$est.scale.gpd = est.scale.gpd;data.df.gpd$est.shape.gpd = est.shape.gpd

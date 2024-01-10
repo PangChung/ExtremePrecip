@@ -13,13 +13,13 @@ load("data/precip.RData")
 load("data/transformed_coordinates.RData")
 load("data/temperature.RData")
 
-idx.region = 1;bootstrap.ind = 1
-init = c(-1.5,4,0);fixed=c(F,F,F)
+idx.region = 1;bootstrap.ind = 400
+init = c(-4,4,0);fixed=c(F,F,F)
 season = c("Winter" ,"Spring" ,"Summer" ,"Fall")
 
 for (arg in args) eval(parse(text = arg))
 
-ncores = 4 #detectCores()
+ncores = 5 #detectCores()
 init.seed = as.integer((as.integer(Sys.time())/bootstrap.ind + sample.int(10^5,1))%%10^5)
 set.seed(init.seed)
 ## prepare the time covariate: year and date
@@ -63,7 +63,7 @@ data.df = data.df[complete.cases(data.df),] ## select the complete dataframe
 
 message("start Gamma fitting")
 thres.prob = 0.8
-formula = y ~ temp + s(day,k=5) + ti(lon,lat,k=5) + s(alt,k=5)
+formula = y ~ temp + s(day,k=10) + ti(lon,lat,k=10) + s(alt,k=10)
 results.gam = gam(formula,family=Gamma(link="log"),data=data.df)
 est.sig2 <- results.gam$sig2;est.mean <- results.gam$fitted.values
 est.shape = 1/est.sig2;est.scale <- est.mean/est.shape
@@ -74,7 +74,7 @@ data.df$y.bin <- as.numeric(data.df$y > data.df$est.quantile)
 data.df$est.prob <- est.prob 
 
 message("start binominal fitting")
-formula.bin = y.bin ~ temp + s(day,k=5) + s(alt,k=5) + ti(lon,lat,k=5)
+formula.bin = y.bin ~ temp + s(day,k=10) + s(alt,k=10) + ti(lon,lat,k=10)
 results.bin <- gam(formula.bin,family = binomial(link="logit"),data=data.df)
 est.prob.exceed <- fitted(results.bin) ## fitted exceeding probability
 data.df$est.prob.exceed <- est.prob.exceed
@@ -82,7 +82,7 @@ data.df$est.prob.exceed <- est.prob.exceed
 message("start GPD fitting")
 data.df$y.gpd <- data.df$y - data.df$est.quantile
 data.df.gpd <- data.df[data.df$y.gpd>0,]
-formula.gpd = list(y.gpd ~ temp + s(day,k=5) + s(alt,k=5) + ti(lon,lat,k=5),~1)
+formula.gpd = list(y.gpd ~ log(est.quantile) + temp + s(day,k=10) + s(alt,k=10) + ti(lon,lat,k=10),~1)
 results.gpd <- evgam(formula.gpd,data=data.df.gpd,family="gpd")
 est.scale.gpd = exp(fitted(results.gpd)[,1]);est.shape.gpd = fitted(results.gpd)[1,2]
 data.df.gpd$est.scale.gpd = est.scale.gpd;data.df.gpd$est.shape.gpd = est.shape.gpd

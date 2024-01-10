@@ -10,7 +10,7 @@ load("data/transformed_coordinates.RData")
 load("data/temperature.RData")
 
 idx.region = 2;ST = TRUE
-init = c(-1.5,4,0);fixed=c(F,F,F)
+init = c(-4,4,0);fixed=c(F,F,F)
 bootstrap=FALSE;
 bootstrap.idx = 1;season.idx=1
 season = c("Winter" ,"Spring" ,"Summer" ,"Fall")
