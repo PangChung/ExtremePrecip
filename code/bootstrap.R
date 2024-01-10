@@ -16,9 +16,10 @@ load("data/temperature.RData")
 idx.region = 1;bootstrap.ind = 1
 init = c(-1.5,4,0);fixed=c(F,F,F)
 season = c("Winter" ,"Spring" ,"Summer" ,"Fall")
+
 for (arg in args) eval(parse(text = arg))
 
-ncores = detectCores()
+ncores = 4 #detectCores()
 init.seed = as.integer((as.integer(Sys.time())/bootstrap.ind + sample.int(10^5,1))%%10^5)
 set.seed(init.seed)
 ## prepare the time covariate: year and date
@@ -95,10 +96,9 @@ U[cbind(data.df$row,data.df$col)] <- est.prob/(1+1e-10) ## avoid computational i
 
 ## depdence fit ##
 result.list <- list(list(),list())
-# for(norm.ind in 1:2){
-#     for(season.idx in 1:4){
-norm.ind = 1;season.idx=2
-        file = paste0("data/fit_pot_ST_",season.idx,"_",region.name[idx.region],"_",norm.ind,".Rdata") 
+for(norm.ind in 1:2){
+     for(season.idx in 1:4){
+        file = paste0("data/fit_pot_ST_",season.idx,"_",idx.region,"_",norm.ind,".Rdata") 
         if(file.exists(file)){
             load(file,e<-new.env())
             init = e$result$par
@@ -137,10 +137,10 @@ norm.ind = 1;season.idx=2
         exceedances <- obs[idx.exc]
 
         result.list[[norm.ind]][[season.idx]] = fit.gradientScoreBR(obs=exceedances,loc=loc,init=init,fixed = fixed,vario = vario,u = thres,ST = TRUE,nCores = ncores,weightFun = weightFun,dWeightFun = dWeightFun)
-#     }
-# }
+    }
+}
 
-file2save = paste0("data/fit_pot_ST_bootstrap_",init.seed,"_",regions[idx.region],".RData")
+file2save = paste0("data/fit_bootstrap_",bootstrap.ind,"_",idx.region,".RData")
 save(result.list,file=file2save)
 
 

@@ -18,7 +18,7 @@ norm.idx = 1
 for (arg in args) eval(parse(text = arg))
 
 ## file where the data should be stored ##
-file = paste0("data/fit_pot_ST_",season.idx,"_",region.name[idx.region],"_",norm.ind,".Rdata") 
+file = paste0("data/fit_",season.idx,"_",idx.region,"_",norm.ind,".Rdata") 
 if(file.exists(file)){
     load(file,e<-new.env())
     init = e$result$par

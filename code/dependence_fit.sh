@@ -43,17 +43,3 @@ for region in {1..8}; do
         done
     done
 done
-
-# Wait for all jobs to finish
-for pid in "${pids[@]}"; do
-    wait "$pid"
-done
-
-# Check if all jobs have finished
-if [ ${#pids[@]} -eq N ]; then
-    echo "All jobs have finished."
-else
-    echo "Some jobs are still running."
-fi
-
-echo "Your program has been finished" | mail -s "Your program has been finished" -a "From:zhongprw@gmail.com" -s smtp="smtp.gmail.com:587" -s smtp-use-starttls -s smtp-auth=login -s smtp-auth-user="zhongprw@gmail.com" -s "Marginal Fit" peng.zhong@unsw.edu.au 
