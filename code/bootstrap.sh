@@ -36,7 +36,7 @@ is_running() {
 }
 
 # Run multiple jobs in parallel
-for region in {1..3}; do
+for region in {1..8}; do
     while [ ${#pids[@]} -ge $max_jobs ]; do
         sleep 1
         # Remove finished jobs from the pids array
@@ -50,4 +50,5 @@ for region in {1..3}; do
     echo "Running job $region"
     run_job $region $1
 done
+
 date
