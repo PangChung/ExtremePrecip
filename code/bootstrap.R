@@ -33,7 +33,7 @@ tep.covariate <- temperature.covariate[[idx.region]][ind.data]
 idx_numbers = sort(rep(1:1000,length.out = sum(ind.data)))
 #idx_samples = (1:300)[-bootstrap.ind]
 idx_samples = sort(sample(1:1000,1000,replace=TRUE))
-ind.sample = apply(matrix(unlist(lapply(idx_samples,function(x){idx_numbers==x})),ncol=length(idx_samples),byrow=FALSE),1,any)
+ind.sample = sort(unlist(lapply(idx_samples,function(x){which(idx_numbers==x)})))
 
 ind.station = station$group.id==region.id[idx.region]
 alt <- station$elev[ind.station]/1000 ## elevation of the station
@@ -41,7 +41,7 @@ lon <- station$Y[ind.station]
 lat <- station$X[ind.station]
 
 ## compute the consective temperature averages ## 
-D = sum(ind.station);Dt = sum(ind.sample) # dimensions
+D = sum(ind.station);Dt = length(ind.sample) # dimensions
 y = unlist(lapply(precip[[idx.region]],function(x){x[ind.sample]}))
 y.thres <- 10;y = y-y.thres ## remove the values that are below y.thres
 
@@ -113,10 +113,9 @@ for(norm.ind in 1:2){
             est.shape.gpd <- 1
         }
         # Define locations 
-        loc = loc.trans.list[[idx.region]]
+        loc = loc.trans.list[[idx.region]]/1000
         date.df2 = date.df[ind.data,][ind.sample,]
         idx.season = date.df2$season == season[season.idx]
-
         ## load the observations and covariates ## 
         obs = split(U,row(U))
         obs = subset(obs,idx.season)
@@ -132,7 +131,7 @@ for(norm.ind in 1:2){
 
         ## select the exceedances
         idx.exc = no.obs > 5 & r.obs > thres 
-        stopifnot( sum(idx.exc) > 0 )
+        stopifnot( sum(idx.exc) > 0 & any(!is.na(reg.t)) )
 
         reg.t = reg.t[idx.exc]
         exceedances <- obs[idx.exc]
