@@ -30,8 +30,9 @@ date.ind = date.df$date[ind.data]
 tep.covariate <- temperature.covariate[[idx.region]][ind.data]
 
 ## sample the data ##
-idx_numbers = sort(rep(1:300,length.out = sum(ind.data)))
-idx_samples = (1:300)[-bootstrap.ind]
+idx_numbers = sort(rep(1:1000,length.out = sum(ind.data)))
+#idx_samples = (1:300)[-bootstrap.ind]
+idx_samples = sort(sample(1:1000,1000,replace=TRUE))
 ind.sample = apply(matrix(unlist(lapply(idx_samples,function(x){idx_numbers==x})),ncol=length(idx_samples),byrow=FALSE),1,any)
 
 ind.station = station$group.id==region.id[idx.region]
