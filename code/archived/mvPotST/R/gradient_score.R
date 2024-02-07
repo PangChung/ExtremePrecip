@@ -105,7 +105,7 @@ scoreEstimation <- function(par2, obs, loc, vario.fun,
     stop('The semi-variogram is not valid for the locations provided.')
   })
   gammaOrigin <- apply(loc, 1, vario)
-
+    
   SigmaS <- (outer(gammaOrigin, gammaOrigin, "+") - gamma)
   computeScores = function(i){
     obs.i = .subset2(obs,i)
@@ -177,7 +177,6 @@ scoreEstimation <- function(par2, obs, loc, vario.fun,
       sum(2 * (weights * dWeights) * gradient + weights^2 * diagHessian + 1 / 2 * weights^2 * gradient^2)
     }
   }
-  
   if(nCores > 1){
     scores <- parallel::mclapply(1:n, computeScores,mc.cores = nCores)
   } else {
