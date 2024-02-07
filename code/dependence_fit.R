@@ -25,7 +25,7 @@ if(file.exists(file)){
     rm(e)
     #stop("file already exists")
 } 
-ncores = 5 #detectCores()
+ncores = detectCores()
 ## load the data from marginal fit ##
 load(paste0("data/marginal_fit_",idx.region,"_model_1.RData"))
 ## choose the r risk functional...##
