@@ -19,7 +19,7 @@ season = c("Winter" ,"Spring" ,"Summer" ,"Fall")
 
 for (arg in args) eval(parse(text = arg))
 
-ncores = 5 #detectCores()
+ncores = 10 #detectCores()
 init.seed = as.integer((as.integer(Sys.time())/bootstrap.ind + sample.int(10^5,1))%%10^5)
 set.seed(init.seed)
 ## prepare the time covariate: year and date
