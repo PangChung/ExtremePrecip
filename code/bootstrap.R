@@ -22,7 +22,7 @@ library(evd)
 library(mgcv)
 library(evgam)
 
-file.marginal = file=paste0(DataPath,"/data/marginal_fit_",bootstrap.ind,"_",idx.region,".RData")
+file.marginal = paste0(DataPath,"/data/marginal_fit_",bootstrap.ind,"_",idx.region,".RData")
 ncores = detectCores()
 init.seed = as.integer((as.integer(Sys.time())/bootstrap.ind + sample.int(10^5,1))%%10^5)
 set.seed(init.seed)
