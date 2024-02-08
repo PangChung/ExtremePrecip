@@ -10,15 +10,11 @@
 
 # cd ${PBS_O_WORKDIR}
 
-# ./myprogram ${PBS_ARRAY_INDEX}.dat
-
-# cd ~/Desktop/ExtremePrecip/
-
 cd ~/R/ExtremePrecip/
 module load r/4.3.1
 
-Rscript code/bootstrap.R "idx.region=$region;bootstrap.ind=$boot_ind;computer=\"hpc\""
-#Rscript code/bootstrap.R "idx.region=${region};bootstrap.ind=${PBS_ARRAY_INDEX}"
+Rscript code/bootstrap.R "idx.region=$region;bootstrap.ind=$boot_ind;computer=\"hpc\"" > output.${PBS_JOBID}_${boot_ind} 2>1&
+#Rscript code/bootstrap.R "idx.region=${region};bootstrap.ind=${PBS_ARRAY_INDEX}" > output.${PBS_JOBID}_${PBS_ARRAY_INDEX} 2>1&
 
 # Array to store the process IDs of each job
 # declare -a pids
