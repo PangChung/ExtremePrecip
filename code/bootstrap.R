@@ -36,9 +36,12 @@ tep.covariate <- temperature.covariate[[idx.region]][ind.data]
 ## sample the data ##
 idx_numbers = sort(rep(1:1000,length.out = sum(ind.data)))
 #idx_samples = (1:300)[-bootstrap.ind]
-idx_samples = sort(sample(1:1000,1000,replace=TRUE))
+if(bootstrap.ind!=301){
+    idx_samples = sort(sample(1:1000,1000,replace=TRUE))
+}else{
+    idx_samples = 1:1000
+}
 ind.sample = sort(unlist(lapply(idx_samples,function(x){which(idx_numbers==x)})))
-
 ind.station = station$group.id==region.id[idx.region]
 alt <- station$elev[ind.station]/1000 ## elevation of the station
 lon <- station$Y[ind.station]
