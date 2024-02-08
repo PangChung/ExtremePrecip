@@ -4,7 +4,7 @@
 #PBS -l mem=124gb
 #PBS -l walltime=12:00:00
 #PBS -j oe 
-##PBS -J 1-300
+#PBS -J 1-300
 #PBS -m a
 #PBS -M peng.zhong@unsw.edu.au 
 
@@ -13,8 +13,8 @@
 cd ~/R/ExtremePrecip/
 module load r/4.3.1
 
-Rscript code/bootstrap.R "idx.region=$region;bootstrap.ind=$boot_ind;computer=\"hpc\"" 
-#Rscript code/bootstrap.R "idx.region=${region};bootstrap.ind=${PBS_ARRAY_INDEX}" > output.${PBS_JOBID}_${PBS_ARRAY_INDEX} 2>1&
+#Rscript code/bootstrap.R "idx.region=$region;bootstrap.ind=$boot_ind;computer=\"hpc\"" 
+Rscript code/bootstrap.R "idx.region=${region};bootstrap.ind=${PBS_ARRAY_INDEX};computer=\"hpc\"" 
 
 # Array to store the process IDs of each job
 # declare -a pids
