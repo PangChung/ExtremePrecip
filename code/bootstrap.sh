@@ -17,8 +17,8 @@
 cd ~/R/ExtremePrecip/
 module load r/4.3.1
 
-#Rscript code/bootstrap.R "idx.region=$region;bootstrap.ind=$boot_ind"
-Rscript code/bootstrap.R "idx.region=${region};bootstrap.ind=${PBS_ARRAY_INDEX}"
+Rscript code/bootstrap.R "idx.region=$region;bootstrap.ind=$boot_ind"
+#Rscript code/bootstrap.R "idx.region=${region};bootstrap.ind=${PBS_ARRAY_INDEX}"
 
 # Array to store the process IDs of each job
 # declare -a pids
