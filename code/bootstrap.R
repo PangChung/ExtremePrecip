@@ -1,13 +1,6 @@
 rm(list=ls())
 t0 <- proc.time()
 args <- commandArgs(TRUE)
-.libPaths("../src")
-library(parallel)
-library(lubridate)
-library(mvPotST)
-library(evd)
-library(mgcv)
-library(evgam)
 source("code/utility.R")
 load("data/precip.RData")
 load("data/transformed_coordinates.RData")
@@ -15,11 +8,21 @@ load("data/temperature.RData")
 idx.region = 1;bootstrap.ind = 2
 init = c(0,0,0);fixed=c(F,F,F)
 season = c("Winter" ,"Spring" ,"Summer" ,"Fall")
-
+computer="hpc"
 for (arg in args) eval(parse(text = arg))
+switch(computer,
+    "ws" = {DataPath<-"~/Desktop/ExtremePrecip"},
+    "hpc" = {DataPath<-"/srv/scratch/z3536974/";.libPaths("../src")}
+    "local" = {DataPath<-"~/Desktop/ExtremePrecip"}
+)
+library(parallel)
+library(lubridate)
+library(mvPotST)
+library(evd)
+library(mgcv)
+library(evgam)
 
-file.marginal = file=paste0("/srv/scratch/z3536974/data/marginal_fit_",bootstrap.ind,"_",idx.region,".RData")
-
+file.marginal = file=paste0(DataPath,"/data/marginal_fit_",bootstrap.ind,"_",idx.region,".RData")
 ncores = detectCores()
 init.seed = as.integer((as.integer(Sys.time())/bootstrap.ind + sample.int(10^5,1))%%10^5)
 set.seed(init.seed)
@@ -108,7 +111,7 @@ result.list <- list(list(),list())
 for(count in 1:8){
         norm.ind = (count-1) %/% 4 + 1
         season.idx = (count - 1) %% 4 + 1
-        file = paste0("/srv/scratch/z3536974/data/fit_bootstrap_301_",idx.region,".RData") 
+        file = paste0(DataPath,"/data/fit_bootstrap_301_",idx.region,".RData") 
         # file2save = paste0("/srv/scratch/z3536974/data/fit_bootstrap_",bootstrap.ind,"_",idx.region,"_",count,".RData")
         if(file.exists(file)){
             load(file,e<-new.env())
@@ -146,7 +149,7 @@ for(count in 1:8){
         result.list[[norm.ind]][[season.idx]] = fit.gradientScoreBR(obs=exceedances,loc=loc,init=init,fixed = fixed,vario = vario,u = thres,method="Nelder-Mead",ST = TRUE,nCores = ncores,weightFun = weightFun,dWeightFun = dWeightFun)
         
 }
-file2save = paste0("/srv/scratch/z3536974/data/fit_bootstrap_",bootstrap.ind,"_",idx.region,".RData")
+file2save = paste0(DataPath,"/data/fit_bootstrap_",bootstrap.ind,"_",idx.region,".RData")
 t1 = proc.time() - t0
 save(t1,result.list,file=file2save)
 
