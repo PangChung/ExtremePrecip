@@ -12,8 +12,8 @@ consective.mean <- function(pos,vals,n=30){
 vario <- function(h,par=c(0,log(100),0),t=1){ ##return the semi-variogram
     ## reparametrization
     alpha = 2/(1+exp(-par[1]));lambda1 = par[2];lambda2 <- par[3]
-    lambda <- exp(lambda1+lambda2*reg.t[t])
-    val=(sqrt(sum(h^2))/lambda)^alpha
+    lambda <- exp(lambda1+lambda2*reg.t[t]) + 2
+    val=(sqrt(sum(h^2))/lambda)^alpha 
     return(val)
 }
 
