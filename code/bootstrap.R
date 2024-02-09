@@ -13,7 +13,7 @@ for (arg in args) eval(parse(text = arg))
 switch(computer,
     "ws" = {DataPath<-"~/Desktop/ExtremePrecip"},
     "hpc" = {DataPath<-"/srv/scratch/z3536974/";.libPaths("../src")},
-    "local" = {DataPath<-"~/Desktop/ExtremePrecip"}
+    "local" = {DataPath<-"~/Documents/Github/ExtremePrecip"}
 )
 library(parallel)
 library(lubridate)
