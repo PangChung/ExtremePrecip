@@ -52,8 +52,6 @@ D = sum(ind.station);Dt = length(ind.sample) # dimensions
 y = unlist(lapply(precip[[idx.region]],function(x){x[ind.sample]}))
 y.thres <- 10;y = y-y.thres ## remove the values that are below y.thres
 
-
-
 ## generate the data frame for marginal fitting ## 
 data.df <- data.frame(y=y,
                     temp = rep(tep.covariate[ind.sample],each=D),
