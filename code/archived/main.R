@@ -355,11 +355,9 @@ pic <- pic + theme(axis.text = element_text(size=20),
 pic <- pic + geom_point(data=estimates,aes(x=season,y=value,color=measure),size=2,shape=19,position=position_dodge(1))
 pic <- pic + geom_hline(data=dummy,aes(yintercept = 0),size=2,linetype="dashed",color="grey")
 
-
 pdf(file="figures/boxplot_estimates.pdf",width=18,height=8)
 show(pic)
 dev.off()
-
 
 ## plot the tail-correlation range ##
   model.selected <- c("AWI","MIROC","NorESM","AVG")
