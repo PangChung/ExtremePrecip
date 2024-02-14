@@ -107,8 +107,6 @@ if(file.exists(file.marginal)){
 
 ## depdence fit ##
 result.list <- list(list(),list())
-# start.count = list.files(path="/srv/scratch/z3536974/data/",pattern=paste0("fit_bootstrap_",bootstrap.ind,"_",idx.region,"_"),full.name=T)
-# if(length(start.count)!=0) load(start.count[length(start.count)])
 for(count in 1:8){
         norm.ind = (count-1) %/% 4 + 1
         season.idx = (count - 1) %% 4 + 1
