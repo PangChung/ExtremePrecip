@@ -128,7 +128,7 @@ for(idx in 1:5){
     #g[[idx]] <- g[[idx]] + guides(fill=FALSE,colour=FALSE)
 }
 
-pdf("figures/temperature-mississippi_location.pdf",width=10*5,height=8)
+png("figures/temperature-mississippi_location.png",width=10*5,height=10,res=300,units="cm")
 ggarrange(g[[1]],g[[2]],g[[3]],g[[4]],g[[5]],ncol=5,common.legend=TRUE,legend="bottom")
 dev.off()
 
@@ -142,6 +142,6 @@ for(idx in 1:5){
     g1[[idx]] <- g1[[idx]] + guides(fill=FALSE,colour=FALSE)
 }
 
-pdf("figures/temperature-danube_location.pdf",width=10*5,height=8)
+png("figures/temperature-danube_location.png",width=10*5,height=10,res=300,units="cm")
 ggarrange(g1[[1]],g1[[2]],g1[[3]],g1[[4]],g1[[5]],ncol=5,common.legend=TRUE,legend="bottom")
 dev.off()
