@@ -44,8 +44,7 @@ obs = split(U,row(U))
 obs = subset(obs,idx.season)
 no.obs = sapply(obs,function(x){sum(!is.na(x))})
 obs[no.obs>1] = lapply(obs[no.obs>1],evd::qgpd,shape=1,loc=1,scale = 1)
-reg.t = temperature[[idx.region]][idx.season]
-reg.t = (reg.t - mean(reg.t))/sd(reg.t)
+reg.t = temperature.covariate[[idx.region]][idx.season]
 
 r.obs <- suppressWarnings(unlist(lapply(obs,function(x){if(sum(!is.na(x))!=0){rFun(x[!is.na(x)],u=1,
 est.shape.gpd)}else{NA}})))
