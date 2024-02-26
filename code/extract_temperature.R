@@ -2,13 +2,13 @@ args <- commandArgs(TRUE)
 source("code/utility.R")
 library(ncdf4)
 library(parallel)
-year <- 1956
+year <- 1958
 
 for (arg in args) eval(parse(text = arg)) #input is the year
 
 ## prepare the data and files ##
-filename1 = paste0("data/2t_day_era5-land_",year,".nc")
-filename2 = paste0("data/temp_EUROPE/",year,"_daily_temp.nc")
+filename1 = paste0("~/Desktop/Temperatures/2t_day_era5-land_",year,".nc")
+filename2 = paste0("~/Desktop/Temperatures/temp_EUROPE/",year,"_daily_temp.nc")
 file2save = paste0("data/temperature_",year,".RData")
 data1 <- nc_open(filename1)
 data2 <- nc_open(filename2)
@@ -71,8 +71,11 @@ for(i in 2:length(region.id)){
 	for(j in 1:length(ids)){
 		val[,j] = extract_func(ids[j],vari="2t",data=data1,res=length(lon))
 	}
+    print(sum(apply(val,1,function(x) !any(x!=0))))
 	temperature[[i]] = val
 }
+
+# sum(apply(temperature[[6]],1,function(x) !any(x!=0)))
 
 ## extract the temperature data for Danube region ##
 ids = loc_df$id[loc_df$group.id == 19]
