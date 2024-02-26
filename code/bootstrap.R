@@ -105,50 +105,50 @@ if(file.exists(file.marginal)){
     if(bootstrap.ind==301) save(results.bin,results.gam,results.gpd,data.df.gpd,U,data.df,file=file.marginal)
 }
 
-# ## depdence fit ##
-# # result.list <- list(list(),list())
-# # for(count in 1:8){
-# #         norm.ind = (count-1) %/% 4 + 1
-# #         season.idx = (count - 1) %% 4 + 1
-# #         file = paste0(DataPath,"/data/fit_bootstrap_301_",idx.region,".RData") 
-# #         # file2save = paste0("/srv/scratch/z3536974/data/fit_bootstrap_",bootstrap.ind,"_",idx.region,"_",count,".RData")
-# #         if(file.exists(file)){
-# #             load(file,e<-new.env())
-# #             init = e$result.list[[norm.ind]][[season.idx]]$par
-# #             rm(e)
-# #         }
-# #         ## choose the r risk functional...##
-# #         if(norm.ind==1){
-# #             est.shape.gpd <- data.df.gpd$est.shape.gpd[1]
-# #         }else{
-# #             est.shape.gpd <- 1
-# #         }
-# #         # Define locations 
-# #         loc = loc.trans.list[[idx.region]]/1000
-# #         date.df2 = date.df[ind.data,][ind.sample,]
-# #         idx.season = (date.df2$season == season[season.idx])
-# #         ## load the observations and covariates ## 
-# #         obs = split(U,row(U))[ind.sample]
-# #         obs = subset(obs,idx.season)
-# #         no.obs = sapply(obs,function(x){sum(!is.na(x))})
-# #         obs[no.obs>1] = lapply(obs[no.obs>1],evd::qgpd,shape=1,loc=1,scale = 1)
-# #         reg.t = temperature.covariate[[idx.region]][ind.data][ind.sample][idx.season]
+# depdence fit ##
+result.list <- list(list(),list())
+for(count in 1:8){
+        norm.ind = (count-1) %/% 4 + 1
+        season.idx = (count - 1) %% 4 + 1
+        file = paste0(DataPath,"/data/fit_bootstrap_301_",idx.region,".RData") 
+        # file2save = paste0("/srv/scratch/z3536974/data/fit_bootstrap_",bootstrap.ind,"_",idx.region,"_",count,".RData")
+        if(file.exists(file)){
+            load(file,e<-new.env())
+            init = e$result.list[[norm.ind]][[season.idx]]$par
+            rm(e)
+        }
+        ## choose the r risk functional...##
+        if(norm.ind==1){
+            est.shape.gpd <- data.df.gpd$est.shape.gpd[1]
+        }else{
+            est.shape.gpd <- 1
+        }
+        # Define locations 
+        loc = loc.trans.list[[idx.region]]/1000
+        date.df2 = date.df[ind.data,][ind.sample,]
+        idx.season = (date.df2$season == season[season.idx])
+        ## load the observations and covariates ## 
+        obs = split(U,row(U))[ind.sample]
+        obs = subset(obs,idx.season)
+        no.obs = sapply(obs,function(x){sum(!is.na(x))})
+        obs[no.obs>1] = lapply(obs[no.obs>1],evd::qgpd,shape=1,loc=1,scale = 1)
+        reg.t = temperature.covariate[[idx.region]][ind.data][ind.sample][idx.season]
 
-# #         r.obs <- suppressWarnings(unlist(lapply(obs,function(x){if(sum(!is.na(x))!=0){rFun(x[!is.na(x)],u=1,est.shape.gpd)}else{NA}})))
-# #         thres = quantile(r.obs[no.obs > 5],0.9,na.rm=TRUE)
+        r.obs <- suppressWarnings(unlist(lapply(obs,function(x){if(sum(!is.na(x))!=0){rFun(x[!is.na(x)],u=1,est.shape.gpd)}else{NA}})))
+        thres = quantile(r.obs[no.obs > 5],0.9,na.rm=TRUE)
 
-# #         ## select the exceedances
-# #         idx.exc = no.obs > 5 & r.obs > thres 
-# #         stopifnot( sum(idx.exc) > 0 & any(!is.na(reg.t)) )
+        ## select the exceedances
+        idx.exc = no.obs > 5 & r.obs > thres 
+        stopifnot( sum(idx.exc) > 0 & any(!is.na(reg.t)) )
 
-# #         reg.t = reg.t[idx.exc]
-# #         exceedances <- obs[idx.exc]
+        reg.t = reg.t[idx.exc]
+        exceedances <- obs[idx.exc]
 
-# #         result.list[[norm.ind]][[season.idx]] = fit.gradientScoreBR(obs=exceedances,loc=loc,init=init,fixed = fixed,vario = vario,u = thres,method="Nelder-Mead",ST = TRUE,nCores = ncores,weightFun = weightFun,dWeightFun = dWeightFun)
+        result.list[[norm.ind]][[season.idx]] = fit.gradientScoreBR(obs=exceedances,loc=loc,init=init,fixed = fixed,vario = vario,u = thres,method="Nelder-Mead",ST = TRUE,nCores = ncores,weightFun = weightFun,dWeightFun = dWeightFun)
         
-# # }
-# # file2save = paste0(DataPath,"/data/fit_bootstrap_",bootstrap.ind,"_",idx.region,".RData")
-# # t1 = proc.time() - t0
-# save(t1,result.list,file=file2save)
+}
+file2save = paste0(DataPath,"/data/fit_bootstrap_",bootstrap.ind,"_",idx.region,".RData")
+t1 = proc.time() - t0
+save(t1,result.list,file=file2save)
 
 
