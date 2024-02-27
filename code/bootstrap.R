@@ -102,10 +102,10 @@ if(file.exists(file.marginal)){
     U <- matrix(NA,nrow=sum(ind.data),ncol=D)
     U[cbind(data.df$row,data.df$col)] <- est.prob/(1+1e-5) ## avoid computational issues
     
-    if(bootstrap.ind==301) save(data.df.gpd,U,data.df,file=file.marginal)
+    if(bootstrap.ind==301) save(results.bin,results.gam,results.gpd,data.df.gpd,U,data.df,file=file.marginal)
 }
 
-## depdence fit ##
+# depdence fit ##
 result.list <- list(list(),list())
 for(count in 1:8){
         norm.ind = (count-1) %/% 4 + 1
