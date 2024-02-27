@@ -19,14 +19,15 @@ for(i in 1:length(boot.files)){
 }
 
 boot.collect <- function(data,idx,norm.idx,season.idx,region.idx,boot.idx){
-    estimates.boot = matrix(unlist(lapply(data[region.idx==idx & boot.idx != 301],function(x){x[[norm.idx]][[season.idx]]$par})),ncol=3,byrow=TRUE)
-    est.true = results.boot.list[region.idx == idx  & boot.idx == 301][[1]][[norm.idx]][[season.idx]]$par
+    estimates.boot = matrix(unlist(lapply(data[region.idx==idx & boot.idx != 301],function(x){y=x[[norm.idx]][[season.idx]]$par;y[1] <- 2/(1+exp(-y[1]));y})),ncol=3,byrow=TRUE)
+    est.true = results.boot.list[region.idx == idx  & boot.idx == 301][[1]][[norm.idx]][[season.idx]]$par; est.true[1] <- 2/(1+exp(-est.true[1]))
     n = nrow(estimates.boot)
     sd.jackknife = apply(estimates.boot,2,function(x){return(sd(x))})
     return(list(sd=sd.jackknife,true=est.true,jack=estimates.boot))
 }
 
 boot.result.list <- list(list(),list())
+
 for(norm.idx in 1:2){
     for(season.idx in 1:4){
         result.list <- list()
@@ -37,6 +38,7 @@ for(norm.idx in 1:2){
     }
 }
 
-save(boot.result.list,results.boot.list,region.idx, boot.files, boot.idx,file="data/dep.fit.boot.results.RData")
+save(boot.result.list, results.boot.list, region.idx, boot.files, boot.idx,file="data/dep.fit.boot.results.RData")
+
 
 

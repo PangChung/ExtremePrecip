@@ -440,6 +440,7 @@ for(i in 1:length(simu)){
   label=bquote(paste("Tail-correlation range:", ~.(round(dep_range[i],1)),";",~lambda==.(param_mat[i,1])))
   )
 }
+
 library(cowplot)
 pdf("figures/simulation.pdf",width=4.5*3,height=4,onefile=TRUE)
 combined_pic <- plot_grid(pic[[1]],pic[[2]],pic[[3]],
