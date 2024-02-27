@@ -129,12 +129,11 @@ p.list <- list()
 for(r in 1:8){
     load(paste0("data/marginal_fit_301_",r,".RData"),e<-new.env())
     ### prepare the data frame to predict ###
-    print(r)
-    print(summary(e$results.gam))
-}
-    data.1 = temperature.covariate[[r]]/10
-    data.2 = apply(matrix(unlist(lapply(model.selected,function(i){temperature.245.avg[[i]][[r]]})),ncol=length(model.selected),byrow=FALSE),1,mean)
-    data.3 = apply(matrix(unlist(lapply(model.selected,function(i){temperature.585.avg[[i]][[r]]})),ncol=length(model.selected),byrow=FALSE),1,mean)
+    # print(r)
+    # print(summary(e$results.gam))
+    data.1 = temperature.covariate[[r]]
+    data.2 = apply(matrix(unlist(lapply(model.selected,function(i){temperature.245.avg[[i]][[r]]})),ncol=length(model.selected),byrow=FALSE),1,mean)*10
+    data.3 = apply(matrix(unlist(lapply(model.selected,function(i){temperature.585.avg[[i]][[r]]})),ncol=length(model.selected),byrow=FALSE),1,mean)*10
     data.temp = c(data.1, data.2, data.3)
     date.temp = c(date.df[,1],date.245,date.585)
     data.type = c(rep("Obs",length(data.1)),
