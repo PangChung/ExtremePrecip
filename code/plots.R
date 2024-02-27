@@ -119,7 +119,7 @@ for(i in 1:8){
     show(p.list[i])
 }
 dev.off()
-
+save(p.list,file = "data/temperature_covariate.RData")
 
 ## plot the marginal return level ##
 model.selected = c(1,3,4)
@@ -198,7 +198,7 @@ for(i in 1:8){
     show(p.list[i])
 }
 dev.off()
-
+save(p.list,file = "data/return_level_margins.RData")
 
 ## plot the tail-correlation range ##
 model.selected <- c(1,3,4)
@@ -238,6 +238,7 @@ for(i in 1:length(p.list)){
 }
 dev.off()
 
+save(p.list,file = "data/tail_correlation_range.RData")
 
 ## Simulations ##
 source("code/simu_Dombry_et_al.R")
