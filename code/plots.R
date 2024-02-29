@@ -17,13 +17,14 @@ source("code/utility.R")
 ## Present the results ##
 # 4 seasons * 8 regions * 2 risk functions
 # create a data frame with the results 
+season = c("Winter" ,"Spring" ,"Summer" ,"Fall")
 idx.grid <- as.matrix(expand.grid(1:8, 1:4, 1:2))
 boot.result.df <- data.frame(
     region = idx.grid[,1],
     season = idx.grid[,2],
     risk = idx.grid[,3],
     shape = apply(idx.grid,1,function(x){boot.result.list[[x[3]]][[x[2]]][[x[1]]]$true[1]}),
-    lambda0 = apply(idx.grid,1,function(x){boot.result.list[[x[3]]][[x[2]]][[x[1]]]$true[2]}),
+    lambda0 = apply(idx.grid,1,function(x){boot.result.list[[x[3]]][[x[2]]][[x[1]]]$true[2]}+log(2)),
     lambda1 = apply(idx.grid,1,function(x){boot.result.list[[x[3]]][[x[2]]][[x[1]]]$true[3]}),
     sd.shape = apply(idx.grid,1,function(x){boot.result.list[[x[3]]][[x[2]]][[x[1]]]$sd[1]}),
     sd.lambda0 = apply(idx.grid,1,function(x){boot.result.list[[x[3]]][[x[2]]][[x[1]]]$sd[2]}),
@@ -58,7 +59,7 @@ grid.arrange(p1, p2, legend, nrow = 1, widths = c(4, 4, 1))
 p3
 dev.off()
 
-save(p1,p2,p3,file="data/boot_plot.RData")
+save(boot.result.df,p1,p2,p3,file="data/boot_plot.RData")
 
 ## the prediciton into the future: marginal return level and the dependence range ## 
 
@@ -109,7 +110,7 @@ for(r in 1:8){
                         plot.title = element_text(hjust = 0.5),
                         panel.border = element_rect(fill = "transparent", # Needed to add the border
                                                     color = "black",            # Color of the border
-                                                    size = 1),
+                                                    linewidth = 1),
                         panel.background = element_rect(fill = "transparent"))
         p.list[[count]] <- p;count = count + 1
 }
@@ -119,7 +120,7 @@ for(i in 1:8){
     show(p.list[i])
 }
 dev.off()
-save(p.list,file = "data/temperature_covariate.RData")
+save(p.list,file = "data/plot_temperature_covariate.RData")
 
 ## plot the marginal return level ##
 model.selected = c(1,3,4)
@@ -198,7 +199,7 @@ for(i in 1:8){
     show(p.list[i])
 }
 dev.off()
-save(p.list,file = "data/return_level_margins.RData")
+save(p.list,file = "data/plot_return_level_margins.RData")
 
 ## plot the tail-correlation range ##
 model.selected <- c(1,3,4)
@@ -214,44 +215,67 @@ for(r in 1:8){
                 rep("SSP 5-8.5",length(data.3)))
     data.df = data.frame(season=getSeason(date.temp),tep=data.temp,type=data.type,year=getYear(date.temp))
     data.df.avg <- aggregate(tep ~ season + year + type, data.df, mean)
+    risk = rep(1:2,nrow(data.df.avg));data.df.avg <- rbind(data.df.avg,data.df.avg)
+    data.df.avg$risk = risk
+    data.df.avg$season = as.numeric(factor(data.df.avg$season,season))
+    data.df.avg = merge(data.df.avg,subset(boot.result.df,region==r),by=c("season","risk"))
+    data.df.avg$season = season[data.df.avg$season]
+    data.df.avg$range = sapply(1:nrow(data.df.avg),function(i){solve.h.BR(c(data.df.avg$shape[i],data.df.avg$lambda0[i],data.df.avg$lambda1[i]),temp=data.df.avg$tep[i]*10,logval=TRUE)})
+
+    p[[1]] <- ggplot(subset(data.df.avg,risk==1), aes(x=year, y=range, group=interaction(season,type), color=season, linetype=type)) + geom_line(alpha=0.9) + 
+        xlab("Year") + ylab ("Logarithmic range") + labs(color='Season',linetype='Group') + 
+        scale_color_manual(values=hcl.colors(4,"Dynamic")) + scale_linetype_manual(values=c("dotted","dashed","solid")) +
+        ggtitle(paste0(region.name[r]," with risk functional 1")) +
+        theme(axis.text = element_text(size=10), 
+                        axis.title.x = element_text(size=14), 
+                        axis.title.y = element_text(size=14),
+                        plot.title = element_text(hjust = 0.5),
+                        panel.border = element_rect(fill = "transparent", # Needed to add the border
+                                                    color = "black",            # Color of the border
+                                                    linewidth = 1),
+                        panel.background = element_rect(fill = "transparent"))
     
-    p <- ggplot(data,aes(x=year,y=range)) + geom_line(aes(color=season,group=Group,linetype=type),size=0.6,alpha=1) 
-    p <- p + scale_linetype_manual(values=c("solid","dashed","dotted"),labels=c("Obs","SSP 2-4.5","SSP 5-8.5"))
-    p <- p + scale_x_continuous(breaks = seq(1965,2100,20),labels = seq(1965,2100,20),expand = c(0, 0), limits = c(1965,2100)) + xlab("Year") + ylab ("Logarithmic range")
-    p <- p + labs(linetype="Group",color="Season") + guides(linetype=guide_legend(text=c("Obs","SSP 2-4.5","SSP 5-8.5"))) 
-    p <- p + ggtitle(paste0(lab.regions[r],"; ",model.selected[s]))
-    p <- p + theme(axis.text = element_text(size=10), 
-                    axis.title.x = element_text(size=14), 
-                    axis.title.y = element_text(size=14),
-                    plot.title = element_text(hjust = 0.5),
-                    panel.border = element_rect(fill = "transparent", # Needed to add the border
-                                                color = "black",            # Color of the border
-                                                size = 1),
-                    panel.background = element_rect(fill = "transparent"))
-    #if(count %% 4 != 0){p <- p + theme(legend.position="none")}
-    p.list[[count]] <- p;count = count + 1
+    p[[2]] <- ggplot(subset(data.df.avg,risk==2), aes(x=year, y=range, group=interaction(season,type), color=season, linetype=type)) + geom_line(alpha=0.9)  + 
+        xlab("Year") + ylab ("Logarithmic range") +
+        labs(color='Season',linetype='Group')  + 
+        scale_color_manual(values=hcl.colors(4,"Dynamic")) + scale_linetype_manual(values=c("dotted","dashed","solid")) +
+        ggtitle(paste0(region.name[r]," with risk functional 2")) +
+        theme(axis.text = element_text(size=10), 
+                        axis.title.x = element_text(size=14), 
+                        axis.title.y = element_text(size=14),
+                        plot.title = element_text(hjust = 0.5),
+                        panel.border = element_rect(fill = "transparent", # Needed to add the border
+                                                    color = "black",            # Color of the border
+                                                    linewidth = 1),
+                        panel.background = element_rect(fill = "transparent"))
+    
+    legend <- get_legend(p[[1]])
+    p[[1]] <- p[[1]] + theme(legend.position = "none")
+    p[[2]] <- p[[2]] + theme(legend.position = "none")
+    p[[3]] <- legend
+    p.list[[r]] <- p
 }
 
-pdf("figures/tail_correlation_range.pdf",width = 6,height = 3,onefile = TRUE)
+pdf("figures/tail_correlation_range.pdf",width = 4*2+1,height = 3,onefile = TRUE)
 for(i in 1:length(p.list)){
-    show(p.list[i])
+    grid.arrange(p.list[[i]][[1]], p.list[[i]][[2]], p.list[[i]][[3]], nrow = 1, widths = c(4, 4, 1))
 }
 dev.off()
 
 save(p.list,file = "data/tail_correlation_range.RData")
 
 ## Simulations ##
-source("code/simu_Dombry_et_al.R")
+library(mvPotST)
 loc = as.matrix(expand.grid((1:50)/5,(1:50)/5),ncol=2)
-param_mat <- as.matrix(expand.grid(c(2,5,10),1))
-dep_range <- apply(param_mat,1,solve.h.BR)
+param_mat <- as.matrix(expand.grid(1,log(c(2,5,10)),0))
+dep_range <- apply(param_mat,1,solve.h.BR,temp=0,logval=FALSE)
 simu <- list()
 for(i in 1:nrow(param_mat)){
-	param = param_mat[i,]
+	param = param_mat[i,-3]
 	vario <- function(h,par=param){ 
   		## reparametrization
-  		alpha = par[2]
-  		lambda <- par[1]
+  		alpha = par[1]
+  		lambda <- exp(par[2])
   		val=(sqrt(sum(h^2))/lambda)^alpha
   	    return(val)
 	}
@@ -282,3 +306,4 @@ nrow=1,rel_widths=c(1,1,1),label_y = expression(alpha==0.5),hjust=-1,align="vh")
 show(combined_pic)
 dev.off()
 
+save(pic,param_mat,vario,loc,simu,file="data/plot_simulation.RData")
