@@ -5,6 +5,7 @@ load("data/precip.RData")
 library(parallel)
 library(ggplot2)
 library(ggpubr)
+library(RColorBrewer)
 library(lubridate)
 library(sf)
 source("code/utility.R")
@@ -117,14 +118,16 @@ table(locate.idx.list[[3]][,2])
 table(locate.idx.list[[4]][,2])
 table(locate.idx.list[[5]][,2])
 
+load("data/temperature_pred.RData")
 load("data/temperatures-mississippi.RData")
 g<-list()
+colors = c(brewer.pal(6,"Set2"),brewer.pal(12,"Paired"))
 for(idx in 1:5){
     i = which(models==idx.models[idx] & periods=="historical") ## 
     idx.group.id = locate.idx.list[[idx]][locate.idx.list[[idx]][,2]!=19,1]
     data = data.frame(x = xyt[[i]]$lon[idx.grid.list[[idx]]$miss[,1]],y=xyt[[i]]$lat[idx.grid.list[[idx]]$miss[,2]])[idx.group.id,]
     data$group.id = locate.idx.list[[idx]][locate.idx.list[[idx]][,2]!=19,2]
-    g[[idx]] <- ggplot() + geom_sf(data=shape1,aes(fill=names),alpha=0.2) + geom_point(data=data,aes(x=x,y=y,col=as.factor(group.id)),size=0.5) + ggtitle(idx.models[idx]) + theme(plot.title = element_text(hjust = 0.5)) + labs(col="Regions",fill="Region names")
+    g[[idx]] <- ggplot() + geom_sf(data=shape1,aes(fill=names),alpha=0.2) + geom_point(data=data,aes(x=x,y=y,col=as.factor(group.id)),size=0.5) + scale_fill_manual(values=colors) + scale_color_brewer(palette="Dark2") + ggtitle(idx.models[idx]) + theme(plot.title = element_text(hjust = 0.5)) + labs(col="Regions",fill="Region names")
     #g[[idx]] <- g[[idx]] + guides(fill=FALSE,colour=FALSE)
 }
 

@@ -194,6 +194,29 @@ for(r in 1:8){
     print(count)
 }
 
+## plot qqplot for random locations ##
+for(idx in 1:8){
+    load(paste0("data/marginal_fit_301_",idx,".RData"),e<-new.env())
+    set.seed(1000)
+    idx.list = sample(1:sum(station$group.id==region.id[idx]),8,replace = F,prob=apply(e$U,2,function(x){sum(!is.na(x))}))
+    png(file = paste0("figures/qqplot_marginal_",idx,".png"),height=4*3,width=4*3,units="cm",res=300, pointsize=6)
+    par(mfrow=c(3,3),mar=c(5,5,3,1),mgp=c(2.5,1,0),cex.lab=2,cex.axis=1.5,cex.main=2)
+    theoretical.quantiles <- e$U[,idx.list]
+    empirical.quantiles <- 1:1000/(1+1000)
+    theoretical.quantiles <- split(theoretical.quantiles,col(theoretical.quantiles))
+    theoretical.quantiles <- sapply(theoretical.quantiles,function(x) quantile(x,prob=empirical.quantiles,na.rm=T),simplify = F)
+    qqplot(unlist(theoretical.quantiles),empirical.quantiles,cex=0.5,pch=20,xlim=c(0,1), ylim=c(0,1),
+        xlab="Theoretical quantiles",ylab="Empirical quantiles",main="All stations")
+    abline(0,1,col=2,lwd=2)
+    for(ind in 1:length(idx.list)){
+    qqplot(theoretical.quantiles[[ind]],empirical.quantiles,
+        cex=0.5,pch=20,
+        xlab="Theoretical quantiles",ylab="Empirical quantiles",main=paste("Station",idx.list[ind]))
+    abline(0,1,col=2,lwd=2)
+    }        
+    dev.off() 
+}
+
 pdf("figures/return_level_margins.pdf",width = 6,height = 3,onefile = TRUE)
 for(i in 1:8){
     show(p.list[i])
