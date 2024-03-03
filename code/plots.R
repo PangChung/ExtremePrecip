@@ -330,3 +330,54 @@ show(combined_pic)
 dev.off()
 
 save(pic,param_mat,vario,loc,simu,file="data/plot_simulation.RData")
+
+## plot the location of 
+library(sf)
+load("data/temperature_pred.RData")
+load("data/temperatures-mississippi.RData")
+load("data/era5_geoinfo.RData")
+g<-list()
+colors = c(brewer.pal(6,"Set2"),brewer.pal(12,"Paired"))
+for(idx in 1:5){
+    i = which(models==idx.models[idx] & periods=="historical") ## 
+    idx.group.id = locate.idx.list[[idx]][locate.idx.list[[idx]][,2]!=19,1]
+    data = data.frame(x = xyt[[i]]$lon[idx.grid.list[[idx]]$miss[,1]],y=xyt[[i]]$lat[idx.grid.list[[idx]]$miss[,2]])[idx.group.id,]
+    data$group.id = locate.idx.list[[idx]][locate.idx.list[[idx]][,2]!=19,2]
+    g[[idx]] <- ggplot() + geom_sf(data=shape1,aes(fill=names),alpha=0.2) + geom_point(data=data,aes(x=x,y=y,col=as.factor(group.id)),size=0.5) + coord_sf(xlim = c(-79, -114), ylim = c(29, 49)) + scale_fill_manual(values=colors) + scale_color_brewer(palette="Dark2") + ggtitle(idx.models[idx]) + theme(plot.title = element_text(hjust = 0.5)) + labs(col="Regions",fill="Region names",x="Longitude",y="Latitude")
+    #g[[idx]] <- g[[idx]] + guides(fill=FALSE,colour=FALSE)
+}
+
+png("figures/temperature-mississippi_location.png",width=10*5,height=10,res=300,units="cm")
+ggarrange(g[[1]],g[[2]],g[[3]],g[[4]],g[[5]],ncol=5,common.legend=TRUE,legend="bottom")
+dev.off()
+
+load("data/temperatures-danube.RData")
+g1<-list()
+for(idx in 1:5){
+    i = which(models==idx.models[idx] & periods=="historical") ## 
+    idx.group.id = locate.idx.list[[idx]][locate.idx.list[[idx]][,2]==19,1]
+    data = data.frame(x = xyt[[i]]$lon[idx.grid.list[[idx]]$danube[,1]],y=xyt[[i]]$lat[idx.grid.list[[idx]]$danube[,2]],group.id=19)[idx.group.id,]
+    g1[[idx]] <- ggplot() + geom_sf(data=shape3,aes(fill="blue"),alpha=0.2) + geom_point(data=data,aes(x=x,y=y),color="red",size=0.5) + ggtitle(idx.models[idx]) + theme(plot.title = element_text(hjust = 0.5))
+    g1[[idx]] <- g1[[idx]] + guides(fill=FALSE,colour=FALSE) + labs(x="Longitude",y="Latitude")
+}
+
+png("figures/temperature-danube_location.png",width=10*5,height=10,res=300,units="cm")
+ggarrange(g1[[1]],g1[[2]],g1[[3]],g1[[4]],g1[[5]],ncol=5,common.legend=TRUE,legend="bottom")
+dev.off()
+
+save(g,g1,file="data/plot_location_climate_models.RData")
+
+##plot the location of the stations ##
+load("data/era5_geoinfo.RData")
+colors =c(brewer.pal(7,"Paired"),"grey50")
+shape1$names2 = shape1$names;shape1$names2[-region.id[-1]] = "Others";shape1$names2 = factor(shape1$names2,levels=c(region.name[-1],"Others")) 
+data = data.frame(x = station$Y,y=station$X,region=station$group.id)[station$group.id!=19,]
+p1 <- ggplot() + geom_sf(data=shape1,aes(fill=names2),alpha=0.5) + geom_point(data=data,aes(x=x,y=y,col=as.factor(region)),size=0.5) + coord_sf(xlim = c(-79, -114), ylim = c(29, 49)) + scale_fill_manual(values=colors) + scale_color_brewer(palette="Dark2") + labs(fill="Subregions",x="Longitude",y="Latitude") + guides(colour=FALSE) + theme(legend.position = "right",plot.title = element_text(hjust = 0.5)) + ggtitle("Mississippi")
+
+
+data = data.frame(x = station$Y,y=station$X,region=station$group.id)[station$group.id==19,]
+p2 <- ggplot() + geom_sf(data=shape3,aes(fill=colors[1]),alpha=0.5) + geom_point(data=data,aes(x=x,y=y),size=0.5) + scale_fill_manual(values=colors) + scale_color_brewer(palette="Dark2") + labs(x="Longitude",y="Latitude") + guides(fill=FALSE) + theme(plot.title = element_text(hjust = 0.5)) + ggtitle("Danube")
+
+pdf("figures/precip_loc.pdf",width=11,height=3.5,onefile=TRUE)
+grid.arrange(p1,p2,nrow=1,widths=c(6,5))
+dev.off()
