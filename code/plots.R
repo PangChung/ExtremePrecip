@@ -1,10 +1,9 @@
 rm(list=ls())
 library(ggplot2)
-library(gridExtra)
-library(cowplot)
 library(lubridate)
 library(mgcv)
 library(evgam)
+library(ggpubr)
 library(evd)
 load("data/dep.fit.boot.results.RData")
 load("data/temperature.RData")
@@ -99,27 +98,26 @@ for(r in 1:8){
         data.df = data.frame(season=getSeason(date.temp),tep=data.temp,type=data.type,year=getYear(date.temp))
 
         data.df.avg <- aggregate(tep ~ season + year + type, data.df, mean)
-        p <- ggplot(data.df.avg, aes(x=year, y=tep, group=interaction(season,type), color=season, linetype=type)) + geom_line(alpha=0.9)
-        p <- p  + xlab("Year") + ylab ("Temperature (°C)")
+        p <- ggplot(data.df.avg, aes(x=year, y=tep, group=interaction(season,type), color=season, linetype=type)) + geom_line(alpha=0.9,linewidth=1.5)
+        p <- p  + xlab(NULL) + ylab(NULL) #xlab("Year") + ylab ("Temperature (°C)")
         p <- p + labs(color='Season',linetype='Group') 
         p <- p + scale_color_manual(values=hcl.colors(4,"Dynamic")) + scale_linetype_manual(values=c("dotted","dashed","solid")) 
-        p <- p + ggtitle(paste0(region.name[r],"; ","Average"))
-        p <- p + theme(axis.text = element_text(size=10), 
-                        axis.title.x = element_text(size=14), 
-                        axis.title.y = element_text(size=14),
-                        plot.title = element_text(hjust = 0.5),
+        p <- p + ggtitle(paste0(region.name[r]))
+        p <- p + theme(axis.text = element_text(size=16,face="bold"),
+                       plot.title = element_text(size=16,face="bold",hjust=0.5),
+                        axis.ticks =  element_line(size = 1.5),
                         panel.border = element_rect(fill = "transparent", # Needed to add the border
                                                     color = "black",            # Color of the border
                                                     linewidth = 1),
-                        panel.background = element_rect(fill = "transparent"))
+                        panel.background = element_rect(fill = "transparent")) 
+        p <- p + guides(colour = guide_legend(title.theme = element_text(size = 16, face = "bold"), label.theme = element_text(size = 16),override.aes = list(size = 2),keywidth = unit(1.5,"cm")),linetype = guide_legend(title.theme = element_text(size = 16, face = "bold"), label.theme = element_text(size = 16),override.aes = list(size = 2),,keywidth = unit(1.5,"cm")))
         p.list[[count]] <- p;count = count + 1
 }
   
-pdf("figures/temperature_covariate.pdf",width = 6,height = 3,onefile = TRUE)
-for(i in 1:8){
-    show(p.list[i])
-}
+pdf("figures/temperature_covariate.pdf",width = 20,height = 9)
+ggarrange(plotlist=p.list,nrow=2,ncol=4,common.legend=TRUE,legend="bottom")
 dev.off()
+
 save(p.list,file = "data/plot_temperature_covariate.RData")
 
 ## plot the marginal return level ##
@@ -174,30 +172,26 @@ for(r in 1:8){
     return.value <- y.thres + quantile.pred + qgpd(prob.gpd,loc=0,scale=scale.gpd.pred,shape=shape.gpd.pred)
     data.df.avg$return.value = return.value
 
-    p <- ggplot(data.df.avg, aes(x=year, y=return.value, group=interaction(season,type), color=season, linetype=type)) + geom_line()
+    p <- ggplot(data.df.avg, aes(x=year, y=return.value, group=interaction(season,type), color=season, linetype=type)) + geom_line(alpha=0.8,linewidth=1.5)
     p <- p + scale_linetype_manual(values=c("dotted","dashed","solid"),labels=c("Obs","SSP 2-4.5","SSP 5-8.5"))
     p <- p +  xlab("Year") + ylab ("Return level (mm)") 
     p <- p + labs(color="Season",linetype="Group") 
     #p <- p + scale_color_manual(values=hcl.colors(4, "Berlin")) 
     p <- p + ggtitle(main)
-    p <- p + theme(axis.text = element_text(size=10), 
-                    axis.title.x = element_text(size=14), 
-                    axis.title.y = element_text(size=14),
-                    plot.title = element_text(hjust = 0.5),
-                    panel.border = element_rect(fill = "transparent", # Needed to add the border
-                                                color = "black",            # Color of the border
-                                                size = 1),
-                    panel.background = element_rect(fill = "transparent")) 
-
-    #if(count %% 4 != 0){p <- p + theme(legend.position="none")}
+    p <- p + theme(axis.text = element_text(size=16,face="bold"),
+                       plot.title = element_text(size=14,face="bold",hjust=0.5),
+                        axis.ticks =  element_line(size = 1.5),
+                        panel.border = element_rect(fill = "transparent", # Needed to add the border
+                                                    color = "black",            # Color of the border
+                                                    linewidth = 1),
+                        panel.background = element_rect(fill = "transparent")) 
+    p <- p + guides(colour = guide_legend(title.theme = element_text(size = 16, face = "bold"), label.theme = element_text(size = 16),override.aes = list(size = 2),keywidth = unit(1.5,"cm")),linetype = guide_legend(title.theme = element_text(size = 16, face = "bold"), label.theme = element_text(size = 16),override.aes = list(size = 2),,keywidth = unit(1.5,"cm")))#if(count %% 4 != 0){p <- p + theme(legend.position="none")}
     p.list[[count]] <- p;count = count + 1
     print(count)
 }
 
-pdf("figures/return_level_margins.pdf",width = 6,height = 3,onefile = TRUE)
-for(i in 1:8){
-    show(p.list[i])
-}
+pdf("figures/return_level_margins.pdf",width = 20,height = 8,onefile = TRUE)
+ggarrange(plotlist=p.list,nrow=2,ncol=4,common.legend=TRUE,legend="bottom")
 dev.off()
 save(p.list,file = "data/plot_return_level_margins.RData")
 
@@ -227,7 +221,8 @@ for(idx in 1:8){
 
 ## plot the tail-correlation range ##
 model.selected <- c(1,3,4)
-count = 1;p.list <- list()
+count = 1;p.list1 <- list()
+p.list2 <- list()
 for(r in 1:8){
     data.1 = temperature.covariate[[r]]/10
     data.2 = apply(matrix(unlist(lapply(model.selected,function(i){temperature.245.avg[[i]][[r]]})),ncol=length(model.selected),byrow=FALSE),1,mean)
@@ -246,47 +241,41 @@ for(r in 1:8){
     data.df.avg$season = season[data.df.avg$season]
     data.df.avg$range = sapply(1:nrow(data.df.avg),function(i){solve.h.BR(c(data.df.avg$shape[i],data.df.avg$lambda0[i],data.df.avg$lambda1[i]),temp=data.df.avg$tep[i]*10,logval=TRUE)})
 
-    p[[1]] <- ggplot(subset(data.df.avg,risk==1), aes(x=year, y=range, group=interaction(season,type), color=season, linetype=type)) + geom_line(alpha=0.9) + 
+    p.list1[[r]] <- ggplot(subset(data.df.avg,risk==1), aes(x=year, y=range, group=interaction(season,type), color=season, linetype=type)) + geom_line(alpha=0.9,linewidth=1.5) + 
         xlab("Year") + ylab ("Logarithmic range") + labs(color='Season',linetype='Group') + 
         scale_color_manual(values=hcl.colors(4,"Dynamic")) + scale_linetype_manual(values=c("dotted","dashed","solid")) +
         ggtitle(paste0(region.name[r]," with risk functional 1")) +
-        theme(axis.text = element_text(size=10), 
-                        axis.title.x = element_text(size=14), 
-                        axis.title.y = element_text(size=14),
-                        plot.title = element_text(hjust = 0.5),
+        theme(axis.text = element_text(size=16,face="bold"),
+                       plot.title = element_text(size=16,face="bold",hjust=0.5),
+                        axis.ticks =  element_line(size = 1.5),
                         panel.border = element_rect(fill = "transparent", # Needed to add the border
                                                     color = "black",            # Color of the border
                                                     linewidth = 1),
-                        panel.background = element_rect(fill = "transparent"))
+                        panel.background = element_rect(fill = "transparent")) + 
+        guides(colour = guide_legend(title.theme = element_text(size = 16, face = "bold"), label.theme = element_text(size = 16),override.aes = list(size = 2),keywidth = unit(1.5,"cm")),linetype = guide_legend(title.theme = element_text(size = 16, face = "bold"), label.theme = element_text(size = 16),override.aes = list(size = 2),,keywidth = unit(1.5,"cm")))
+
     
-    p[[2]] <- ggplot(subset(data.df.avg,risk==2), aes(x=year, y=range, group=interaction(season,type), color=season, linetype=type)) + geom_line(alpha=0.9)  + 
+    p.list2[[r]] <- ggplot(subset(data.df.avg,risk==2), aes(x=year, y=range, group=interaction(season,type), color=season, linetype=type)) + geom_line(alpha=0.9,linewidth=1.5)  + 
         xlab("Year") + ylab ("Logarithmic range") +
         labs(color='Season',linetype='Group')  + 
         scale_color_manual(values=hcl.colors(4,"Dynamic")) + scale_linetype_manual(values=c("dotted","dashed","solid")) +
         ggtitle(paste0(region.name[r]," with risk functional 2")) +
-        theme(axis.text = element_text(size=10), 
-                        axis.title.x = element_text(size=14), 
-                        axis.title.y = element_text(size=14),
-                        plot.title = element_text(hjust = 0.5),
+        theme(axis.text = element_text(size=16,face="bold"),
+                       plot.title = element_text(size=16,face="bold",hjust=0.5),
+                        axis.ticks =  element_line(size = 1.5),
                         panel.border = element_rect(fill = "transparent", # Needed to add the border
                                                     color = "black",            # Color of the border
                                                     linewidth = 1),
-                        panel.background = element_rect(fill = "transparent"))
-    
-    legend <- get_legend(p[[1]])
-    p[[1]] <- p[[1]] + theme(legend.position = "none")
-    p[[2]] <- p[[2]] + theme(legend.position = "none")
-    p[[3]] <- legend
-    p.list[[r]] <- p
+                        panel.background = element_rect(fill = "transparent")) + 
+        guides(colour = guide_legend(title.theme = element_text(size = 16, face = "bold"), label.theme = element_text(size = 16),override.aes = list(size = 2),keywidth = unit(1.5,"cm")),linetype = guide_legend(title.theme = element_text(size = 16, face = "bold"), label.theme = element_text(size = 16),override.aes = list(size = 2),,keywidth = unit(1.5,"cm")))    
 }
 
-pdf("figures/tail_correlation_range.pdf",width = 4*2+1,height = 3,onefile = TRUE)
-for(i in 1:length(p.list)){
-    grid.arrange(p.list[[i]][[1]], p.list[[i]][[2]], p.list[[i]][[3]], nrow = 1, widths = c(4, 4, 1))
-}
+pdf("figures/tail_correlation_range.pdf",width = 20,height = 9,onefile = TRUE)
+ggarrange(plotlist=p.list1,nrow=2,ncol=4,common.legend=TRUE,legend="bottom")
+ggarrange(plotlist=p.list2,nrow=2,ncol=4,common.legend=TRUE,legend="bottom")
 dev.off()
 
-save(p.list,file = "data/tail_correlation_range.RData")
+save(p.list1,p.list2,file = "data/tail_correlation_range.RData")
 
 ## Simulations ##
 library(mvPotST)
@@ -382,3 +371,4 @@ p2 <- ggplot() + geom_sf(data=shape3,aes(fill=colors[1]),alpha=0.5) + geom_point
 pdf("figures/precip_loc.pdf",width=11,height=3.5,onefile=TRUE)
 grid.arrange(p1,p2,nrow=1,widths=c(6,5))
 dev.off()
+
