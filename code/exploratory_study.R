@@ -97,6 +97,7 @@ for(i in 1:length(region.id)){
 }
 dev.off()  
 
+save(p1.list,p2.list,file="data/plot_heatmaps.RData")
  
 
 
