@@ -149,7 +149,8 @@ for(r in 1:8){
     lon <- station$Y[idx.loc2][idx.loc1]
     lat <- station$X[idx.loc2][idx.loc1]
 
-    main = paste0(region.name[r],"; ","Station ",idx.loc1," (", round(lat,2) ,"N°,",round(lon,2),"E°" ,") ")
+    #main = paste0(region.name[r],"; ","Station ",idx.loc1," (", round(lat,2) ,"N°,",round(lon,2),"E°" ,") ")
+    main = paste0(region.name[r],"; ", "(", round(lat,2) ,"N°,",round(lon,2),"E°" ,") ")
     D = length(lat);Dt = length(data.df.avg$day)
     data.pred <- data.frame(temp = rep(data.df.avg$tep,times=D),
                             day = rep(data.df.avg$day,times=D),
@@ -174,12 +175,12 @@ for(r in 1:8){
 
     p <- ggplot(data.df.avg, aes(x=year, y=return.value, group=interaction(season,type), color=season, linetype=type)) + geom_line(alpha=0.8,linewidth=1.5)
     p <- p + scale_linetype_manual(values=c("dotted","dashed","solid"),labels=c("Obs","SSP 2-4.5","SSP 5-8.5"))
-    p <- p +  xlab("Year") + ylab ("Return level (mm)") 
+    p <- p + xlab(NULL) + ylab(NULL) # xlab("Year") + ylab ("Return level (mm)") 
     p <- p + labs(color="Season",linetype="Group") 
     #p <- p + scale_color_manual(values=hcl.colors(4, "Berlin")) 
     p <- p + ggtitle(main)
     p <- p + theme(axis.text = element_text(size=16,face="bold"),
-                       plot.title = element_text(size=14,face="bold",hjust=0.5),
+                       plot.title = element_text(size=16,face="bold",hjust=0.5),
                         axis.ticks =  element_line(size = 1.5),
                         panel.border = element_rect(fill = "transparent", # Needed to add the border
                                                     color = "black",            # Color of the border
@@ -190,7 +191,7 @@ for(r in 1:8){
     print(count)
 }
 
-pdf("figures/return_level_margins.pdf",width = 20,height = 8,onefile = TRUE)
+pdf("figures/return_level_margins.pdf",width = 20,height = 9,onefile = TRUE)
 ggarrange(plotlist=p.list,nrow=2,ncol=4,common.legend=TRUE,legend="bottom")
 dev.off()
 save(p.list,file = "data/plot_return_level_margins.RData")
