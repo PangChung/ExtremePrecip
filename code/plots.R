@@ -145,7 +145,7 @@ for(r in 1:8){
     
     days <- c(315,135,225,45) #(Fall,Spring,Summer,Winter)
     data.df.avg$day = days[as.factor(data.df.avg$season)]
-    idx.loc1 = which.max(unlist(lapply(precip[[r]],mean,na.rm=TRUE)))
+    idx.loc1 = which.max(unlist(lapply(precip[[r]],median,na.rm=TRUE)))
     idx.loc2 = station$group.id == region.id[r]
     alt <- station$elev[idx.loc2][idx.loc1]/1000
     lon <- station$Y[idx.loc2][idx.loc1]
@@ -194,6 +194,14 @@ for(r in 1:8){
     print(count)
 }
 
+pdf("figures/return_level_margins.pdf",width = 6,height = 3,onefile = TRUE)
+for(i in 1:8){
+    show(p.list[i])
+}
+dev.off()
+save(p.list,file = "data/plot_return_level_margins.RData")
+
+
 ## plot qqplot for random locations ##
 for(idx in 1:8){
     load(paste0("data/marginal_fit_301_",idx,".RData"),e<-new.env())
@@ -216,13 +224,6 @@ for(idx in 1:8){
     }        
     dev.off() 
 }
-
-pdf("figures/return_level_margins.pdf",width = 6,height = 3,onefile = TRUE)
-for(i in 1:8){
-    show(p.list[i])
-}
-dev.off()
-save(p.list,file = "data/plot_return_level_margins.RData")
 
 ## plot the tail-correlation range ##
 model.selected <- c(1,3,4)
