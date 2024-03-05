@@ -309,7 +309,7 @@ for(i in 1:length(simu)){
           axis.title.y = element_text(size=14), 
           plot.title = element_text(hjust = 0.5),aspect.ratio=1) + coord_fixed() 
  pic[[i]] <- pic1 + ggtitle(
-  label=bquote(paste("Tail-correlation range:", ~.(round(dep_range[i],1)),";",~lambda==.(param_mat[i,1])))
+  label=bquote(paste("Tail-correlation range:", ~.(round(dep_range[i],1)),";",~lambda==.(exp(param_mat[i,2]))))
   )
 }
 
