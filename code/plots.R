@@ -202,12 +202,13 @@ for(idx in 1:8){
     load(paste0("data/marginal_fit_301_",idx,".RData"),e<-new.env())
     sig2.pred <- e$results.gam$sig2
     shape.pred = 1/sig2.pred
+    print(shape.pred)
     set.seed(1000)
     idx.list = sample(1:sum(station$group.id==region.id[idx]),3,replace = F,prob=apply(e$U,2,function(x){sum(!is.na(x))}))
     png(file = paste0("figures/qqplot_marginal_",idx,".png"),height=4*3,width=4*3,units="cm",res=300, pointsize=6)
     par(mfrow=c(2,2),mar=c(5,5,3,1),mgp=c(2.5,1,0),cex.lab=2,cex.axis=1.5,cex.main=2)
-    theoretical.quantiles <- e$U[,idx.list]
-    empirical.quantiles <- 1:1000/(1+1000)
+    theoretical.quantiles <- qgpd(e$U[,idx.list],loc=0,scale=1,shape=0)
+    empirical.quantiles <- qgpd(1:1000/(1+1000),loc=0,scale=1,shape=0)
     theoretical.quantiles <- split(theoretical.quantiles,col(theoretical.quantiles))
     theoretical.quantiles <- sapply(theoretical.quantiles,function(x) quantile(x,prob=1:1000/(1+1000),na.rm=T),simplify = F)
     qqplot(unlist(theoretical.quantiles),empirical.quantiles,cex=0.5,pch=20,
