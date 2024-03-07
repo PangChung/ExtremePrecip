@@ -143,7 +143,7 @@ for(r in 1:8){
     
     days <- c(315,135,225,45) #(Fall,Spring,Summer,Winter)
     data.df.avg$day = days[as.factor(data.df.avg$season)]
-    idx.loc1 = which.max(unlist(lapply(precip[[r]],median,na.rm=TRUE)))
+    idx.loc1 = which.max(unlist(lapply(precip[[r]],function(x){sum(na.omit(x)>0)})))
     idx.loc2 = station$group.id == region.id[r]
     alt <- station$elev[idx.loc2][idx.loc1]/1000
     lon <- station$Y[idx.loc2][idx.loc1]
@@ -200,15 +200,17 @@ save(p.list,file = "data/plot_return_level_margins.RData")
 ## plot qqplot for random locations ##
 for(idx in 1:8){
     load(paste0("data/marginal_fit_301_",idx,".RData"),e<-new.env())
+    sig2.pred <- e$results.gam$sig2
+    shape.pred = 1/sig2.pred
     set.seed(1000)
-    idx.list = sample(1:sum(station$group.id==region.id[idx]),8,replace = F,prob=apply(e$U,2,function(x){sum(!is.na(x))}))
+    idx.list = sample(1:sum(station$group.id==region.id[idx]),3,replace = F,prob=apply(e$U,2,function(x){sum(!is.na(x))}))
     png(file = paste0("figures/qqplot_marginal_",idx,".png"),height=4*3,width=4*3,units="cm",res=300, pointsize=6)
-    par(mfrow=c(3,3),mar=c(5,5,3,1),mgp=c(2.5,1,0),cex.lab=2,cex.axis=1.5,cex.main=2)
+    par(mfrow=c(2,2),mar=c(5,5,3,1),mgp=c(2.5,1,0),cex.lab=2,cex.axis=1.5,cex.main=2)
     theoretical.quantiles <- e$U[,idx.list]
     empirical.quantiles <- 1:1000/(1+1000)
     theoretical.quantiles <- split(theoretical.quantiles,col(theoretical.quantiles))
-    theoretical.quantiles <- sapply(theoretical.quantiles,function(x) quantile(x,prob=empirical.quantiles,na.rm=T),simplify = F)
-    qqplot(unlist(theoretical.quantiles),empirical.quantiles,cex=0.5,pch=20,xlim=c(0,1), ylim=c(0,1),
+    theoretical.quantiles <- sapply(theoretical.quantiles,function(x) quantile(x,prob=1:1000/(1+1000),na.rm=T),simplify = F)
+    qqplot(unlist(theoretical.quantiles),empirical.quantiles,cex=0.5,pch=20,
         xlab="Theoretical quantiles",ylab="Empirical quantiles",main="All stations")
     abline(0,1,col=2,lwd=2)
     for(ind in 1:length(idx.list)){
