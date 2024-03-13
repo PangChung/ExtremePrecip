@@ -248,7 +248,7 @@ for(r in 1:8){
     data.df.avg$range = sapply(1:nrow(data.df.avg),function(i){solve.h.BR(c(data.df.avg$shape[i],data.df.avg$lambda0[i],data.df.avg$lambda1[i]),temp=data.df.avg$tep[i]*10,logval=TRUE)})
 
     p.list1[[r]] <- ggplot(subset(data.df.avg,risk==1), aes(x=year, y=range, group=interaction(season,type), color=season, linetype=type)) + geom_line(alpha=0.9,linewidth=1.5) + 
-        xlab("Year") + ylab ("Logarithmic range") + labs(color='Season',linetype='Group') + 
+        xlab(NULL) + ylab (NULL) + labs(color='Season',linetype='Group') + 
         scale_color_manual(values=hcl.colors(4,"Dynamic")) + scale_linetype_manual(values=c("dotted","dashed","solid")) +
         ggtitle(paste0(region.name[r]," with risk functional 1")) +
         theme(axis.text = element_text(size=16,face="bold"),
@@ -262,7 +262,7 @@ for(r in 1:8){
 
     
     p.list2[[r]] <- ggplot(subset(data.df.avg,risk==2), aes(x=year, y=range, group=interaction(season,type), color=season, linetype=type)) + geom_line(alpha=0.9,linewidth=1.5)  + 
-        xlab("Year") + ylab ("Logarithmic range") +
+        xlab(NULL) + ylab (NULL) +
         labs(color='Season',linetype='Group')  + 
         scale_color_manual(values=hcl.colors(4,"Dynamic")) + scale_linetype_manual(values=c("dotted","dashed","solid")) +
         ggtitle(paste0(region.name[r]," with risk functional 2")) +

@@ -2,7 +2,7 @@ args <- commandArgs(TRUE)
 source("code/utility.R")
 library(ncdf4)
 library(parallel)
-year <- 1958
+year <- 1996
 
 for (arg in args) eval(parse(text = arg)) #input is the year
 
@@ -54,6 +54,9 @@ save(shape1,shape2,shape3,lon,lat,lat_danube,lon_danube,loc_df,file="data/era5_g
 
 }
 
+diff.range = sapply(1:length(vals[[1]][[1]]),function(i){ diff(range(sapply(vals[[1]][1:366],function(x){x[i]}),na.rm=T))})
+diff.range = diff.range[is.finite(diff.range)]
+summary(diff.range)
 # plot(shape1)
 # ind = loc_df$group.id== 19
 # plot(x=loc_df$lon[ind],y=loc_df$lat[ind],type="p",col=loc_df$group.id[ind],cex=0.1)
