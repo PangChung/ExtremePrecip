@@ -81,25 +81,25 @@ for(i in 2:length(region.id)){
 	temperature[[i]] = val
 }
 
-library(ggplot2)
-library(gridExtra)
-p.list = list()
-for(day in 1:365){
-data = NULL
-for(i in 2:length(region.id)){
-    idx = loc_df$group.id==region.id[i]
-    data <- rbind(data,data.frame(x=loc_df$lon[idx],y=loc_df$lat[idx],z=temperature[[i]][day,]/10))
-}
-    p.list[[day]] = ggplot(data,aes(x=x,y=y,fill=z)) + geom_tile() + scale_fill_gradient(low="blue",high="red",limits=range(data$z)) + ggtitle(paste0("Day ",day)) + theme(plot.title = element_text(hjust = 0.5)) + coord_fixed()
-}
-pdf(paste0("figures/temperature_",year,"_mississippi2",".pdf"),width=5*3,height=5*2)
-grid.arrange(grobs=p.list[round(seq(1,365,length.out=6))],nrow=2,ncol=3)
-dev.off()
+# library(ggplot2)
+# library(gridExtra)
+# p.list = list()
+# for(day in 1:365){
+# data = NULL
+# for(i in 2:length(region.id)){
+#     idx = loc_df$group.id==region.id[i]
+#     data <- rbind(data,data.frame(x=loc_df$lon[idx],y=loc_df$lat[idx],z=temperature[[i]][day,]-273.15))
+# }
+#     p.list[[day]] = ggplot(data,aes(x=x,y=y,fill=z)) + geom_tile() + scale_fill_gradient(low="blue",high="red",limits=range(data$z)) + ggtitle(paste0("Day ",day)) + theme(plot.title = element_text(hjust = 0.5)) + coord_fixed()
+# }
+# pdf(paste0("figures/temperature_",year,"_mississippi2",".pdf"),width=5*3,height=5*2)
+# grid.arrange(grobs=p.list[round(seq(1,365,length.out=6))],nrow=2,ncol=3)
+# dev.off()
 
-ids = loc_df$id[ loc_df$group.id == region.id[2] ]
-val1 = extract_func(ids[1],vari="2t",data=data1,res=length(lon))
-val2 = extract_func(ids[1],vari="2t",data=data2,res=length(lon))
-sum(val1 != val2)
+# ids = loc_df$id[ loc_df$group.id == region.id[2] ]
+# val1 = extract_func(ids[1],vari="2t",data=data1,res=length(lon))
+# val2 = extract_func(ids[1],vari="2t",data=data2,res=length(lon))
+# sum(val1 != val2)
 
 # sum(apply(temperature[[6]],1,function(x) !any(x!=0)))
 

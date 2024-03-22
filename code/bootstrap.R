@@ -8,10 +8,10 @@ load("data/temperature.RData")
 idx.region = 1;bootstrap.ind = 2
 init = c(0,0,0);fixed=c(F,F,F)
 season = c("Winter" ,"Spring" ,"Summer" ,"Fall")
-computer="hpc"
+computer="ws"
 for (arg in args) eval(parse(text = arg))
 switch(computer,
-    "ws" = {DataPath<-"~/Desktop/ExtremePrecip"},
+    "ws" = {DataPath<-"~/Desktop/ExtremePrecip";.libPaths("/home/z3536974/R/x86_64-pc-linux-gnu-library/4.2")},
     "hpc" = {DataPath<-"/srv/scratch/z3536974/";.libPaths("../src")},
     "local" = {DataPath<-"~/Documents/Github/ExtremePrecip"}
 )
@@ -31,7 +31,7 @@ ind.data = date.df$date >= START.date & date.df$date <= END.date
 y.ind = date.df$year[ind.data];y.ind=y.ind - y.ind[1] + 1
 d.ind = yday(date.df$date[ind.data])  
 date.ind = date.df$date[ind.data]
-tep.covariate <- temperature.covariate[[idx.region]][ind.data]
+tep.covariate <- temperature.covariate[[idx.region]][ind.data] 
 
 ## sample the data ##
 idx_numbers = sort(rep(1:1000,length.out = sum(ind.data)))

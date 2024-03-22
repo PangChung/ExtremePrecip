@@ -9,7 +9,7 @@ temperature <- list(Danube=NULL,Miss1=NULL,Miss2=NULL,Miss3=NULL,
 					Miss4=NULL,Miss5=NULL,Miss6=NULL,Miss7=NULL)
 for(f in files){
 	load(f,e<-new.env())
-	temperature <- lapply(1:8,FUN= function(id) c(temperature[[id]],apply(e$temperature[[id]],1,mean) ) )
+	temperature <- lapply(1:8,FUN= function(id) c(temperature[[id]],apply(e$temperature[[id]],1,mean) - 273.15 ) )
 	print(f)
 }
 
