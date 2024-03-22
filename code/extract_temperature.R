@@ -71,10 +71,10 @@ region.id = unique(loc_df$group.id)
 temperature = list()
 for(i in 2:length(region.id)){
 	ids = loc_df$id[loc_df$group.id == region.id[i]]
-	ndays = length(extract_func(ids[1],vari="2t",data=data1,res=length(lon)))
+	ndays = length(extract_func(ids[1],vari="2t",data=data2,res=length(lon)))
 	val = matrix(data=NA,nrow=ndays,ncol=length(ids))
 	for(j in 1:length(ids)){
-		val[,j] = extract_func(ids[j],vari="2t",data=data1,res=length(lon))
+		val[,j] = extract_func(ids[j],vari="2t",data=data2,res=length(lon))
         range(val[,j])
 	}
     print(sum(apply(val,1,function(x) !any(x!=0))))
@@ -92,7 +92,7 @@ for(i in 2:length(region.id)){
 }
     p.list[[day]] = ggplot(data,aes(x=x,y=y,fill=z)) + geom_tile() + scale_fill_gradient(low="blue",high="red",limits=range(data$z)) + ggtitle(paste0("Day ",day)) + theme(plot.title = element_text(hjust = 0.5)) + coord_fixed()
 }
-pdf(paste0("figures/temperature_",year,"_mississippi",".pdf"),width=5*3,height=5*2)
+pdf(paste0("figures/temperature_",year,"_mississippi2",".pdf"),width=5*3,height=5*2)
 grid.arrange(grobs=p.list[round(seq(1,365,length.out=6))],nrow=2,ncol=3)
 dev.off()
 
