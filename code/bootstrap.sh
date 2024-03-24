@@ -4,7 +4,7 @@
 #PBS -l mem=124gb
 #PBS -l walltime=12:00:00
 #PBS -j oe 
-#PBS -J 0-2400
+###PBS -J 0-2400
 #PBS -m a
 #PBS -M peng.zhong@unsw.edu.au 
 
@@ -16,8 +16,8 @@ module load r/4.3.1
 # region=$(( PBS_ARRAY_INDEX / 301 + 1 ))
 # boot_ind=$(( PBS_ARRAY_INDEX % 301 + 1))
 
-region=$(( PBS_ARRAY_INDEX / 8 + 1 ))
-boot_ind=$(( PBS_ARRAY_INDEX % 8 + 1))
+# region=$(( PBS_ARRAY_INDEX / 8 + 1 ))
+# boot_ind=$(( PBS_ARRAY_INDEX % 8 + 1))
 
 Rscript code/bootstrap.R "idx.region=${region};bootstrap.ind=${boot_ind};computer=\"hpc\"" 
 
