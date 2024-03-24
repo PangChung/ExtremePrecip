@@ -8,7 +8,7 @@ for(i in 1:length(marginal.fit.files)){
 
 ### collect results for bootstrap ### 
 library(stringr)
-boot.files <- list.files(path="data/bootstrap3/",pattern="fit_bootstrap_",full.names = TRUE)
+boot.files <- list.files(path="data/bootstrap/",pattern="fit_bootstrap_",full.names = TRUE)
 region.idx <- as.numeric(str_extract(str_extract(boot.files,"_[1-8]\\."),"[1-8]"))
 boot.idx <- as.numeric(str_extract(str_extract(boot.files,"_\\d+_"),"\\d+"))
 

@@ -3,6 +3,7 @@ library(ggplot2)
 library(lubridate)
 library(mgcv)
 library(evgam)
+library(gridExtra)
 library(ggpubr)
 library(evd)
 load("data/dep.fit.boot.results.RData")
@@ -67,7 +68,7 @@ model.selected = c(1,3,4)
 align <- function(m,r,data){
     intercep.1 = as.Date("2015-01-01") <= date.df[,1] & date.df[,1] <= as.Date("2020-12-31") 
     intercep.2 = as.Date("2015-01-01") <= date.245 & date.245 <= as.Date("2020-12-31") 
-    data.1 = data.frame(season=date.df[intercep.1,3],temp=temperature.covariate[[r]][intercep.1]/10)
+    data.1 = data.frame(season=date.df[intercep.1,3],temp=temperature.covariate[[r]][intercep.1])
     data.2 = data.frame(season=getSeason(date.245[intercep.2]),temp=data[[m]][[r]][intercep.2])
     data_avg.1 = aggregate(temp ~ season, data.1, mean)
     data_avg.2 = aggregate(temp ~ season, data.2, mean)
@@ -86,7 +87,7 @@ for(m in model.selected){
 
 count = 1;p.list <- list()
 for(r in 1:8){
-        data.1 = temperature.covariate[[r]]/10
+        data.1 = temperature.covariate[[r]]
         data.2 = apply(matrix(unlist(lapply(model.selected,function(i){temperature.245.avg[[i]][[r]]})),ncol=length(model.selected),byrow=FALSE),1,mean)
         data.3 = apply(matrix(unlist(lapply(model.selected,function(i){temperature.585.avg[[i]][[r]]})),ncol=length(model.selected),byrow=FALSE),1,mean)
         
@@ -202,8 +203,8 @@ for(idx in 1:8){
     load(paste0("data/marginal_fit_301_",idx,".RData"),e<-new.env())
     sig2.pred <- e$results.gam$sig2
     shape.pred = 1/sig2.pred
-    print(shape.pred)
-}
+#     print(shape.pred)
+# }
     set.seed(1000)
     idx.list = sample(1:sum(station$group.id==region.id[idx]),2,replace = F,prob=apply(e$U,2,function(x){sum(!is.na(x))}))
     png(file = paste0("figures/qqplot_marginal_",idx,".png"),height=6,width=6*3,units="cm",res=300, pointsize=6)
@@ -230,7 +231,7 @@ model.selected <- c(1,3,4)
 count = 1;p.list1 <- list()
 p.list2 <- list()
 for(r in 1:8){
-    data.1 = temperature.covariate[[r]]/10
+    data.1 = temperature.covariate[[r]]
     data.2 = apply(matrix(unlist(lapply(model.selected,function(i){temperature.245.avg[[i]][[r]]})),ncol=length(model.selected),byrow=FALSE),1,mean)
     data.3 = apply(matrix(unlist(lapply(model.selected,function(i){temperature.585.avg[[i]][[r]]})),ncol=length(model.selected),byrow=FALSE),1,mean)
     data.temp = c(data.1, data.2, data.3)
