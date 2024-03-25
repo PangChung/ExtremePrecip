@@ -137,7 +137,6 @@ scoreEstimation <- function(par2, obs,loc, vario.fun,
       sum(2 * (weights * dWeights) * gradient + weights^2 * diagHessian + 1 / 2 * weights^2 * gradient^2)
     }
   }
-  browser()
   if(nCores > 1){
     scores <- parallel::mclapply(1:n, computeScores,mc.cores = nCores)
   } else {
