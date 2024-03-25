@@ -5,7 +5,7 @@ source("code/utility.R")
 load("data/precip.RData")
 load("data/transformed_coordinates.RData")
 load("data/temperature.RData")
-idx.region = 1;bootstrap.ind = 2
+idx.region = 1;bootstrap.ind = 301
 init = c(0,0,0);fixed=c(F,F,F)
 season = c("Winter" ,"Spring" ,"Summer" ,"Fall")
 computer="ws"
@@ -90,7 +90,7 @@ if(file.exists(file.marginal)){
     message("start GPD fitting")
     data.df$y.gpd <- data.df$y - data.df$est.quantile
     data.df.gpd <- data.df[data.df$y.gpd>0,]
-    formula.gpd = list(y.gpd ~ log(est.quantile) + temp + s(day,k=10) + s(alt,k=10) + ti(lon,lat,k=10),~1)
+    formula.gpd = list(y.gpd ~ -1 + log(est.quantile) + temp + s(day,k=10) + s(alt,k=10) + ti(lon,lat,k=10),~1)
     results.gpd <- evgam(formula.gpd,data=data.df.gpd,family="gpd")
     est.scale.gpd = exp(fitted(results.gpd)[,1]);est.shape.gpd = fitted(results.gpd)[1,2]
     data.df.gpd$est.scale.gpd = est.scale.gpd;data.df.gpd$est.shape.gpd = est.shape.gpd

@@ -106,7 +106,7 @@ for(r in 1:8){
         p <- p + ggtitle(paste0(region.name[r]))
         p <- p + theme(axis.text = element_text(size=16,face="bold"),
                        plot.title = element_text(size=16,face="bold",hjust=0.5),
-                        axis.ticks =  element_line(size = 1.5),
+                        axis.ticks =  element_line(linewidth = 1.5),
                         panel.border = element_rect(fill = "transparent", # Needed to add the border
                                                     color = "black",            # Color of the border
                                                     linewidth = 1),
@@ -132,8 +132,8 @@ for(r in 1:8){
     # print(r)
     # print(summary(e$results.gam))
     data.1 = temperature.covariate[[r]]
-    data.2 = apply(matrix(unlist(lapply(model.selected,function(i){temperature.245.avg[[i]][[r]]})),ncol=length(model.selected),byrow=FALSE),1,mean)*10
-    data.3 = apply(matrix(unlist(lapply(model.selected,function(i){temperature.585.avg[[i]][[r]]})),ncol=length(model.selected),byrow=FALSE),1,mean)*10
+    data.2 = apply(matrix(unlist(lapply(model.selected,function(i){temperature.245.avg[[i]][[r]]})),ncol=length(model.selected),byrow=FALSE),1,mean)
+    data.3 = apply(matrix(unlist(lapply(model.selected,function(i){temperature.585.avg[[i]][[r]]})),ncol=length(model.selected),byrow=FALSE),1,mean)
     data.temp = c(data.1, data.2, data.3)
     date.temp = c(date.df[,1],date.245,date.585)
     data.type = c(rep("Obs",length(data.1)),
@@ -203,8 +203,8 @@ for(idx in 1:8){
     load(paste0("data/marginal_fit_301_",idx,".RData"),e<-new.env())
     sig2.pred <- e$results.gam$sig2
     shape.pred = 1/sig2.pred
-#     print(shape.pred)
-# }
+    print(shape.pred)
+#}
     set.seed(1000)
     idx.list = sample(1:sum(station$group.id==region.id[idx]),2,replace = F,prob=apply(e$U,2,function(x){sum(!is.na(x))}))
     png(file = paste0("figures/qqplot_marginal_",idx,".png"),height=6,width=6*3,units="cm",res=300, pointsize=6)
@@ -246,7 +246,7 @@ for(r in 1:8){
     data.df.avg$season = as.numeric(factor(data.df.avg$season,season))
     data.df.avg = merge(data.df.avg,subset(boot.result.df,region==r),by=c("season","risk"))
     data.df.avg$season = season[data.df.avg$season]
-    data.df.avg$range = sapply(1:nrow(data.df.avg),function(i){solve.h.BR(c(data.df.avg$shape[i],data.df.avg$lambda0[i],data.df.avg$lambda1[i]),temp=data.df.avg$tep[i]*10,logval=TRUE)})
+    data.df.avg$range = sapply(1:nrow(data.df.avg),function(i){solve.h.BR(c(data.df.avg$shape[i],data.df.avg$lambda0[i],data.df.avg$lambda1[i]),temp=data.df.avg$tep[i],logval=TRUE)})
 
     p.list1[[r]] <- ggplot(subset(data.df.avg,risk==1), aes(x=year, y=range, group=interaction(season,type), color=season, linetype=type)) + geom_line(alpha=0.9,linewidth=1.5) + 
         xlab(NULL) + ylab (NULL) + labs(color='Season',linetype='Group') + 
