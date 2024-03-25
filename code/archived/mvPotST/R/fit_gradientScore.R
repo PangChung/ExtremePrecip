@@ -63,8 +63,8 @@ fit.gradientScoreBR <- function(obs,
       (1 - exp(-(mean(x / u) - 1))) + (x /u/length(x)) * exp( - (mean(x / u) - 1))
     }
   }
-
   fun <- function(par){
+    print(par)
     par2 = init
     par2[!fixed] = par 
     val = scoreEstimation(par2, obs, loc, vario.fun=vario, weightFun = weightFun, dWeightFun=dWeightFun,u = u,nCores = nCores,ST=ST,...)

@@ -51,11 +51,11 @@
 #' #Evaluate gradient score function
 #' scoreEstimation(exceedances, loc, vario, weightFun = weightFun, dWeightFun, u = threshold)
 #' @export
-scoreEstimation <- function(par2, obs, loc, vario.fun, 
+scoreEstimation <- function(par2, obs,loc, vario.fun, 
                             weightFun = NULL, dWeightFun = NULL, 
                             nCores = 1L,  
                             ST=FALSE,
-                            ... ){
+                            ... ){                                  
   #Backwards compatibility for versions 0.1.3 and below
   ellipsis <- list(...)
   if("weigthFun" %in% names(ellipsis) && is.null(weightFun)){
@@ -87,51 +87,31 @@ scoreEstimation <- function(par2, obs, loc, vario.fun,
   n <- length(obs)
   dim <- nrow(loc)
   if(!ST){
-  gamma <- tryCatch({
-    dists <- lapply(1:ncol(loc), function(k) {
-      outer(loc[,k],loc[,k], "-")
-      })
-    computeVarMat <- sapply(1:length(dists[[1]]), function(k){
-      h <- rep(0,ncol(loc))
-      for(j in 1:ncol(loc)){
-        h[j] = dists[[j]][k]
-      }
-      vario.fun(h,par2)
-    })
-    matrix(computeVarMat, dim, dim)
-  }, warning = function(war) {
-    war
-  }, error = function(err) {
-    stop('The semi-variogram is not valid for the locations provided.')
-  })
-  gammaOrigin <- apply(loc, 1, vario)
+    SigmaS = vario.fun(loc,par2)
+    computeScores = function(i){
+        obs.i = .subset2(obs,i)
+        ind = !is.na(obs.i)
+        dim = sum(ind)
+        obs.i = obs.i[ind]
+        
+        sigmaInv <- MASS::ginv(SigmaS[ind,ind])
+        sigma <- diag(SigmaS[ind,ind])
+        q <- rowSums(sigmaInv)
+        
+        A <- sigmaInv - q %*% t(q)/sum(q)
+        zeroDiagA <- A
+        diag(zeroDiagA) <- 0
+        mtp <- 2*q / (sum(q)) + 2 + sigmaInv %*% sigma - (q %*% t(q) %*% sigma)/(sum(q))
+        
+        gradient <- - 1 / 2 * ((A + t(A)) %*% log(obs.i)) *  (1 / obs.i) - 1/2* (1/obs.i) * mtp
+        diagHessian <- - 1 / 2 * diag(A + t(A)) * (1/ obs.i^2) + 1 / 2 * ((A + t(A)) %*% log(obs.i)) * (1/obs.i)^2  + 1/2* (1/obs.i)^2 * mtp
+        #hack due to intercept in ellipsis function
+        weights <- do.call(what = "weightFun", args = c(ellipsis, x = list(obs.i)))
+        dWeights  <- do.call(what = "dWeightFun", args = c(ellipsis, x = list(obs.i)))
 
-  SigmaS <- (outer(gammaOrigin, gammaOrigin, "+") - gamma)
-  computeScores = function(i){
-    obs.i = .subset2(obs,i)
-    ind = !is.na(obs.i)
-    dim = sum(ind)
-    obs.i = obs.i[ind]
-    
-    sigmaInv <- MASS::ginv(SigmaS[ind,ind])
-    sigma <- diag(SigmaS[ind,ind])
-    q <- rowSums(sigmaInv)
-    
-    A <- sigmaInv - q %*% t(q)/sum(q)
-    zeroDiagA <- A
-    diag(zeroDiagA) <- 0
-    mtp <- 2*q / (sum(q)) + 2 + sigmaInv %*% sigma - (q %*% t(q) %*% sigma)/(sum(q))
-    
-    gradient <- - 1 / 2 * ((A + t(A)) %*% log(obs.i)) *  (1 / obs.i) - 1/2* (1/obs.i) * mtp
-    diagHessian <- - 1 / 2 * diag(A + t(A)) * (1/ obs.i^2) + 1 / 2 * ((A + t(A)) %*% log(obs.i)) * (1/obs.i)^2  + 1/2* (1/obs.i)^2 * mtp
-    #hack due to intercept in ellipsis function
-    weights <- do.call(what = "weightFun", args = c(ellipsis, x = list(obs.i)))
-    dWeights  <- do.call(what = "dWeightFun", args = c(ellipsis, x = list(obs.i)))
-
-    sum(2 * (weights * dWeights) * gradient + weights^2 * diagHessian + 1 / 2 * weights^2 * gradient^2)
+        sum(2 * (weights * dWeights) * gradient + weights^2 * diagHessian + 1 / 2 * weights^2 * gradient^2)
     }
-  }
-  else{
+  }else{
     computeScores = function(i){
       # prepare the data for time i#
       obs.i = .subset2(obs,i)
@@ -139,30 +119,10 @@ scoreEstimation <- function(par2, obs, loc, vario.fun,
       dim = sum(ind)
       obs.i = obs.i[ind]
       # compute the variogram matrix
-      gamma <- tryCatch({
-        dists <- lapply(1:ncol(loc), function(k) {
-          outer(loc[ind,k],loc[ind,k], "-")
-        })
-        computeVarMat <- sapply(1:length(dists[[1]]), function(k){
-          h <- rep(0,ncol(loc))
-          for(j in 1:ncol(loc)){
-            h[j] = dists[[j]][k]
-          }
-          vario.fun(h,par2,t=i)
-        })
-        matrix(computeVarMat, dim, dim)
-      }, warning = function(war) {
-        war
-      }, error = function(err) {
-        stop('The semi-variogram is not valid for the locations provided.')
-      })
-      gammaOrigin <- apply(loc[ind,], 1, vario)
-      ## compute the sigma matrix and 
-      SigmaS <- (outer(gammaOrigin, gammaOrigin, "+") - gamma)
+      SigmaS = vario.fun(loc[ind,],par2,i)
       sigmaInv <- tryCatch({MASS::ginv(SigmaS)}, warning = function(war){print(war)},error=function(err){print(err);print(range(SigmaS,na.rm=TRUE));print(par2);browser()})
       sigma <- diag(SigmaS)
       q <- rowSums(sigmaInv)
-      
       A <- sigmaInv - q %*% t(q)/sum(q)
       zeroDiagA <- A
       diag(zeroDiagA) <- 0
@@ -177,7 +137,7 @@ scoreEstimation <- function(par2, obs, loc, vario.fun,
       sum(2 * (weights * dWeights) * gradient + weights^2 * diagHessian + 1 / 2 * weights^2 * gradient^2)
     }
   }
-  
+  browser()
   if(nCores > 1){
     scores <- parallel::mclapply(1:n, computeScores,mc.cores = nCores)
   } else {

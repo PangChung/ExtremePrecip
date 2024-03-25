@@ -8,7 +8,7 @@ load("data/temperature.RData")
 idx.region = 1;bootstrap.ind = 301
 init = c(0,0,0);fixed=c(F,F,F)
 season = c("Winter" ,"Spring" ,"Summer" ,"Fall")
-computer="ws"
+computer="local"
 for (arg in args) eval(parse(text = arg))
 switch(computer,
     "ws" = {DataPath<-"~/Desktop/ExtremePrecip";.libPaths("/home/z3536974/R/x86_64-pc-linux-gnu-library/4.2")},
@@ -71,7 +71,7 @@ if(file.exists(file.marginal)){
 }else{
     message("start Gamma fitting")
     thres.prob = 0.8
-    formula = y ~ temp + s(day,k=10) + ti(lon,lat,k=10) + s(alt,k=10)
+    formula = y ~ temp + s(day,k=8) + ti(lon,lat,k=8) + s(alt,k=8)
     results.gam = gam(formula,family=Gamma(link="log"),data=data.df)
     est.sig2 <- results.gam$sig2;est.mean <- results.gam$fitted.values
     est.shape = 1/est.sig2;est.scale <- est.mean/est.shape
@@ -90,7 +90,7 @@ if(file.exists(file.marginal)){
     message("start GPD fitting")
     data.df$y.gpd <- data.df$y - data.df$est.quantile
     data.df.gpd <- data.df[data.df$y.gpd>0,]
-    formula.gpd = list(y.gpd ~ -1 + log(est.quantile) + temp + s(day,k=10) + s(alt,k=10) + ti(lon,lat,k=10),~1)
+    formula.gpd = list(y.gpd ~ log(est.quantile) + temp + s(day,k=10) + s(alt,k=10) + ti(lon,lat,k=10),~1)
     results.gpd <- evgam(formula.gpd,data=data.df.gpd,family="gpd")
     est.scale.gpd = exp(fitted(results.gpd)[,1]);est.shape.gpd = fitted(results.gpd)[1,2]
     data.df.gpd$est.scale.gpd = est.scale.gpd;data.df.gpd$est.shape.gpd = est.shape.gpd
@@ -135,7 +135,7 @@ for(count in 1:8){
         reg.t = temperature.covariate[[idx.region]][ind.data][ind.sample][idx.season]
 
         r.obs <- suppressWarnings(unlist(lapply(obs,function(x){if(sum(!is.na(x))!=0){rFun(x[!is.na(x)],u=1,est.shape.gpd)}else{NA}})))
-        thres = quantile(r.obs[no.obs > 5],0.9,na.rm=TRUE)
+        thres = quantile(r.obs[no.obs > 10],0.95,na.rm=TRUE)
 
         ## select the exceedances
         idx.exc = no.obs > 5 & r.obs > thres 
@@ -144,7 +144,7 @@ for(count in 1:8){
         reg.t = reg.t[idx.exc]
         exceedances <- obs[idx.exc]
 
-        result.list[[norm.ind]][[season.idx]] = fit.gradientScoreBR(obs=exceedances,loc=loc,init=init,fixed = fixed,vario = vario,u = thres,method="Nelder-Mead",ST = TRUE,nCores = ncores,weightFun = weightFun,dWeightFun = dWeightFun)
+        result.list[[norm.ind]][[season.idx]] = fit.gradientScoreBR(obs=exceedances,loc=loc,init=c(0,log(100),0),fixed = fixed,vario = vario,u = thres,method="Nelder-Mead",ST = TRUE,nCores = ncores,weightFun = weightFun,dWeightFun = dWeightFun)
         
 }
 file2save = paste0(DataPath,"/data/fit_bootstrap_",bootstrap.ind,"_",idx.region,".RData")

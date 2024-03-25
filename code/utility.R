@@ -9,12 +9,32 @@ consective.mean <- function(pos,vals,n=30){
 }
 
 ## semi-variogram
-vario <- function(h,par=c(0,log(100),0),t=1){ ##return the semi-variogram
-    ## reparametrization
+# vario <- function(h,par=c(0,log(100),0),t=1){ ##return the semi-variogram
+#     ## reparametrization
+#     alpha = 2/(1+exp(-par[1]));lambda1 = par[2];lambda2 <- par[3]
+#     lambda <- exp(lambda1+lambda2*reg.t[t]) 
+#     val=(sqrt(sum(h^2))/lambda)^alpha 
+#     return(val)
+# }
+
+vario <- function(loc,par,t=1){ ##return a covariance matrix
     alpha = 2/(1+exp(-par[1]));lambda1 = par[2];lambda2 <- par[3]
-    lambda <- exp(lambda1+lambda2*reg.t[t]) + 2
-    val=(sqrt(sum(h^2))/lambda)^alpha 
-    return(val)
+    lambda <- exp(lambda1+lambda2*reg.t[t]) 
+    if(!is.matrix(loc)){loc = matrix(loc,nrow=1)}
+    n = nrow(loc)
+    if(n==1){
+        val= 2*(sqrt(sum(loc[1,]^2))/lambda)^alpha
+        return(val)
+    }
+    vario <- function(coord){
+        if(!is.matrix(coord)) {val <- 2*(sqrt(sum(coord^2))/lambda)^alpha}
+        else {val <- 2*(sqrt(sum((coord[1,]-coord[2,])^2))/lambda)^alpha}
+
+    }
+    cov.mat <- sapply(1:n, function(i) sapply(1:n, function(j) 
+                        vario(loc[i,]) + vario(loc[j,]) - vario(loc[c(i,j),])))
+                        
+    return(cov.mat + .Machine$double.eps * diag(n))
 }
 
 ## risk functional
