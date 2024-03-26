@@ -23,6 +23,8 @@ library(mgcv)
 library(evgam)
 
 file.marginal = paste0(DataPath,"/data/marginal_fit_",bootstrap.ind,"_",idx.region,".RData")
+file2save = paste0(DataPath,"/data/fit_bootstrap_",bootstrap.ind,"_",idx.region,".RData")
+if(file.exists(file2save)) {stop("fit is already done")}
 ncores = detectCores()
 init.seed = as.integer((as.integer(Sys.time())/bootstrap.ind + sample.int(10^5,1))%%10^5)
 set.seed(init.seed)
@@ -148,7 +150,7 @@ for(count in 1:8){
         result.list[[norm.ind]][[season.idx]] = fit.gradientScoreBR(obs=exceedances,loc=loc,init=c(0,log(100),0),fixed = fixed,vario = vario,u = thres,method="L-BFGS-B",ST = TRUE,nCores = ncores,weightFun = weightFun,dWeightFun = dWeightFun)
         
 }
-file2save = paste0(DataPath,"/data/fit_bootstrap_",bootstrap.ind,"_",idx.region,".RData")
+
 t1 = proc.time() - t0
 save(t1,result.list,file=file2save)
 

@@ -59,4 +59,14 @@ for region in {1..8}; do
     run_job $region $boot
 done
 
+while [ ${#pids[@]} -ge 1 ]; do 
+    sleep 2
+    for ((i=0; i<${#pids[@]}; i++)); do
+        if ! is_running "${pids[$i]}"; then
+            unset 'pids[$i]'
+        fi
+    done
+    echo "all jobs are currently either running or finished"
+done
+
 date
