@@ -64,11 +64,9 @@ fit.gradientScoreBR <- function(obs,
     }
   }
   fun <- function(par){
-    print(par)
     par2 = init
     par2[!fixed] = par 
     val = scoreEstimation(par2, obs, loc, vario.fun=vario, weightFun = weightFun, dWeightFun=dWeightFun,u = u,nCores = nCores,ST=ST,...)
-    print(par2)
     return(val)
   }
   
