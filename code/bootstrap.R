@@ -5,7 +5,7 @@ source("code/utility.R")
 load("data/precip.RData")
 load("data/transformed_coordinates.RData")
 load("data/temperature.RData")
-idx.region = 1;bootstrap.ind = 301
+idx.region = 1;bootstrap.ind = 301;njobs=4
 init = c(0,0,0);fixed=c(F,F,F)
 season = c("Winter" ,"Spring" ,"Summer" ,"Fall")
 computer="hpc"
@@ -23,7 +23,9 @@ library(mgcv)
 library(evgam)
 
 file.marginal = paste0(DataPath,"/data/marginal_fit_",bootstrap.ind,"_",idx.region,".RData")
-ncores = detectCores()
+file2save = paste0(DataPath,"/data/fit_bootstrap_",bootstrap.ind,"_",idx.region,".RData")
+if(file.exists(file2save)) {stop("fit is already done")}
+ncores = floor(detectCores()/njobs)
 init.seed = as.integer((as.integer(Sys.time())/bootstrap.ind + sample.int(10^5,1))%%10^5)
 set.seed(init.seed)
 ## prepare the time covariate: year and date
@@ -148,7 +150,7 @@ for(count in 1:8){
         result.list[[norm.ind]][[season.idx]] = fit.gradientScoreBR(obs=exceedances,loc=loc,init=init,fixed = fixed,vario = vario,u = thres,method="L-BFGS-B",ST = TRUE,nCores = ncores,weightFun = weightFun,dWeightFun = dWeightFun)
         
 }
-file2save = paste0(DataPath,"/data/fit_bootstrap_",bootstrap.ind,"_",idx.region,".RData")
+
 t1 = proc.time() - t0
 save(t1,result.list,file=file2save)
 
