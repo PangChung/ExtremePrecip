@@ -145,7 +145,7 @@ for(count in 1:8){
         reg.t = reg.t[idx.exc]
         exceedances <- obs[idx.exc]
 
-        result.list[[norm.ind]][[season.idx]] = fit.gradientScoreBR(obs=exceedances,loc=loc,init=c(0,log(100),0),fixed = fixed,vario = vario,u = thres,method="L-BFGS-B",ST = TRUE,nCores = ncores,weightFun = weightFun,dWeightFun = dWeightFun)
+        result.list[[norm.ind]][[season.idx]] = fit.gradientScoreBR(obs=exceedances,loc=loc,init=init,fixed = fixed,vario = vario,u = thres,method="L-BFGS-B",ST = TRUE,nCores = ncores,weightFun = weightFun,dWeightFun = dWeightFun)
         
 }
 file2save = paste0(DataPath,"/data/fit_bootstrap_",bootstrap.ind,"_",idx.region,".RData")
