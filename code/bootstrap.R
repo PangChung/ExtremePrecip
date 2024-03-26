@@ -8,7 +8,7 @@ load("data/temperature.RData")
 idx.region = 1;bootstrap.ind = 301
 init = c(0,0,0);fixed=c(F,F,F)
 season = c("Winter" ,"Spring" ,"Summer" ,"Fall")
-computer="local"
+computer="hpc"
 for (arg in args) eval(parse(text = arg))
 switch(computer,
     "ws" = {DataPath<-"~/Desktop/ExtremePrecip";.libPaths("/home/z3536974/R/x86_64-pc-linux-gnu-library/4.2")},
@@ -145,7 +145,7 @@ for(count in 1:8){
         reg.t = reg.t[idx.exc]
         exceedances <- obs[idx.exc]
 
-        result.list[[norm.ind]][[season.idx]] = fit.gradientScoreBR(obs=exceedances,loc=loc,init=c(0,log(100),0),fixed = fixed,vario = vario,u = thres,method="L-BFGS-B",ST = FALSE,nCores = ncores,weightFun = weightFun,dWeightFun = dWeightFun)
+        result.list[[norm.ind]][[season.idx]] = fit.gradientScoreBR(obs=exceedances,loc=loc,init=c(0,log(100),0),fixed = fixed,vario = vario,u = thres,method="L-BFGS-B",ST = TRUE,nCores = ncores,weightFun = weightFun,dWeightFun = dWeightFun)
         
 }
 file2save = paste0(DataPath,"/data/fit_bootstrap_",bootstrap.ind,"_",idx.region,".RData")

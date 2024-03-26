@@ -4,7 +4,7 @@
 #PBS -l mem=124gb
 #PBS -l walltime=12:00:00
 #PBS -j oe 
-##PBS -J 0-2400
+##PBS -J 1-2400
 #PBS -m a
 #PBS -M peng.zhong@unsw.edu.au 
 
