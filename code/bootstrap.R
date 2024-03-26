@@ -5,7 +5,7 @@ source("code/utility.R")
 load("data/precip.RData")
 load("data/transformed_coordinates.RData")
 load("data/temperature.RData")
-idx.region = 1;bootstrap.ind = 301;njobs=4
+idx.region = 1;bootstrap.ind = 301;njobs=1
 init = c(-2,log(100),0);fixed=c(F,F,F)
 season = c("Winter" ,"Spring" ,"Summer" ,"Fall")
 computer="hpc"
@@ -112,7 +112,7 @@ result.list <- list(list(),list())
 for(count in 1:8){
         norm.ind = (count-1) %/% 4 + 1
         season.idx = (count - 1) %% 4 + 1
-        file = paste0(DataPath,"/data/fit_bootstrap_301_",idx.region,".RData") 
+        file = paste0(DataPath,"/data/fit_bootstrap_21_",idx.region,".RData") 
         # file2save = paste0("/srv/scratch/z3536974/data/fit_bootstrap_",bootstrap.ind,"_",idx.region,"_",count,".RData")
         if(file.exists(file)){
             load(file,e<-new.env())
@@ -152,5 +152,6 @@ for(count in 1:8){
 }
 
 t1 = proc.time() - t0
+print(t1)
 save(t1,result.list,file=file2save)
 
