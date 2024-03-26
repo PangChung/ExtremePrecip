@@ -54,15 +54,15 @@ y.thres <- 10;y = y-y.thres ## remove the values that are below y.thres
 
 ## generate the data frame for marginal fitting ## 
 data.df <- data.frame(y=y,
-                    temp = rep(tep.covariate[ind.sample],each=D),
-                    date = rep(date.ind[ind.sample],each=D),
-                    day = rep(d.ind[ind.sample],each=D),
-                    year = rep(y.ind[ind.sample],each=D),
-                    alt = rep(alt,time=Dt),
-                    lon = rep(lon,time=Dt),
-                    lat = rep(lat,time=Dt),
-                    col=rep(1:D,time=Dt),
-                    row=rep((1:sum(ind.data))[ind.sample],each=D))[!is.na(y) & y > 0 & y < 1000,]
+                    temp = rep(tep.covariate[ind.sample],time=D),
+                    date = rep(date.ind[ind.sample],time=D),
+                    day = rep(d.ind[ind.sample],time=D),
+                    year = rep(y.ind[ind.sample],time=D),
+                    alt = rep(alt,each=Dt),
+                    lon = rep(lon,each=Dt),
+                    lat = rep(lat,each=Dt),
+                    col=rep(1:D,each=Dt),
+                    row=rep((1:sum(ind.data))[ind.sample],time=D))[!is.na(y) & y > 0 & y < 1000,]
 
 data.df = data.df[complete.cases(data.df),] ## select the complete dataframe
 
@@ -70,8 +70,8 @@ if(file.exists(file.marginal)){
     load(file.marginal)
 }else{
     message("start Gamma fitting")
-    thres.prob = 0.8
-    formula = y ~ temp + s(day,k=8) + ti(lon,lat,k=8) + s(alt,k=8)
+    thres.prob = 0.9
+    formula = y ~ temp + s(day,k=10) + ti(lon,lat,k=10) + s(alt,k=10)
     results.gam = gam(formula,family=Gamma(link="log"),data=data.df)
     est.sig2 <- results.gam$sig2;est.mean <- results.gam$fitted.values
     est.shape = 1/est.sig2;est.scale <- est.mean/est.shape
@@ -100,7 +100,7 @@ if(file.exists(file.marginal)){
     est.prob.exceed[data.df$y.bin]*pgpd(data.df.gpd$y.gpd,loc = 0,scale = est.scale.gpd,shape = est.shape.gpd)
 
     U <- matrix(NA,nrow=sum(ind.data),ncol=D)
-    U[cbind(data.df$row,data.df$col)] <- est.prob/(1+1e-5) ## avoid computational issues
+    U[cbind(data.df$row,data.df$col)] <- est.prob/(1+1e-10) ## avoid computational issues
     
     if(bootstrap.ind==301) save(results.bin,results.gam,results.gpd,data.df.gpd,U,data.df,file=file.marginal)
 }
@@ -125,6 +125,7 @@ for(count in 1:8){
         }
         # Define locations 
         loc = loc.trans.list[[idx.region]]/1000
+        loc = apply(loc,2,function(x){x - mean(x,na.rm=TRUE)})
         date.df2 = date.df[ind.data,][ind.sample,]
         idx.season = (date.df2$season == season[season.idx])
         ## load the observations and covariates ## 
@@ -135,7 +136,7 @@ for(count in 1:8){
         reg.t = temperature.covariate[[idx.region]][ind.data][ind.sample][idx.season]
 
         r.obs <- suppressWarnings(unlist(lapply(obs,function(x){if(sum(!is.na(x))!=0){rFun(x[!is.na(x)],u=1,est.shape.gpd)}else{NA}})))
-        thres = quantile(r.obs[no.obs > 10],0.95,na.rm=TRUE)
+        thres = quantile(r.obs[no.obs > 5],0.95,na.rm=TRUE)
 
         ## select the exceedances
         idx.exc = no.obs > 5 & r.obs > thres 
@@ -144,11 +145,12 @@ for(count in 1:8){
         reg.t = reg.t[idx.exc]
         exceedances <- obs[idx.exc]
 
-        result.list[[norm.ind]][[season.idx]] = fit.gradientScoreBR(obs=exceedances,loc=loc,init=c(0,log(100),0),fixed = fixed,vario = vario,u = thres,method="Nelder-Mead",ST = FALSE,nCores = ncores,weightFun = weightFun,dWeightFun = dWeightFun)
+        result.list[[norm.ind]][[season.idx]] = fit.gradientScoreBR(obs=exceedances,loc=loc,init=c(0,log(100),0),fixed = fixed,vario = vario,u = thres,method="L-BFGS-B",ST = FALSE,nCores = ncores,weightFun = weightFun,dWeightFun = dWeightFun)
+
+        result.list[[norm.ind]][[season.idx]] = fit.gradientScoreBR(obs=exceedances,loc=e$loc.list[[1]],init=c(-1.5,4,0),fixed = fixed,vario = vario,u = thres,ST = FALSE,nCores = ncores,weightFun = weightFun,dWeightFun = dWeightFun)
         
 }
 file2save = paste0(DataPath,"/data/fit_bootstrap_",bootstrap.ind,"_",idx.region,".RData")
 t1 = proc.time() - t0
 save(t1,result.list,file=file2save)
-
 
