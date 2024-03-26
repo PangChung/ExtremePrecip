@@ -6,7 +6,7 @@ load("data/precip.RData")
 load("data/transformed_coordinates.RData")
 load("data/temperature.RData")
 idx.region = 1;bootstrap.ind = 301;njobs=4
-init = c(0,0,0);fixed=c(F,F,F)
+init = c(-2,log(100),0);fixed=c(F,F,F)
 season = c("Winter" ,"Spring" ,"Summer" ,"Fall")
 computer="hpc"
 for (arg in args) eval(parse(text = arg))
