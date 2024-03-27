@@ -112,7 +112,7 @@ result.list <- list(list(),list())
 for(count in 1:8){
         norm.ind = (count-1) %/% 4 + 1
         season.idx = (count - 1) %% 4 + 1
-        file = paste0(DataPath,"/data/fit_bootstrap_21_",idx.region,".RData") 
+        file = paste0(DataPath,"/data/fit_bootstrap_12_",idx.region,".RData") 
         # file2save = paste0("/srv/scratch/z3536974/data/fit_bootstrap_",bootstrap.ind,"_",idx.region,"_",count,".RData")
         if(file.exists(file)){
             load(file,e<-new.env())
