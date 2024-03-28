@@ -26,6 +26,7 @@ file.marginal = paste0(DataPath,"/data/marginal_fit_",bootstrap.ind,"_",idx.regi
 file2save = paste0(DataPath,"/data/fit_bootstrap_",bootstrap.ind,"_",idx.region,".RData")
 if(file.exists(file2save)) {stop("fit is already done")}
 ncores = floor(detectCores()/njobs)
+if(idx.region==2 | idx.region==7){ncores=ncores*2}
 init.seed = as.integer((as.integer(Sys.time())/bootstrap.ind + sample.int(10^5,1))%%10^5)
 set.seed(init.seed)
 ## prepare the time covariate: year and date
