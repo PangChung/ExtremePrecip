@@ -204,7 +204,7 @@ for(idx in 1:8){
     sig2.pred <- e$results.gam$sig2
     shape.pred = 1/sig2.pred
     print(shape.pred)
-#}
+}
     set.seed(1000)
     idx.list = sample(1:sum(station$group.id==region.id[idx]),2,replace = F,prob=apply(e$U,2,function(x){sum(!is.na(x))}))
     png(file = paste0("figures/qqplot_marginal_",idx,".png"),height=6,width=6*3,units="cm",res=300, pointsize=6)
