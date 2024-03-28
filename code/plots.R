@@ -201,10 +201,11 @@ save(p.list,file = "data/plot_return_level_margins.RData")
 ## plot qqplot for random locations ##
 for(idx in 1:8){
     load(paste0("data/marginal_fit_301_",idx,".RData"),e<-new.env())
-    sig2.pred <- e$results.gam$sig2
-    shape.pred = 1/sig2.pred
+    # sig2.pred <- e$results.gpd$sig2
+    # shape.pred = 1/sig2.pred
+    shape.pred = fitted(e$results.gpd)[1,2]
     print(shape.pred)
-}
+#    }
     set.seed(1000)
     idx.list = sample(1:sum(station$group.id==region.id[idx]),2,replace = F,prob=apply(e$U,2,function(x){sum(!is.na(x))}))
     png(file = paste0("figures/qqplot_marginal_",idx,".png"),height=6,width=6*3,units="cm",res=300, pointsize=6)

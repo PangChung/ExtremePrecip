@@ -74,7 +74,7 @@ if(file.exists(file.marginal)){
 }else{
     message("start Gamma fitting")
     thres.prob = 0.9
-    formula = y ~ temp + s(day,k=10) + te(lon,lat,k=8) + s(alt,k=10)
+    formula = y ~ temp + s(day,k=10) + te(lon,lat,k=10) + s(alt,k=10)
     results.gam = gam(formula,family=Gamma(link="log"),data=data.df)
     est.sig2 <- results.gam$sig2;est.mean <- results.gam$fitted.values
     est.shape = 1/est.sig2;est.scale <- est.mean/est.shape
