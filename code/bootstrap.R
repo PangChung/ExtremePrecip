@@ -139,10 +139,10 @@ for(count in 1:8){
         reg.t = temperature.covariate[[idx.region]][ind.data][ind.sample][idx.season]
 
         r.obs <- suppressWarnings(unlist(lapply(obs,function(x){if(sum(!is.na(x))!=0){rFun(x[!is.na(x)],u=1,est.shape.gpd)}else{NA}})))
-        thres = quantile(r.obs[no.obs > 5],0.8,na.rm=TRUE)
+        thres = quantile(r.obs[no.obs > 10],0.8,na.rm=TRUE)
 
         ## select the exceedances
-        idx.exc = no.obs > 5 & r.obs > thres 
+        idx.exc = no.obs > 10 & r.obs > thres 
         stopifnot( sum(idx.exc) > 0 & any(!is.na(reg.t)) )
 
         reg.t = reg.t[idx.exc]
