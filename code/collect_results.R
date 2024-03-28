@@ -18,11 +18,19 @@ for(i in 1:length(boot.files)){
     results.boot.list[[i]] <- e$result.list
 }
 
+idx.valid = !unlist(lapply(results.boot.list,function(x){any(!unlist(lapply(x,function(y){length(y)==4})))}))
+
+system(paste("rm",boot.files[!idx.valid]))
+results.boot.list <- results.boot.list[idx.valid]
+boot.files <- boot.files[idx.valid]
+region.idx <- region.idx[idx.valid]
+boot.idx <- boot.idx[idx.valid]
 boot.collect <- function(data,idx,norm.idx,season.idx,region.idx,boot.idx){
     estimates.boot = matrix(unlist(lapply(data[region.idx==idx & boot.idx != 301],function(x){y=x[[norm.idx]][[season.idx]]$par;y[1] <- 2/(1+exp(-y[1]));y})),ncol=3,byrow=TRUE)
     est.true = results.boot.list[region.idx == idx  & boot.idx == 301][[1]][[norm.idx]][[season.idx]]$par; est.true[1] <- 2/(1+exp(-est.true[1]))
     n = nrow(estimates.boot)
     sd.jackknife = apply(estimates.boot,2,function(x){return(sd(x))})
+    
     return(list(sd=sd.jackknife,true=est.true,jack=estimates.boot))
 }
 

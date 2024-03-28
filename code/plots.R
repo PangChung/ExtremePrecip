@@ -24,7 +24,7 @@ boot.result.df <- data.frame(
     season = idx.grid[,2],
     risk = idx.grid[,3],
     shape = apply(idx.grid,1,function(x){boot.result.list[[x[3]]][[x[2]]][[x[1]]]$true[1]}),
-    lambda0 = apply(idx.grid,1,function(x){boot.result.list[[x[3]]][[x[2]]][[x[1]]]$true[2]}+log(2)),
+    lambda0 = apply(idx.grid,1,function(x){boot.result.list[[x[3]]][[x[2]]][[x[1]]]$true[2]}),
     lambda1 = apply(idx.grid,1,function(x){boot.result.list[[x[3]]][[x[2]]][[x[1]]]$true[3]}),
     sd.shape = apply(idx.grid,1,function(x){boot.result.list[[x[3]]][[x[2]]][[x[1]]]$sd[1]}),
     sd.lambda0 = apply(idx.grid,1,function(x){boot.result.list[[x[3]]][[x[2]]][[x[1]]]$sd[2]}),
@@ -163,7 +163,7 @@ for(r in 1:8){
     mean.pred  <- exp(predict.gam(e$results.gam,newdata = data.pred))
     sig2.pred <- e$results.gam$sig2
     shape.pred = 1/sig2.pred;scale.pred <- mean.pred/shape.pred;
-    quantile.pred <- qgamma(0.8,shape = shape.pred,scale=scale.pred)
+    quantile.pred <- qgamma(0.9,shape = shape.pred,scale=scale.pred)
     data.pred$est.quantile = quantile.pred
     prob.exceed.pred <- predict.gam(e$results.bin,newdata=data.pred,type="response")
     gpd.pred <- predict(e$results.gpd,newdata=data.pred)
