@@ -5,10 +5,10 @@ source("code/utility.R")
 load("data/precip.RData")
 load("data/transformed_coordinates.RData")
 load("data/temperature.RData")
-idx.region = 1;bootstrap.ind = 301;njobs=1
+idx.region = 1;bootstrap.ind = 1;njobs=1
 init = c(-2,log(100),0);fixed=c(F,F,F)
 season = c("Winter" ,"Spring" ,"Summer" ,"Fall")
-computer="hpc"
+computer="local"
 for (arg in args) eval(parse(text = arg))
 switch(computer,
     "ws" = {DataPath<-"~/Desktop/ExtremePrecip";.libPaths("/home/z3536974/R/x86_64-pc-linux-gnu-library/4.2")},
