@@ -66,7 +66,6 @@ data.df <- data.frame(y=y,
                     lat = rep(lat,each=Dt),
                     col=rep(1:D,each=Dt),
                     row=rep((1:sum(ind.data))[ind.sample],time=D))[!is.na(y) & y > 0 & y < 1000,]
-
 data.df = data.df[complete.cases(data.df),] ## select the complete dataframe
 
 if(file.exists(file.marginal)){
@@ -74,7 +73,7 @@ if(file.exists(file.marginal)){
 }else{
     message("start Gamma fitting")
     thres.prob = 0.9
-    formula = y ~ temp + s(day,k=10) + te(lon,lat,k=8) + s(alt,k=10)
+    formula = y ~ temp + s(day,k=10) + te(lon,lat,k=10) + s(alt,k=10)
     results.gam = gam(formula,family=Gamma(link="log"),data=data.df)
     est.sig2 <- results.gam$sig2;est.mean <- results.gam$fitted.values
     est.shape = 1/est.sig2;est.scale <- est.mean/est.shape
@@ -85,7 +84,7 @@ if(file.exists(file.marginal)){
     data.df$est.prob <- est.prob 
 
     message("start binominal fitting")
-    formula.bin = y.bin ~ temp + s(day,k=10) + s(alt,k=10) + te(lon,lat,k=8)
+    formula.bin = y.bin ~ temp + s(day,k=10) + s(alt,k=10) + te(lon,lat,k=10)
     results.bin <- gam(formula.bin,family = binomial(link="logit"),data=data.df)
     est.prob.exceed <- fitted(results.bin) ## fitted exceeding probability
     data.df$est.prob.exceed <- est.prob.exceed
@@ -93,7 +92,7 @@ if(file.exists(file.marginal)){
     message("start GPD fitting")
     data.df$y.gpd <- data.df$y - data.df$est.quantile
     data.df.gpd <- data.df[data.df$y.gpd>0,]
-    formula.gpd = list(y.gpd ~ log(est.quantile) + temp + s(day,k=10) + s(alt,k=10) + te(lon,lat,k=8),~1)
+    formula.gpd = list(y.gpd ~ log(est.quantile) + temp + s(day,k=10) + s(alt,k=10) + te(lon,lat,k=10),~1)
     results.gpd <- evgam(formula.gpd,data=data.df.gpd,family="gpd")
     est.scale.gpd = exp(fitted(results.gpd)[,1]);est.shape.gpd = fitted(results.gpd)[1,2]
     data.df.gpd$est.scale.gpd = est.scale.gpd;data.df.gpd$est.shape.gpd = est.shape.gpd
@@ -139,7 +138,7 @@ for(count in 1:8){
         reg.t = temperature.covariate[[idx.region]][ind.data][ind.sample][idx.season]
 
         r.obs <- suppressWarnings(unlist(lapply(obs,function(x){if(sum(!is.na(x))!=0){rFun(x[!is.na(x)],u=1,est.shape.gpd)}else{NA}})))
-        thres = quantile(r.obs[no.obs > 10],0.8,na.rm=TRUE)
+        thres = quantile(r.obs[no.obs > 10],0.95,na.rm=TRUE)
 
         ## select the exceedances
         idx.exc = no.obs > 10 & r.obs > thres 
