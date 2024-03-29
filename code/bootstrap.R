@@ -143,7 +143,7 @@ for(count in 1:8){
         ## select the exceedances
         idx.exc = no.obs > 10 & r.obs > thres 
         stopifnot( sum(idx.exc) > 0 & any(!is.na(reg.t)) )
-
+        print(sum(idx.exc))
         reg.t = reg.t[idx.exc]
         exceedances <- obs[idx.exc]
 
