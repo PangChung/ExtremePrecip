@@ -6,7 +6,8 @@ library(evgam)
 library(gridExtra)
 library(ggpubr)
 library(evd)
-load("data/dep.fit.boot.results.RData")
+DataPath <- "data/boot2/"
+load("data/dep.fit.boot.results2.RData")
 load("data/temperature.RData")
 load("data/temperature_pred.RData")
 load("data/precip.RData")
@@ -18,17 +19,58 @@ source("code/utility.R")
 # 4 seasons * 8 regions * 2 risk functions
 # create a data frame with the results 
 season = c("Winter" ,"Spring" ,"Summer" ,"Fall")
-idx.grid <- as.matrix(expand.grid(1:8, 1:4, 1:2))
-boot.result.df <- data.frame(
-    region = idx.grid[,1],
-    season = idx.grid[,2],
-    risk = idx.grid[,3],
-    shape = apply(idx.grid,1,function(x){boot.result.list[[x[3]]][[x[2]]][[x[1]]]$true[1]}),
-    lambda0 = apply(idx.grid,1,function(x){boot.result.list[[x[3]]][[x[2]]][[x[1]]]$true[2]}),
-    lambda1 = apply(idx.grid,1,function(x){boot.result.list[[x[3]]][[x[2]]][[x[1]]]$true[3]}),
-    sd.shape = apply(idx.grid,1,function(x){boot.result.list[[x[3]]][[x[2]]][[x[1]]]$sd[1]}),
-    sd.lambda0 = apply(idx.grid,1,function(x){boot.result.list[[x[3]]][[x[2]]][[x[1]]]$sd[2]}),
-    sd.lambda1 = apply(idx.grid,1,function(x){boot.result.list[[x[3]]][[x[2]]][[x[1]]]$sd[3]}))
+# plot the results
+# Assuming boot.result.df has columns for x, y, ymin, and ymax
+p1 <- p2 <- list()
+p1[[1]] <- ggplot(boot.result.df, aes(x=factor(region), y=shape, color=factor(risk), group=season)) +
+geom_point(size=1) +
+geom_errorbar(aes(ymin=shape - 1.96*sd.shape, ymax=shape + 1.96*sd.shape), width=0.5) +
+ggh4x::facet_grid2(~season, space = "free_x", labeller = labeller(season = as_labeller(c("1" = "Winter", "2" = "Spring", "3" = "Summer", "4" = "Fall")))) + labs(color="risk functional",x="Region",y=expression(nu))  + theme(axis.text.x = element_text(angle = 0, hjust = 0.5))
+
+p1[[2]] <- ggplot(boot.result.df, aes(x=factor(region), y=lambda0, color=factor(risk), group=season)) +
+geom_point(size=1) +
+geom_errorbar(aes(ymin=lambda0 - 1.96*sd.lambda0, ymax=lambda0 + 1.96*sd.lambda0), width=0.5) +
+ggh4x::facet_grid2(~season, space = "free_x", labeller = labeller(season = as_labeller(c("1" = "Winter", "2" = "Spring", "3" = "Summer", "4" = "Fall")))) + labs(color="risk functional",x="Region",y=expression(lambda[0])) + theme(axis.text.x = element_text(angle = 0, hjust = 0.5))
+
+p1[[3]] <- ggplot(boot.result.df, aes(x=factor(region), y=lambda1, color=factor(risk), group=season)) +
+geom_point(size=1) +
+geom_errorbar(aes(ymin=lambda1 - 1.96*sd.lambda1, ymax=lambda1 + 1.96*sd.lambda1), width=0.5,position=position_dodge(width=0)) +
+ggh4x::facet_grid2(~season,scales="free_y",independent="y", labeller = labeller(season = as_labeller(c("1" = "Winter", "2" = "Spring", "3" = "Summer", "4" = "Fall")))) + labs(color="risk functional",x="Region",y=expression(lambda[1]))  + theme(axis.text.x = element_text(angle = 0, hjust = 0.5))
+
+p1[[4]] <- get_legend(p1[[1]])
+p1[[1]] <- p1[[1]] + theme(legend.position = "none")
+p1[[2]] <- p1[[2]] + theme(legend.position = "none")
+p1[[3]] <- p1[[3]] + theme(legend.position = "none")
+
+pdf(file="figures/boot_plot.pdf",width=4*2+1,height=3)
+grid.arrange(grobs=p1[-3], nrow = 1, widths = c(4, 4, 1))
+p1[[3]]
+dev.off()
+
+p2[[1]] <- ggplot(boot.result.df, aes(x=factor(region), y=shape, color=factor(risk), group=season)) +
+geom_point(size=1) +
+geom_errorbar(aes(ymin=low.shape, ymax=high.shape), width=0.5,position=position_dodge(width=1)) +
+ggh4x::facet_grid2(~season, space = "free_x", labeller = labeller(season = as_labeller(c("1" = "Winter", "2" = "Spring", "3" = "Summer", "4" = "Fall")))) + labs(color="risk functional",x="Region",y=expression(nu))  + theme(axis.text.x = element_text(angle = 0, hjust = 0.5))
+
+p2[[2]] <- ggplot(boot.result.df, aes(x=factor(region), y=lambda0, color=factor(risk), group=season)) +
+geom_point(size=1) +
+geom_errorbar(aes(ymin=low.lambda0, ymax=high.lambda0), width=0.5,position=position_dodge(width=1)) +
+ggh4x::facet_grid2(~season, space = "free_x", labeller = labeller(season = as_labeller(c("1" = "Winter", "2" = "Spring", "3" = "Summer", "4" = "Fall")))) + labs(color="risk functional",x="Region",y=expression(lambda[0])) + theme(axis.text.x = element_text(angle = 0, hjust = 0.5))
+
+p2[[3]] <- ggplot(boot.result.df, aes(x=factor(region), y=lambda1, color=factor(risk), group=season)) +
+geom_point(size=1) +
+geom_errorbar(aes(ymin=low.lambda1, ymax=high.lambda1), width=0.5,position=position_dodge(width=1)) +
+ggh4x::facet_grid2(~season,scales="free_y",independent="y", labeller = labeller(season = as_labeller(c("1" = "Winter", "2" = "Spring", "3" = "Summer", "4" = "Fall")))) + labs(color="risk functional",x="Region",y=expression(lambda[1]))  + theme(axis.text.x = element_text(angle = 0, hjust = 0.5))
+
+p2[[4]] <- get_legend(p2[[1]])
+p2[[1]] <- p2[[1]] + theme(legend.position = "none")
+p2[[2]] <- p2[[2]] + theme(legend.position = "none")
+p2[[3]] <- p2[[3]] + theme(legend.position = "none")
+
+pdf(file="figures/boot_plot2.pdf",width=4*2+1,height=3)
+grid.arrange(grobs=p2[-3], nrow = 1, widths = c(4, 4, 1))
+p2[[3]]
+dev.off()
 
 # plot the results
 # Assuming boot.result.df has columns for x, y, ymin, and ymax
@@ -59,7 +101,7 @@ grid.arrange(p1, p2, legend, nrow = 1, widths = c(4, 4, 1))
 p3
 dev.off()
 
-save(boot.result.df,p1,p2,p3,file="data/boot_plot.RData")
+save(boot.result.df,p1,p2,p3,file=paste0(DataPath,"data/boot_plot.RData"))
 
 ## the prediciton into the future: marginal return level and the dependence range ## 
 
@@ -119,7 +161,7 @@ pdf("figures/temperature_covariate.pdf",width = 20,height = 9)
 ggarrange(plotlist=p.list,nrow=2,ncol=4,common.legend=TRUE,legend="bottom")
 dev.off()
 
-save(p.list,file = "data/plot_temperature_covariate.RData")
+save(p.list,file = paste0(DataPath,"plot_temperature_covariate.RData"))
 
 ## plot the marginal return level ##
 model.selected = c(1,3,4)
@@ -127,7 +169,7 @@ y.thres=10
 count = 1
 p.list <- list()
 for(r in 1:8){
-    load(paste0("data/marginal_fit_301_",r,".RData"),e<-new.env())
+    load(paste0(DataPath,"marginal_fit_301_",r,".RData"),e<-new.env())
     ### prepare the data frame to predict ###
     # print(r)
     # print(summary(e$results.gam))
@@ -195,12 +237,13 @@ for(r in 1:8){
 pdf("figures/return_level_margins.pdf",width = 20,height = 9,onefile = TRUE)
 ggarrange(plotlist=p.list,nrow=2,ncol=4,common.legend=TRUE,legend="bottom")
 dev.off()
-save(p.list,file = "data/plot_return_level_margins.RData")
+save(p.list,file = paste0(DataPath,"plot_return_level_margins.RData"))
 
 
 ## plot qqplot for random locations ##
+
 for(idx in 1:8){
-    load(paste0("data/bootstrap2/marginal_fit_301_",idx,".RData"),e<-new.env())
+    load(paste0(DataPath,"marginal_fit_301_",idx,".RData"),e<-new.env())
     # sig2.pred <- e$results.gpd$sig2
     # shape.pred = 1/sig2.pred
     shape.pred = fitted(e$results.gpd)[1,2]
@@ -283,7 +326,7 @@ ggarrange(plotlist=p.list1,nrow=2,ncol=4,common.legend=TRUE,legend="bottom")
 ggarrange(plotlist=p.list2,nrow=2,ncol=4,common.legend=TRUE,legend="bottom")
 dev.off()
 
-save(p.list1,p.list2,file = "data/tail_correlation_range.RData")
+save(p.list1,p.list2,file = paste0(DataPath,"data/tail_correlation_range.RData"))
 
 ## Simulations ##
 library(mvPotST)

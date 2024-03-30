@@ -1,14 +1,7 @@
-load("data/precip.RData")
-marginal.fit.files <- list.files("data/",pattern = "marginal_fit_.*.RData",full.names = TRUE)
-
-for(i in 1:length(marginal.fit.files)){
-    load(marginal.fit.files[i],e<-new.env())
-    print(is.null(e$data.df.gpd))
-}
-
 ### collect results for bootstrap ### 
+rm(list=ls())
 library(stringr)
-boot.files <- list.files(path="data/bootstrap/",pattern="fit_bootstrap_",full.names = TRUE)
+boot.files <- list.files(path="data/boot2/",pattern="fit_bootstrap_",full.names = TRUE)
 region.idx <- as.numeric(str_extract(str_extract(boot.files,"_[1-8]\\."),"[1-8]"))
 boot.idx <- as.numeric(str_extract(str_extract(boot.files,"_\\d+_"),"\\d+"))
 
@@ -47,14 +40,27 @@ for(norm.idx in 1:2){
 }
 
 idx.grid = expand.grid(region=1:8,season=1:4,risk=1:2)
-CI.data <- data.frame(risk=idx.grid$risk,season=idx.grid$season,region=idx.grid$region,low=NA,high=NA,true=NA)
-CI.data[,4:5]<- t(apply(as.matrix(CI.data[,1:3]),1,function(x){quantile(boot.result.list[[x[1]]][[x[2]]][[x[3]]]$jack[,3],c(0.025,0.975))}))
-# CI.data[,6]<- apply(as.matrix(CI.data[,1:3]),1,function(x){boot.result.list[[x[1]]][[x[2]]][[x[3]]]$true[3]})
-CI.data[,6] <- e1$boot.result.df$lambda1
-CI.data[which(CI.data$low * CI.data$high > 0),1:3]
-length(which(CI.data$true <= CI.data$high & CI.data$true >= CI.data$low))
+boot.result.df <- data.frame(
+    region = idx.grid[,1],
+    season = idx.grid[,2],
+    risk = idx.grid[,3],
+    shape = apply(idx.grid,1,function(x){boot.result.list[[x[3]]][[x[2]]][[x[1]]]$true[1]}),
+    lambda0 = apply(idx.grid,1,function(x){boot.result.list[[x[3]]][[x[2]]][[x[1]]]$true[2]}),
+    lambda1 = apply(idx.grid,1,function(x){boot.result.list[[x[3]]][[x[2]]][[x[1]]]$true[3]}),
+    sd.shape = apply(idx.grid,1,function(x){boot.result.list[[x[3]]][[x[2]]][[x[1]]]$sd[1]}),
+    sd.lambda0 = apply(idx.grid,1,function(x){boot.result.list[[x[3]]][[x[2]]][[x[1]]]$sd[2]}),
+    sd.lambda1 = apply(idx.grid,1,function(x){boot.result.list[[x[3]]][[x[2]]][[x[1]]]$sd[3]}),
+    low.shape = apply(idx.grid,1,function(x){quantile(boot.result.list[[x[3]]][[x[2]]][[x[1]]]$jack[,1],0.025)}),
+    high.shape = apply(idx.grid,1,function(x){quantile(boot.result.list[[x[3]]][[x[2]]][[x[1]]]$jack[,1],0.975)}),
+    low.lambda0 = apply(idx.grid,1,function(x){quantile(boot.result.list[[x[3]]][[x[2]]][[x[1]]]$jack[,2],0.025)}),
+    high.lambda0 = apply(idx.grid,1,function(x){quantile(boot.result.list[[x[3]]][[x[2]]][[x[1]]]$jack[,2],0.975)}),
+    low.lambda1 = apply(idx.grid,1,function(x){quantile(boot.result.list[[x[3]]][[x[2]]][[x[1]]]$jack[,3],0.025)}),
+    high.lambda1 = apply(idx.grid,1,function(x){quantile(boot.result.list[[x[3]]][[x[2]]][[x[1]]]$jack[,3],0.975)})
+    )
+boot.result.df[which(boot.result.df$low.lambda1 * boot.result.df$high.lambda1 > 0),1:3]
+boot.result.df[which(abs(boot.result.df$lambda1) > boot.result.df$sd.lambda1*1.96),1:3]
 
-save(boot.result.list, results.boot.list, region.idx, boot.files, boot.idx,file="data/dep.fit.boot.results.RData")
+save(boot.result.df,boot.result.list, results.boot.list, region.idx, boot.files, boot.idx,file="data/dep.fit.boot.results2.RData")
 
 
 
