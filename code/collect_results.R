@@ -48,9 +48,9 @@ for(norm.idx in 1:2){
 
 idx.grid = expand.grid(region=1:8,season=1:4,risk=1:2)
 CI.data <- data.frame(risk=idx.grid$risk,season=idx.grid$season,region=idx.grid$region,low=NA,high=NA,true=NA)
-CI.data[,4:5]<- t(apply(as.matrix(CI.data[,1:3]),1,function(x){quantile(boot.result.list[[x[1]]][[x[2]]][[x[3]]]$jack[,3],c(0.025,0.975))}))
+CI.data[,c("low","high")]<- t(apply(as.matrix(CI.data[,1:3]),1,function(x){quantile(boot.result.list[[x[1]]][[x[2]]][[x[3]]]$jack[,3],c(0.025,0.975))}))
 # CI.data[,6]<- apply(as.matrix(CI.data[,1:3]),1,function(x){boot.result.list[[x[1]]][[x[2]]][[x[3]]]$true[3]})
-CI.data[,6] <- e1$boot.result.df$lambda1
+CI.data$true <- e1$boot.result.df$lambda1
 CI.data[which(CI.data$low * CI.data$high > 0),1:3]
 length(which(CI.data$true <= CI.data$high & CI.data$true >= CI.data$low))
 
