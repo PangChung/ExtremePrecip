@@ -14,7 +14,7 @@ for(i in 1:length(boot.files)){
 idx.valid = !unlist(lapply(results.boot.list,function(x){any(!unlist(lapply(x,function(y){length(y)==4})))}))
 
 system(paste("rm",boot.files[!idx.valid]))
-results.boot.list <- results.boot.list[idx.valid]
+ist <- results.boot.list[idx.valid]
 boot.files <- boot.files[idx.valid]
 region.idx <- region.idx[idx.valid]
 boot.idx <- boot.idx[idx.valid]
