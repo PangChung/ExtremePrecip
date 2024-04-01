@@ -136,7 +136,7 @@ save(p.list,file = paste0(DataPath,"plot_temperature_covariate.RData"))
 
 ## plot the marginal return level ##
 model.selected = c(1,3,4)
-y.thres=10
+y.thres=0
 count = 1
 p.list <- list()
 for(r in 1:8){
@@ -220,7 +220,7 @@ for(idx in 1:8){
     shape.pred = fitted(e$results.gpd)[1,2]
     print(shape.pred)
 #    }
-    set.seed(1000)
+    set.seed(1234435)
     idx.list = sample(1:sum(station$group.id==region.id[idx]),2,replace = F,prob=apply(e$U,2,function(x){sum(!is.na(x))}))
     png(file = paste0("figures/qqplot_marginal_",idx,".png"),height=6,width=6*3,units="cm",res=300, pointsize=6)
     par(mfrow=c(1,3),mar=c(3,4,3,1),mgp=c(2.5,2,0),cex.lab=3,cex.axis=3,cex.main=3)
@@ -297,7 +297,7 @@ ggarrange(plotlist=p.list1,nrow=2,ncol=4,common.legend=TRUE,legend="bottom")
 ggarrange(plotlist=p.list2,nrow=2,ncol=4,common.legend=TRUE,legend="bottom")
 dev.off()
 
-save(p.list1,p.list2,file = paste0(DataPath,"data/tail_correlation_range.RData"))
+save(p.list1,p.list2,file = paste0(DataPath,"tail_correlation_range.RData"))
 
 ##############################################################
 ######### Simulations ########################################
