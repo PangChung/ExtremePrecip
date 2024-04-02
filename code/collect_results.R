@@ -62,5 +62,5 @@ boot.result.df[which(abs(boot.result.df$lambda1) > boot.result.df$sd.lambda1*1.9
 
 save(boot.result.df,boot.result.list, results.boot.list, region.idx, boot.files, boot.idx,file="data/dep.fit.boot.results2.RData")
 
-
+lapply(precip,function(x){x = unlist(x);sum(x[!is.na(x)]>0)/length(x)})
 
