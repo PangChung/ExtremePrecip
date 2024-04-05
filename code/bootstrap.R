@@ -39,7 +39,7 @@ tep.covariate <- temperature.covariate[[idx.region]][ind.data]
 ## sample the data ##
 idx_numbers = sort(rep(1:1000,length.out = sum(ind.data)))
 #idx_samples = (1:300)[-bootstrap.ind]
-if(bootstrap.ind!=301){
+if(bootstrap.ind!=0){
     idx_samples = sort(sample(1:1000,1000,replace=TRUE))
 } else {
     idx_samples = 1:1000
@@ -104,15 +104,15 @@ if(file.exists(file.marginal)){
     U <- matrix(NA,nrow=sum(ind.data),ncol=D)
     U[cbind(data.df$row,data.df$col)] <- est.prob/(1+1e-10) ## avoid computational issues
     
-    if(bootstrap.ind==301) save(results.bin,results.gam,results.gpd,data.df.gpd,U,data.df,file=file.marginal)
+    if(bootstrap.ind==0) save(results.bin,results.gam,results.gpd,data.df.gpd,U,data.df,file=file.marginal)
 }
 
 # depdence fit ##
 result.list <- list(list(),list())
-for(count in 1:8){
+for(count in 5:8){
         norm.ind = (count-1) %/% 4 + 1
         season.idx = (count - 1) %% 4 + 1
-        file = paste0(DataPath,"/data/fit_bootstrap_301_",idx.region,".RData") 
+        file = paste0(DataPath,"/data/fit_bootstrap_0_",idx.region,".RData") 
         # file2save = paste0("/srv/scratch/z3536974/data/fit_bootstrap_",bootstrap.ind,"_",idx.region,"_",count,".RData")
         if(file.exists(file)){
             load(file,e<-new.env())
