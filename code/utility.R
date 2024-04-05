@@ -29,7 +29,6 @@ vario <- function(loc,par,t=1){ ##return a covariance matrix
     vario <- function(coord){
         if(!is.matrix(coord)) {val <- (sqrt(sum(coord^2))/lambda)^alpha}
         else {val <- (sqrt(sum((coord[1,]-coord[2,])^2))/lambda)^alpha}
-
     }
     all.pairs = combn(1:n,2)
     all.pairs.list = split(all.pairs,col(all.pairs))
