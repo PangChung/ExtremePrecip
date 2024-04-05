@@ -36,7 +36,6 @@ vario <- function(loc,par,t=1){ ##return a covariance matrix
     cov.mat = diag(2*gamma.origin)
     cov.mat[t(all.pairs)] <- sapply(1:length(gamma.vec),function(i){idx = all.pairs[,i];return(gamma.origin[idx[1]] + gamma.origin[idx[2]] - gamma.vec[i])})
     cov.mat[t(all.pairs[2:1,])] <- cov.mat[t(all.pairs)]         
-
     return(cov.mat + .Machine$double.eps * diag(n))
 }
 
