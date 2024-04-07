@@ -57,7 +57,7 @@ for region in {1..8}; do
     run_job $region $PBS_ARRAY_INDEX
 done
 
-output_count=`ls ${srv}/fit_bootstrap_${PBS_ARRAY_INDEX}_*.RData | wc -l`
+output_count=`ls ${srv}/fit_bootstrap_1_${PBS_ARRAY_INDEX}_*.RData | wc -l`
 while [ ${output_count} -ne 8 ]; do 
     sleep 2
     # for ((i=0; i<${#pids[@]}; i++)); do
@@ -66,6 +66,6 @@ while [ ${output_count} -ne 8 ]; do
     #     fi
     # done
     # echo "all jobs are currently either running or finished"
-    output_count=`ls ${srv}/fit_bootstrap_${PBS_ARRAY_INDEX}_*.RData | wc -l`
+    output_count=`ls ${srv}/fit_bootstrap_1_${PBS_ARRAY_INDEX}_*.RData | wc -l`
 done
 date

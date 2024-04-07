@@ -22,12 +22,12 @@ library(evd)
 library(mgcv)
 library(evgam)
 
-file.marginal = paste0(DataPath,"/data/marginal_fit_",bootstrap.ind,"_",idx.region,".RData")
-file2save = paste0(DataPath,"/data/fit_bootstrap_",bootstrap.ind,"_",idx.region,".RData")
+file.marginal = paste0(DataPath,"/data/marginal_fit_1_",bootstrap.ind,"_",idx.region,".RData")
+file2save = paste0(DataPath,"/data/fit_bootstrap_1_",bootstrap.ind,"_",idx.region,".RData")
 if(file.exists(file2save)) {stop("fit is already done")}
 ncores = floor(detectCores()/njobs)
 if(idx.region==2 | idx.region==7){ncores=ncores*2}
-init.seed = as.integer((as.integer(Sys.time())/bootstrap.ind + sample.int(10^5,1))%%10^5)
+init.seed = as.integer((as.integer(Sys.time()) + sample.int(10^5,1))%%10^5)
 set.seed(init.seed)
 ## prepare the time covariate: year and date
 ind.data = date.df$date >= START.date & date.df$date <= END.date
@@ -109,10 +109,10 @@ if(file.exists(file.marginal)){
 
 # depdence fit ##
 result.list <- list(list(),list())
-for(count in 5:8){
+for(count in 1:4){
         norm.ind = (count-1) %/% 4 + 1
         season.idx = (count - 1) %% 4 + 1
-        file = paste0(DataPath,"/data/fit_bootstrap_0_",idx.region,".RData") 
+        file = paste0(DataPath,"/data/fit_bootstrap_1_0_",idx.region,".RData") 
         # file2save = paste0("/srv/scratch/z3536974/data/fit_bootstrap_",bootstrap.ind,"_",idx.region,"_",count,".RData")
         if(file.exists(file)){
             load(file,e<-new.env())
