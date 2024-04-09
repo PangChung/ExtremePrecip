@@ -1,9 +1,25 @@
 ### collect results for bootstrap ### 
 rm(list=ls())
 library(stringr)
-boot.files <- list.files(path="data/boot2/",pattern="fit_bootstrap_",full.names = TRUE)
-region.idx <- as.numeric(str_extract(str_extract(boot.files,"_[1-8]\\."),"[1-8]"))
-boot.idx <- as.numeric(str_extract(str_extract(boot.files,"_\\d+_"),"\\d+"))
+boot.files <- list.files(path="data/boot4/",pattern="fit_bootstrap_0_\\d+_\\d+.RData",full.names = TRUE)
+numbers.idx = str_extract_all(boot.files,"\\d+")
+region.idx <- sapply(numbers.idx,function(x){as.numeric(x[4])})
+boot.idx <- sapply(numbers.idx,function(x){as.numeric(x[3])})
+
+# for(i in 0:300){
+#     for(j in 1:8){
+#         file0 = paste0("data/boot4/fit_bootstrap_",i,"_",j,".RData")
+#         file1 = paste0("data/boot4/fit_bootstrap_1_",i,"_",j,".RData")
+#         if(file.exists(file0) & file.exists(file1)){
+#             load(file0,e0<-new.env());load(file1,e1<-new.env())
+#             result.list <- e0$result.list
+#             result.list[[1]] <- e1$result.list[[1]]
+#             print("done")
+#             save(result.list,file=paste0("data/boot4/fit_bootstrap_0_",i,"_",j,".RData"))
+#         }
+#     }
+#     print(i)
+# }
 
 results.boot.list <- list()
 for(i in 1:length(boot.files)){
@@ -19,8 +35,8 @@ boot.files <- boot.files[idx.valid]
 region.idx <- region.idx[idx.valid]
 boot.idx <- boot.idx[idx.valid]
 boot.collect <- function(data,idx,norm.idx,season.idx,region.idx,boot.idx){
-    estimates.boot = matrix(unlist(lapply(data[region.idx==idx & boot.idx != 301],function(x){y=x[[norm.idx]][[season.idx]]$par;y[1] <- 2/(1+exp(-y[1]));y})),ncol=3,byrow=TRUE)
-    est.true = results.boot.list[region.idx == idx  & boot.idx == 301][[1]][[norm.idx]][[season.idx]]$par; est.true[1] <- 2/(1+exp(-est.true[1]))
+    estimates.boot = matrix(unlist(lapply(data[region.idx==idx & boot.idx != 0],function(x){y=x[[norm.idx]][[season.idx]]$par;y[1] <- 2/(1+exp(-y[1]));y})),ncol=3,byrow=TRUE)
+    est.true = results.boot.list[region.idx == idx  & boot.idx == 0][[1]][[norm.idx]][[season.idx]]$par; est.true[1] <- 2/(1+exp(-est.true[1]))
     n = nrow(estimates.boot)
     sd.jackknife = apply(estimates.boot,2,function(x){return(sd(x))})
     
@@ -56,11 +72,10 @@ boot.result.df <- data.frame(
     high.lambda0 = apply(idx.grid,1,function(x){quantile(boot.result.list[[x[3]]][[x[2]]][[x[1]]]$jack[,2],0.975)}),
     low.lambda1 = apply(idx.grid,1,function(x){quantile(boot.result.list[[x[3]]][[x[2]]][[x[1]]]$jack[,3],0.025)}),
     high.lambda1 = apply(idx.grid,1,function(x){quantile(boot.result.list[[x[3]]][[x[2]]][[x[1]]]$jack[,3],0.975)})
-    )
+)
+
 boot.result.df[which(boot.result.df$low.lambda1 * boot.result.df$high.lambda1 > 0),1:3]
 boot.result.df[which(abs(boot.result.df$lambda1) > boot.result.df$sd.lambda1*1.96),1:3]
 
-save(boot.result.df,boot.result.list, results.boot.list, region.idx, boot.files, boot.idx,file="data/dep.fit.boot.results2.RData")
-
-lapply(precip,function(x){x = unlist(x);sum(x[!is.na(x)]>0)/length(x)})
+save(boot.result.df,boot.result.list, results.boot.list, region.idx, boot.files, boot.idx,file="data/dep.fit.boot.results3.RData")
 
