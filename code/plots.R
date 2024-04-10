@@ -6,8 +6,8 @@ library(evgam)
 library(gridExtra)
 library(ggpubr)
 library(evd)
-DataPath <- "data/boot2/"
-load("data/dep.fit.boot.results2.RData")
+DataPath <- "data/boot4/"
+load("data/dep.fit.boot.results3.RData")
 load("data/temperature.RData")
 load("data/temperature_pred.RData")
 load("data/precip.RData")
@@ -24,54 +24,158 @@ season = c("Winter" ,"Spring" ,"Summer" ,"Fall")
 p1 <- p2 <- list()
 p1[[1]] <- ggplot(boot.result.df, aes(x=factor(region), y=shape, color=factor(risk), group=season)) +
 geom_point(size=1,position=position_dodge2(width=0.5)) +
-geom_errorbar(aes(ymin=shape - 1.96*sd.shape, ymax=shape + 1.96*sd.shape), width=0.5,position=position_dodge2(width=1)) +
-ggh4x::facet_grid2(~season, space = "free_x", labeller = labeller(season = as_labeller(c("1" = "Winter", "2" = "Spring", "3" = "Summer", "4" = "Fall")))) + labs(color="risk functional",x="Region",y=expression(nu))  + theme(axis.text.x = element_text(angle = 0, hjust = 0.5))
+geom_errorbar(aes(ymin=shape - 1.96*sd.shape, ymax=shape + 1.96*sd.shape), width=0.5,linewidth=1.5,position=position_dodge2(width=1)) +
+ggh4x::facet_grid2(~season, space = "free_x", labeller = labeller(season = as_labeller(c("1" = "Winter", "2" = "Spring", "3" = "Summer", "4" = "Fall")))) + labs(color="risk functional",x="Region",y=expression(nu))
 
 p1[[2]] <- ggplot(boot.result.df, aes(x=factor(region), y=lambda0, color=factor(risk), group=season)) +
 geom_point(size=1,position=position_dodge2(width=0.5)) +
-geom_errorbar(aes(ymin=lambda0 - 1.96*sd.lambda0, ymax=lambda0 + 1.96*sd.lambda0), width=0.5,position=position_dodge2(width=1)) +
-ggh4x::facet_grid2(~season, space = "free_x", labeller = labeller(season = as_labeller(c("1" = "Winter", "2" = "Spring", "3" = "Summer", "4" = "Fall")))) + labs(color="risk functional",x="Region",y=expression(lambda[0])) + theme(axis.text.x = element_text(angle = 0, hjust = 0.5))
+geom_errorbar(aes(ymin=lambda0 - 1.96*sd.lambda0, ymax=lambda0 + 1.96*sd.lambda0), width=0.5,linewidth=1.5,position=position_dodge2(width=1)) +
+ggh4x::facet_grid2(~season, space = "free_x", labeller = labeller(season = as_labeller(c("1" = "Winter", "2" = "Spring", "3" = "Summer", "4" = "Fall")))) + labs(color="risk functional",x="Region",y=expression(lambda[0]))
 
 p1[[3]] <- ggplot(boot.result.df, aes(x=factor(region), y=lambda1, color=factor(risk), group=season)) +
 geom_point(size=1,position=position_dodge2(width=0.5)) +
-geom_errorbar(aes(ymin=lambda1 - 1.96*sd.lambda1, ymax=lambda1 + 1.96*sd.lambda1), width=0.5,position=position_dodge2(width=1)) +
-ggh4x::facet_grid2(~season,scales="free_y",independent="y", labeller = labeller(season = as_labeller(c("1" = "Winter", "2" = "Spring", "3" = "Summer", "4" = "Fall")))) + labs(color="risk functional",x="Region",y=expression(lambda[1]))  + theme(axis.text.x = element_text(angle = 0, hjust = 0.5)) + geom_hline(yintercept = 0, linetype="dashed", color = "black")
+geom_errorbar(aes(ymin=lambda1 - 1.96*sd.lambda1, ymax=lambda1 + 1.96*sd.lambda1), width=0.5,linewidth=1.5,position=position_dodge2(width=1)) +
+ggh4x::facet_grid2(~season,scales="free_y",independent="y", labeller = labeller(season = as_labeller(c("1" = "Winter", "2" = "Spring", "3" = "Summer", "4" = "Fall")))) + labs(color="risk functional",x="Region",y=expression(lambda[1])) + geom_hline(yintercept = 0, linetype="dashed", color = "black")
 
 p1[[3]]
 
-p1[[4]] <- get_legend(p1[[1]])
-p1[[1]] <- p1[[1]] + theme(legend.position = "none")
-p1[[2]] <- p1[[2]] + theme(legend.position = "none")
-p1[[3]] <- p1[[3]] + theme(legend.position = "none")
-
-pdf(file="figures/boot_plot.pdf",width=4*2+1,height=3)
-grid.arrange(grobs=p1[-3], nrow = 1, widths = c(4, 4, 1))
+p1[[1]] <- p1[[1]] + theme(axis.text = element_text(size = 10),
+        axis.title.x = element_text(size = 14),
+        strip.text = element_text(size = 14),
+        axis.title.y = element_text(size = 14),
+        plot.title = element_text(hjust = 0.5, size = 14),
+        legend.title = element_text(size = 14),
+        legend.position = "bottom")
+p1[[2]] <- p1[[2]]  + theme(axis.text = element_text(size = 10),
+        axis.title.x = element_text(size = 14),
+        strip.text = element_text(size = 14),
+        axis.title.y = element_text(size = 14),
+        plot.title = element_text(hjust = 0.5, size = 14),
+        legend.title = element_text(size = 14),
+        legend.position = "bottom")
+p1[[3]] <- p1[[3]]  +  theme(axis.text = element_text(size = 10),
+        axis.title.x = element_text(size = 14),
+        strip.text = element_text(size = 14),
+        axis.title.y = element_text(size = 14),
+        plot.title = element_text(hjust = 0.5, size = 14),
+        legend.title = element_text(size = 14),
+        legend.position = "bottom")
+pdf(file="figures/boot_plot.pdf",width=16,height=4)
+p1[[1]]
+p1[[2]]
 p1[[3]]
 dev.off()
 
 p2[[1]] <- ggplot(boot.result.df, aes(x=factor(region), y=shape, color=factor(risk), group=season)) +
 geom_point(size=1,position=position_dodge2(width=0.5)) +
-geom_errorbar(aes(ymin=low.shape, ymax=high.shape), width=0.5,position=position_dodge2(width=1)) +
-ggh4x::facet_grid2(~season, space = "free_x", labeller = labeller(season = as_labeller(c("1" = "Winter", "2" = "Spring", "3" = "Summer", "4" = "Fall")))) + labs(color="risk functional",x="Region",y=expression(nu))  + theme(axis.text.x = element_text(angle = 0, hjust = 0.5))
-
+geom_errorbar(aes(ymin=low.shape, ymax=high.shape), width=0.5,linewidth=1.5,position=position_dodge2(width=1)) +
+ggh4x::facet_grid2(~season, space = "free_x", labeller = labeller(season = as_labeller(c("1" = "Winter", "2" = "Spring", "3" = "Summer", "4" = "Fall")))) + labs(color="risk functional",x="Region",y=expression(nu)) 
 p2[[2]] <- ggplot(boot.result.df, aes(x=factor(region), y=lambda0, color=factor(risk), group=season)) +
 geom_point(size=1,position=position_dodge2(width=0.5)) +
-geom_errorbar(aes(ymin=low.lambda0, ymax=high.lambda0), width=0.5,position=position_dodge2(width=1)) +
-ggh4x::facet_grid2(~season, space = "free_x", labeller = labeller(season = as_labeller(c("1" = "Winter", "2" = "Spring", "3" = "Summer", "4" = "Fall")))) + labs(color="risk functional",x="Region",y=expression(lambda[0])) + theme(axis.text.x = element_text(angle = 0, hjust = 0.5))
+geom_errorbar(aes(ymin=low.lambda0, ymax=high.lambda0), width=0.5,linewidth=1.5,position=position_dodge2(width=1)) +
+ggh4x::facet_grid2(~season, space = "free_x", labeller = labeller(season = as_labeller(c("1" = "Winter", "2" = "Spring", "3" = "Summer", "4" = "Fall")))) + labs(color="risk functional",x="Region",y=expression(lambda[0])) 
 
 p2[[3]] <- ggplot(boot.result.df, aes(x=factor(region), y=lambda1, color=factor(risk), group=season)) +
 geom_point(size=1,position=position_dodge2(width=0.5)) +
-geom_errorbar(aes(ymin=low.lambda1, ymax=high.lambda1), width=0.5,position=position_dodge2(width=1)) +
-ggh4x::facet_grid2(~season,scales="free_y",independent="y", labeller = labeller(season = as_labeller(c("1" = "Winter", "2" = "Spring", "3" = "Summer", "4" = "Fall")))) + labs(color="risk functional",x="Region",y=expression(lambda[1]))  + theme(axis.text.x = element_text(angle = 0, hjust = 0.5)) + geom_hline(yintercept = 0, linetype="dashed", color = "black")
+geom_errorbar(aes(ymin=low.lambda1, ymax=high.lambda1), width=0.5,linewidth=1.5,position=position_dodge2(width=1)) +
+ggh4x::facet_grid2(~season,scales="free_y",independent="y", labeller = labeller(season = as_labeller(c("1" = "Winter", "2" = "Spring", "3" = "Summer", "4" = "Fall")))) + labs(color="risk functional",x="Region",y=expression(lambda[1])) + geom_hline(yintercept = 0, linetype="dashed", color = "black")
 
-p2[[4]] <- get_legend(p2[[1]])
-p2[[1]] <- p2[[1]] + theme(legend.position = "none")
-p2[[2]] <- p2[[2]] + theme(legend.position = "none")
-p2[[3]] <- p2[[3]] + theme(legend.position = "none")
+p2[[1]] <- p2[[1]] +   theme(axis.text = element_text(size = 10),
+        axis.title.x = element_text(size = 14),
+        strip.text = element_text(size = 14),
+        axis.title.y = element_text(size = 14),
+        plot.title = element_text(hjust = 0.5, size = 14),
+        legend.title = element_text(size = 14),
+        legend.position = "bottom")
+p2[[2]] <- p2[[2]] +   theme(axis.text = element_text(size = 10),
+        axis.title.x = element_text(size = 14),
+        strip.text = element_text(size = 14),
+        axis.title.y = element_text(size = 14),
+        plot.title = element_text(hjust = 0.5, size = 14),
+        legend.title = element_text(size = 14),
+        legend.position = "bottom")
+p2[[3]] <- p2[[3]] +   theme(axis.text = element_text(size = 10),
+        axis.title.x = element_text(size = 14),
+        strip.text = element_text(size = 14),
+        axis.title.y = element_text(size = 14),
+        plot.title = element_text(hjust = 0.5, size = 14),
+        legend.title = element_text(size = 14),
+        legend.position = "bottom")
 
-pdf(file="figures/boot_plot2.pdf",width=4*2+1,height=3)
-grid.arrange(grobs=p2[-3], nrow = 1, widths = c(4, 4, 1))
+pdf(file="figures/boot_plot2.pdf",width=16,height=4)
+p2[[1]]
+p2[[2]]
 p2[[3]]
+dev.off()
+
+est.mat <- NULL
+col.names <- c("region","season","risk","nu","lambda[0]","lambda[1]")
+for(i in 1:nrow(boot.result.df)){
+    data.temp = boot.result.list[[boot.result.df$risk[i]]][[boot.result.df$season[i]]][[boot.result.df$region[i]]]$jack
+    data.id = matrix(as.numeric(boot.result.df[i,1:3]),ncol=3,nrow=nrow(data.temp),byrow=TRUE)
+    est.mat = rbind(est.mat,cbind(data.id,data.temp))
+}
+est.df <- as.data.frame(matrix(est.mat,ncol=6))
+names(est.df) <- col.names
+est.df$season = factor(est.df$season,labels=c("Winter" ,"Spring" ,"Summer" ,"Fall"))
+est.df$risk = factor(est.df$risk,labels=c("Risk functional 1","Risk functional 2"))
+colnames(boot.result.df)[1:6] <- col.names
+boot.result.df$season = factor(boot.result.df$season,labels=c("Winter" ,"Spring" ,"Summer" ,"Fall"))
+boot.result.df$risk = factor(boot.result.df$risk,labels=c("Risk functional 1","Risk functional 2"))
+p.list <- list()
+
+p.list[[1]] <- ggplot(est.df, aes(x = factor(region), y = nu, fill = risk)) +
+  geom_violin(position = position_dodge(width=0.75),draw_quantiles = c(0.025,0.975)) + 
+  facet_wrap(~ season,scales = "free",nrow=2,ncol=4,labeller = label_parsed) +
+  geom_point(data=boot.result.df[,1:6],color="black",size=1,position=position_dodge(width = 0.75)) +
+  labs(title = "",
+       x = "Region",
+       y = bquote(nu),
+       fill = "Risk") +
+  theme(axis.text = element_text(size = 10),
+        axis.title.x = element_text(size = 14),
+        strip.text = element_text(size = 14),
+        axis.title.y = element_text(size = 14),
+        plot.title = element_text(hjust = 0.5, size = 14),
+        legend.title = element_text(size = 14),
+        legend.position = "bottom")
+
+p.list[[2]] <- ggplot(est.df, aes(x = factor(region), y = `lambda[0]`, fill = risk)) +
+  geom_violin(position = position_dodge(width=0.75),draw_quantiles = c(0.025,0.975)) + 
+  facet_wrap(~ season,scales = "free",nrow=2,ncol=4,labeller = label_parsed) +
+  geom_point(data=boot.result.df[,1:6],color="black",size=1,position=position_dodge(width = 0.75)) +
+  labs(title = "",
+       x = "Region",
+       y = bquote(lambda[0]),
+       fill = "Risk") +
+  theme(axis.text = element_text(size = 10),
+        axis.title.x = element_text(size = 14),
+        strip.text = element_text(size = 14),
+        axis.title.y = element_text(size = 14),
+        plot.title = element_text(hjust = 0.5, size = 14),
+        legend.title = element_text(size = 14),
+        legend.position = "bottom")
+
+p.list[[3]] <- ggplot(est.df, aes(x = factor(region), y = `lambda[1]`, fill = risk)) +
+  geom_violin(position = position_dodge(width=0.75),draw_quantiles = c(0.05,0.95)) + 
+  facet_wrap(~ season,scales = "free",nrow=2,ncol=4,labeller = label_parsed) +
+  geom_point(data=boot.result.df[,1:6],color="black",size=1,position=position_dodge(width = 0.75)) + geom_hline(yintercept = 0, linetype="dashed", color = "black") +
+  labs(title = "",
+       x = "Region",
+       y = bquote(lambda[1]),
+       fill = "Risk") +
+  theme(axis.text = element_text(size = 10),
+        axis.title.x = element_text(size = 14),
+        strip.text = element_text(size = 14),
+        axis.title.y = element_text(size = 14),
+        plot.title = element_text(hjust = 0.5, size = 14),
+        legend.title = element_text(size = 14),
+        legend.position = "bottom")
+
+pdf(file="figures/boot_plot3.pdf",width=16,height=4,onefile = TRUE)
+p.list[[1]]
+p.list[[2]]
+p.list[[3]]
 dev.off()
 
 ## the prediciton into the future: marginal return level and the dependence range ## 
@@ -140,7 +244,7 @@ y.thres=0
 count = 1
 p.list <- list()
 for(r in 1:8){
-    load(paste0(DataPath,"marginal_fit_301_",r,".RData"),e<-new.env())
+    load(paste0(DataPath,"marginal_fit_0_",r,".RData"),e<-new.env())
     ### prepare the data frame to predict ###
     # print(r)
     # print(summary(e$results.gam))
@@ -214,7 +318,7 @@ save(p.list,file = paste0(DataPath,"plot_return_level_margins.RData"))
 ## plot qqplot for random locations ##
 
 for(idx in 1:8){
-    load(paste0(DataPath,"marginal_fit_301_",idx,".RData"),e<-new.env())
+    load(paste0(DataPath,"marginal_fit_0_",idx,".RData"),e<-new.env())
     # sig2.pred <- e$results.gpd$sig2
     # shape.pred = 1/sig2.pred
     shape.pred = fitted(e$results.gpd)[1,2]
@@ -242,6 +346,7 @@ for(idx in 1:8){
 }
 
 ## plot the tail-correlation range ##
+load("data/dep.fit.boot.results3.RData")
 model.selected <- c(1,3,4)
 count = 1;p.list1 <- list()
 p.list2 <- list()
