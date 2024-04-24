@@ -87,9 +87,9 @@ solve.h.BR <- function(par,temp,logval=FALSE){
     alpha = par[1]
     lambda = par[2] + par[3]*temp
     if(logval){
-        h = lambda + (1/alpha) * (log(4*qnorm(1.95/2)^2))
+        h = lambda + (1/alpha) * (log(2*qnorm(1.95/2)^2))
     }else{
-        h=exp(lambda)*(4*qnorm(1.95/2)^2)^(1/alpha)
+        h=exp(lambda)*(2*qnorm(1.95/2)^2)^(1/alpha)
     }
     return(h)
 }
