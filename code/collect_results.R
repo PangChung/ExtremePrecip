@@ -1,6 +1,9 @@
 ### collect results for bootstrap ### 
 rm(list=ls())
 library(stringr)
+library(tidyr)
+library(knitr)
+library(kableExtra)
 boot.files <- list.files(path="data/boot4/",pattern="fit_bootstrap_0_\\d+_\\d+.RData",full.names = TRUE)
 numbers.idx = str_extract_all(boot.files,"\\d+")
 region.idx <- sapply(numbers.idx,function(x){as.numeric(x[4])})
@@ -79,3 +82,33 @@ boot.result.df[which(abs(boot.result.df$lambda1) > boot.result.df$sd.lambda1*1.9
 
 save(boot.result.df,boot.result.list, results.boot.list, region.idx, boot.files, boot.idx,file="data/dep.fit.boot.results3.RData")
 
+boot.result.df$shape.latex <- paste0("(",round(boot.result.df$low.shape,3),", ",round(boot.result.df$high.shape,3),")")
+
+boot.result.df$lambda0.latex <- paste0("(",round(boot.result.df$low.lambda0,3),", ",round(boot.result.df$high.lambda0,3),")") 
+
+boot.result.df$lambda1.latex <- paste0("(",round(boot.result.df$low.lambda1,3),", ",round(boot.result.df$high.lambda1,3),")") 
+
+df.latex <- boot.result.df[,c(1:6,16,17,18)]
+df.latex[,4:6] <- round(df.latex[,4:6],3)
+df.latex$season = season[df.latex$season]
+df.latex$region = factor(region.name[df.latex$region],levels=region.name)
+df.latex <- rbind(df.latex,df.latex)
+df.latex$type = rep(1:2,each=nrow(df.latex)/2)
+df.latex$shape[df.latex$type==2] = df.latex$shape.latex[df.latex$type==2]
+df.latex$lambda0[df.latex$type==2] = df.latex$lambda0.latex[df.latex$type==2]
+df.latex$lambda1[df.latex$type==2] = df.latex$lambda1.latex[df.latex$type==2]
+df.latex <- df.latex[,c(1:6,10)]
+
+df.latex <- rbind(pivot_wider(df.latex[df.latex$type==1,],names_from=season,values_from=c(shape,lambda0,lambda1)),pivot_wider(df.latex[df.latex$type==2,],names_from=season,values_from=c(shape,lambda0,lambda1)))
+
+df.latex = df.latex[order(df.latex$region,df.latex$risk),]
+df.latex = df.latex[,c(1:3,order(rep(1:4,3)) + 3)]
+# Use kable to create a basic table
+table <- df.latex[,-c(2,3)] %>%
+  kable(format = "latex", booktabs = TRUE)
+
+# Use kableExtra to rotate the table
+table <- table %>%
+  kable_styling(latex_options = c("hold_position","scale_down")) %>%  landscape()
+# Print the table
+print(table)
