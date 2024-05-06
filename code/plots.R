@@ -204,12 +204,13 @@ for(m in model.selected){
 
 count = 1;p.list <- list()
 for(r in 1:8){
-        data.1 = temperature.covariate[[r]]
+        idx.obs = date.df$date>as.Date(START.date)
+        data.1 = temperature.covariate[[r]][idx.obs]
         data.2 = apply(matrix(unlist(lapply(model.selected,function(i){temperature.245.avg[[i]][[r]]})),ncol=length(model.selected),byrow=FALSE),1,mean)
         data.3 = apply(matrix(unlist(lapply(model.selected,function(i){temperature.585.avg[[i]][[r]]})),ncol=length(model.selected),byrow=FALSE),1,mean)
         
         data.temp = c(data.1, data.2, data.3)
-        date.temp = c(date.df[,1],date.245,date.585)
+        date.temp = c(date.df[idx.obs,1],date.245,date.585)
         data.type = c(rep("Obs",length(data.1)),
                     rep("SSP 2-4.5",length(data.2)),
                     rep("SSP 5-8.5",length(data.3)))
@@ -235,8 +236,44 @@ for(r in 1:8){
 pdf("figures/temperature_covariate.pdf",width = 20,height = 9)
 ggarrange(plotlist=p.list,nrow=2,ncol=4,common.legend=TRUE,legend="bottom")
 dev.off()
+save(p.list,file = paste0(DataPath,"plot_temperature_covariate_.RData"))
 
-save(p.list,file = paste0(DataPath,"plot_temperature_covariate.RData"))
+## for individual climate outputs ##
+pdf(paste0("figures/temperature_covariate_i.pdf"),width = 20,height = 9,onefile=TRUE)
+for(i in model.selected){
+    count = 1;p.list <- list()
+    for(r in 1:8){
+        idx.obs = date.df$date>as.Date(START.date)
+        data.1 = temperature.covariate[[r]][idx.obs]
+        data.2 = temperature.245.avg[[i]][[r]] #apply(matrix(unlist(lapply(model.selected,function(i){temperature.245.avg[[i]][[r]]})),ncol=length(model.selected),byrow=FALSE),1,mean)
+        data.3 = temperature.585.avg[[i]][[r]] #apply(matrix(unlist(lapply(model.selected,function(i){temperature.585.avg[[i]][[r]]})),ncol=length(model.selected),byrow=FALSE),1,mean)
+
+        data.temp = c(data.1, data.2, data.3)
+        date.temp = c(date.df[idx.obs,1],date.245,date.585)
+        data.type = c(rep("Obs",length(data.1)),
+            rep("SSP 2-4.5",length(data.2)),
+            rep("SSP 5-8.5",length(data.3)))
+        data.df = data.frame(season=getSeason(date.temp),tep=data.temp,type=data.type,year=getYear(date.temp))
+
+        data.df.avg <- aggregate(tep ~ season + year + type, data.df, mean)
+        p <- ggplot(data.df.avg, aes(x=year, y=tep, group=interaction(season,type), color=season, linetype=type)) + geom_line(alpha=0.9,linewidth=1.5)
+        p <- p  + xlab(NULL) + ylab(NULL) #xlab("Year") + ylab ("Temperature (°C)")
+        p <- p + labs(color='Season',linetype='Group') 
+        p <- p + scale_color_manual(values=hcl.colors(4,"Dynamic")) + scale_linetype_manual(values=c("dotted","dashed","solid")) 
+        p <- p + ggtitle(paste0(region.name[r],"; ",idx.models[i]))
+        p <- p + theme(axis.text = element_text(size=16,face="bold"),
+                plot.title = element_text(size=16,face="bold",hjust=0.5),
+                axis.ticks =  element_line(linewidth = 1.5),
+                panel.border = element_rect(fill = "transparent", # Needed to add the border
+                                            color = "black",            # Color of the border
+                                            linewidth = 1),
+                panel.background = element_rect(fill = "transparent")) 
+        p <- p + guides(colour = guide_legend(title.theme = element_text(size = 16, face = "bold"), label.theme = element_text(size = 16),override.aes = list(size = 2),keywidth = unit(1.5,"cm")),linetype = guide_legend(title.theme = element_text(size = 16, face = "bold"), label.theme = element_text(size = 16),override.aes = list(size = 2),,keywidth = unit(1.5,"cm")))
+        p.list[[count]] <- p;count = count + 1
+    }
+    show(ggarrange(plotlist=p.list,nrow=2,ncol=4,common.legend=TRUE,legend="bottom"))
+}
+dev.off()  
 
 ## plot the marginal return level ##
 model.selected = c(1,3,4)
@@ -248,11 +285,12 @@ for(r in 1:8){
     ### prepare the data frame to predict ###
     # print(r)
     # print(summary(e$results.gam))
-    data.1 = temperature.covariate[[r]]
+    idx.obs = date.df$date>as.Date(START.date)
+    data.1 = temperature.covariate[[r]][idx.obs]
     data.2 = apply(matrix(unlist(lapply(model.selected,function(i){temperature.245.avg[[i]][[r]]})),ncol=length(model.selected),byrow=FALSE),1,mean)
     data.3 = apply(matrix(unlist(lapply(model.selected,function(i){temperature.585.avg[[i]][[r]]})),ncol=length(model.selected),byrow=FALSE),1,mean)
     data.temp = c(data.1, data.2, data.3)
-    date.temp = c(date.df[,1],date.245,date.585)
+    date.temp = c(date.df[idx.obs,1],date.245,date.585)
     data.type = c(rep("Obs",length(data.1)),
                 rep("SSP 2-4.5",length(data.2)),
                 rep("SSP 5-8.5",length(data.3)))
@@ -314,9 +352,84 @@ ggarrange(plotlist=p.list,nrow=2,ncol=4,common.legend=TRUE,legend="bottom")
 dev.off()
 save(p.list,file = paste0(DataPath,"plot_return_level_margins.RData"))
 
+## for individual climate outputs ##
+model.selected = c(1,3,4)
+pdf("figures/return_level_margins_i.pdf",width = 24,height = 10,onefile = TRUE)
+for(i in model.selected){
+y.thres=0
+count = 1
+p.list <- list()
+    for(r in 1:8){
+        load(paste0(DataPath,"marginal_fit_0_",r,".RData"),e<-new.env())
+        ### prepare the data frame to predict ###
+        # print(r)
+        # print(summary(e$results.gam))
+        idx.obs = date.df$date>as.Date(START.date)
+        data.1 = temperature.covariate[[r]][idx.obs]
+        data.2 = temperature.245.avg[[i]][[r]] #apply(matrix(unlist(lapply(model.selected,function(i){temperature.245.avg[[i]][[r]]})),ncol=length(model.selected),byrow=FALSE),1,mean)
+        data.3 = temperature.585.avg[[i]][[r]] #apply(matrix(unlist(lapply(model.selected,function(i){temperature.585.avg[[i]][[r]]})),ncol=length(model.selected),byrow=FALSE),1,mean)
+        data.temp = c(data.1, data.2, data.3)
+        date.temp = c(date.df[idx.obs,1],date.245,date.585)
+        data.type = c(rep("Obs",length(data.1)),
+                    rep("SSP 2-4.5",length(data.2)),
+                    rep("SSP 5-8.5",length(data.3)))
+        data.df = data.frame(season=getSeason(date.temp),tep=data.temp,type=data.type,year=getYear(date.temp))
+        data.df.avg <- aggregate(tep ~ season + year + type, data.df, mean)
+        
+        days <- c(315,135,225,45) #(Fall,Spring,Summer,Winter)
+        data.df.avg$day = days[as.factor(data.df.avg$season)]
+        idx.loc1 = which.max(unlist(lapply(precip[[r]],function(x){sum(na.omit(x)>0)})))
+        idx.loc2 = station$group.id == region.id[r]
+        alt <- station$elev[idx.loc2][idx.loc1]/1000
+        lon <- station$Y[idx.loc2][idx.loc1]
+        lat <- station$X[idx.loc2][idx.loc1]
+
+        #main = paste0(region.name[r],"; ","Station ",idx.loc1," (", round(lat,2) ,"N°,",round(lon,2),"E°" ,") ")
+        main = paste0(region.name[r],"; ", "(", round(lat,2) ,"N°,",round(lon,2),"E°" ,")","; ",idx.models[i])
+        D = length(lat);Dt = length(data.df.avg$day)
+        data.pred <- data.frame(temp = rep(data.df.avg$tep,times=D),
+                                day = rep(data.df.avg$day,times=D),
+                                year = rep(data.df.avg$year,times=D),
+                                alt = rep(alt,each=Dt),
+                                lon = rep(lon,each=Dt),
+                                lat = rep(lat,each=Dt))
+
+        mean.pred  <- exp(predict.gam(e$results.gam,newdata = data.pred))
+        sig2.pred <- e$results.gam$sig2
+        shape.pred = 1/sig2.pred;scale.pred <- mean.pred/shape.pred;
+        quantile.pred <- qgamma(0.9,shape = shape.pred,scale=scale.pred)
+        data.pred$est.quantile = quantile.pred
+        prob.exceed.pred <- predict.gam(e$results.bin,newdata=data.pred,type="response")
+        gpd.pred <- predict(e$results.gpd,newdata=data.pred)
+        scale.gpd.pred = exp(gpd.pred[,1]);shape.gpd.pred = gpd.pred[1,2]
+        return.level = (1-1/(100*365)) 
+        prob.gpd <- (return.level - (1-prob.exceed.pred))/prob.exceed.pred
+
+        return.value <- y.thres + quantile.pred + qgpd(prob.gpd,loc=0,scale=scale.gpd.pred,shape=shape.gpd.pred)
+        data.df.avg$return.value = return.value
+
+        p <- ggplot(data.df.avg, aes(x=year, y=return.value, group=interaction(season,type), color=season, linetype=type)) + geom_line(alpha=0.8,linewidth=1.5)
+        p <- p + scale_linetype_manual(values=c("dotted","dashed","solid"),labels=c("Obs","SSP 2-4.5","SSP 5-8.5"))
+        p <- p + xlab(NULL) + ylab(NULL) # xlab("Year") + ylab ("Return level (mm)") 
+        p <- p + labs(color="Season",linetype="Group") 
+        #p <- p + scale_color_manual(values=hcl.colors(4, "Berlin")) 
+        p <- p + ggtitle(main)
+        p <- p + theme(axis.text = element_text(size=16,face="bold"),
+                        plot.title = element_text(size=16,face="bold",hjust=0.5),
+                            axis.ticks =  element_line(size = 1.5),
+                            panel.border = element_rect(fill = "transparent", # Needed to add the border
+                                                        color = "black",            # Color of the border
+                                                        linewidth = 1),
+                            panel.background = element_rect(fill = "transparent")) 
+        p <- p + guides(colour = guide_legend(title.theme = element_text(size = 16, face = "bold"), label.theme = element_text(size = 16),override.aes = list(size = 2),keywidth = unit(1.5,"cm")),linetype = guide_legend(title.theme = element_text(size = 16, face = "bold"), label.theme = element_text(size = 16),override.aes = list(size = 2),,keywidth = unit(1.5,"cm")))#if(count %% 4 != 0){p <- p + theme(legend.position="none")}
+        p.list[[count]] <- p;count = count + 1
+        print(count)
+    }
+    show(ggarrange(plotlist=p.list,nrow=2,ncol=4,common.legend=TRUE,legend="bottom"))
+}
+dev.off()
 
 ## plot qqplot for random locations ##
-
 for(idx in 1:8){
     load(paste0(DataPath,"marginal_fit_0_",idx,".RData"),e<-new.env())
     # sig2.pred <- e$results.gpd$sig2
@@ -351,11 +464,12 @@ model.selected <- c(1,3,4)
 count = 1;p.list1 <- list()
 p.list2 <- list()
 for(r in 1:8){
-    data.1 = temperature.covariate[[r]]
+    idx.obs = date.df$date>as.Date(START.date)
+    data.1 = temperature.covariate[[r]][idx.obs]
     data.2 = apply(matrix(unlist(lapply(model.selected,function(i){temperature.245.avg[[i]][[r]]})),ncol=length(model.selected),byrow=FALSE),1,mean)
     data.3 = apply(matrix(unlist(lapply(model.selected,function(i){temperature.585.avg[[i]][[r]]})),ncol=length(model.selected),byrow=FALSE),1,mean)
     data.temp = c(data.1, data.2, data.3)
-    date.temp = c(date.df[,1],date.245,date.585)
+    date.temp = c(date.df[idx.obs,1],date.245,date.585)
     data.type = c(rep("Obs",length(data.1)),
                 rep("SSP 2-4.5",length(data.2)),
                 rep("SSP 5-8.5",length(data.3)))
@@ -403,6 +517,63 @@ ggarrange(plotlist=p.list2,nrow=2,ncol=4,common.legend=TRUE,legend="bottom")
 dev.off()
 
 save(p.list1,p.list2,file = paste0(DataPath,"tail_correlation_range.RData"))
+
+load("data/dep.fit.boot.results3.RData")
+pdf("figures/tail_correlation_range_i.pdf",width = 24,height = 10,onefile = TRUE)
+model.selected <- c(1,3,4)
+for(i in model.selected){
+    count = 1;p.list1 <- list()
+    p.list2 <- list()
+    for(r in 1:8){
+        idx.obs = date.df$date>as.Date(START.date)
+        data.1 = temperature.covariate[[r]][idx.obs]
+        data.2 = temperature.245.avg[[i]][[r]]#apply(matrix(unlist(lapply(model.selected,function(i){temperature.245.avg[[i]][[r]]})),ncol=length(model.selected),byrow=FALSE),1,mean)
+        data.3 = temperature.585.avg[[i]][[r]]#apply(matrix(unlist(lapply(model.selected,function(i){temperature.585.avg[[i]][[r]]})),ncol=length(model.selected),byrow=FALSE),1,mean)
+        data.temp = c(data.1, data.2, data.3)
+        date.temp = c(date.df[idx.obs,1],date.245,date.585)
+        data.type = c(rep("Obs",length(data.1)),
+                    rep("SSP 2-4.5",length(data.2)),
+                    rep("SSP 5-8.5",length(data.3)))
+        data.df = data.frame(season=getSeason(date.temp),tep=data.temp,type=data.type,year=getYear(date.temp))
+        data.df.avg <- aggregate(tep ~ season + year + type, data.df, mean)
+        risk = rep(1:2,nrow(data.df.avg));data.df.avg <- rbind(data.df.avg,data.df.avg)
+        data.df.avg$risk = risk
+        data.df.avg$season = as.numeric(factor(data.df.avg$season,season))
+        data.df.avg = merge(data.df.avg,subset(boot.result.df,region==r),by=c("season","risk"))
+        data.df.avg$season = season[data.df.avg$season]
+        data.df.avg$range = sapply(1:nrow(data.df.avg),function(i){solve.h.BR(c(data.df.avg$shape[i],data.df.avg$lambda0[i],data.df.avg$lambda1[i]),temp=data.df.avg$tep[i],logval=TRUE)})
+
+        p.list1[[r]] <- ggplot(subset(data.df.avg,risk==1), aes(x=year, y=range, group=interaction(season,type), color=season, linetype=type)) + geom_line(alpha=0.9,linewidth=1.5) + 
+            xlab(NULL) + ylab (NULL) + labs(color='Season',linetype='Group') + 
+            scale_color_manual(values=hcl.colors(4,"Dynamic")) + scale_linetype_manual(values=c("dotted","dashed","solid")) +
+            ggtitle(paste0(region.name[r]," with risk functional 1","; ",idx.models[i])) +
+            theme(axis.text = element_text(size=16,face="bold"),
+                        plot.title = element_text(size=16,face="bold",hjust=0.5),
+                            axis.ticks =  element_line(size = 1.5),
+                            panel.border = element_rect(fill = "transparent", # Needed to add the border
+                                                        color = "black",            # Color of the border
+                                                        linewidth = 1),
+                            panel.background = element_rect(fill = "transparent")) + 
+            guides(colour = guide_legend(title.theme = element_text(size = 16, face = "bold"), label.theme = element_text(size = 16),override.aes = list(size = 2),keywidth = unit(1.5,"cm")),linetype = guide_legend(title.theme = element_text(size = 16, face = "bold"), label.theme = element_text(size = 16),override.aes = list(size = 2),,keywidth = unit(1.5,"cm")))
+
+        
+        p.list2[[r]] <- ggplot(subset(data.df.avg,risk==2), aes(x=year, y=range, group=interaction(season,type), color=season, linetype=type)) + geom_line(alpha=0.9,linewidth=1.5)  + xlab(NULL) + ylab (NULL) +
+            labs(color='Season',linetype='Group')  + 
+            scale_color_manual(values=hcl.colors(4,"Dynamic")) + scale_linetype_manual(values=c("dotted","dashed","solid")) +
+            ggtitle(paste0(region.name[r]," with risk functional 2","; " ,idx.models[i])) +
+            theme(axis.text = element_text(size=16,face="bold"),
+                        plot.title = element_text(size=16,face="bold",hjust=0.5),
+                            axis.ticks =  element_line(size = 1.5),
+                            panel.border = element_rect(fill = "transparent", # Needed to add the border
+                                                        color = "black",            # Color of the border
+                                                        linewidth = 1),
+                            panel.background = element_rect(fill = "transparent")) + 
+            guides(colour = guide_legend(title.theme = element_text(size = 16, face = "bold"), label.theme = element_text(size = 16),override.aes = list(size = 2),keywidth = unit(1.5,"cm")),linetype = guide_legend(title.theme = element_text(size = 16, face = "bold"), label.theme = element_text(size = 16),override.aes = list(size = 2),,keywidth = unit(1.5,"cm")))    
+    }
+    show(ggarrange(plotlist=p.list1,nrow=2,ncol=4,common.legend=TRUE,legend="bottom"))
+    show(ggarrange(plotlist=p.list2,nrow=2,ncol=4,common.legend=TRUE,legend="bottom"))
+}
+dev.off()
 
 ##############################################################
 ######### Simulations ########################################
