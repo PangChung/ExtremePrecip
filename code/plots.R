@@ -441,8 +441,8 @@ for(idx in 1:8){
     idx.list = sample(1:sum(station$group.id==region.id[idx]),2,replace = F,prob=apply(e$U,2,function(x){sum(!is.na(x))}))
     png(file = paste0("figures/qqplot_marginal_",idx,".png"),height=6,width=6*3,units="cm",res=300, pointsize=6)
     par(mfrow=c(1,3),mar=c(3,4,3,1),mgp=c(2.5,2,0),cex.lab=3,cex.axis=3,cex.main=3)
-    theoretical.quantiles <- qgpd(e$U[,idx.list],loc=1,scale=1,shape=shape.pred)
-    empirical.quantiles <- qgpd(1:1000/(1+1000),loc=1,scale=1,shape=shape.pred)
+    theoretical.quantiles <- qgpd(e$U[,idx.list],loc=0,scale=1,shape=shape.pred)
+    empirical.quantiles <- qgpd(1:1000/(1+1000),loc=0,scale=1,shape=shape.pred)
     theoretical.quantiles <- split(theoretical.quantiles,col(theoretical.quantiles))
     theoretical.quantiles <- sapply(theoretical.quantiles,function(x) quantile(x,prob=1:1000/(1+1000),na.rm=T),simplify = F)
     qqplot(unlist(theoretical.quantiles),empirical.quantiles,cex=1.5,pch=20,
