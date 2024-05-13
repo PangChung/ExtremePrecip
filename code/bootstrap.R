@@ -109,7 +109,7 @@ if(file.exists(file.marginal)){
 
 # depdence fit ##
 result.list <- list(list(),list())
-for(count in 1:4){
+for(count in 1:8){
         norm.ind = (count-1) %/% 4 + 1
         season.idx = (count - 1) %% 4 + 1
         file = paste0(DataPath,"/data/fit_bootstrap_1_0_",idx.region,".RData") 
