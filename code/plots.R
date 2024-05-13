@@ -14,11 +14,10 @@ load("data/precip.RData")
 load("data/era5_geoinfo.RData")
 load("data/transformed_coordinates.RData")
 source("code/utility.R")
-
+season = c("Winter" ,"Spring" ,"Summer" ,"Fall")
 ## Present the results ##
 # 4 seasons * 8 regions * 2 risk functions
 # create a data frame with the results 
-season = c("Winter" ,"Spring" ,"Summer" ,"Fall")
 # plot the results
 # Assuming boot.result.df has columns for x, y, ymin, and ymax
 p1 <- p2 <- list()
@@ -518,6 +517,7 @@ dev.off()
 
 save(p.list1,p.list2,file = paste0(DataPath,"tail_correlation_range.RData"))
 
+## for individual climate outputs ##
 load("data/dep.fit.boot.results3.RData")
 pdf("figures/tail_correlation_range_i.pdf",width = 24,height = 10,onefile = TRUE)
 model.selected <- c(1,3,4)
@@ -573,6 +573,71 @@ for(i in model.selected){
     show(ggarrange(plotlist=p.list1,nrow=2,ncol=4,common.legend=TRUE,legend="bottom"))
     show(ggarrange(plotlist=p.list2,nrow=2,ncol=4,common.legend=TRUE,legend="bottom"))
 }
+dev.off()
+
+## plot the tail correlation range for the bootstrap estimates to ##
+## check the uncertainty of the estimates ##
+solve.h.boot <- function(i,j,k,temp){
+    est = boot.result.list[[i]][[j]][[k]]$jack
+    return(quantile(apply(est,1,solve.h.BR,temp=temp,logval=TRUE),c(0.025,0.975)))
+}
+
+load("data/dep.fit.boot.results3.RData")
+model.selected <- c(1,3,4)
+count = 1;
+p.list1 <- p.list2 <- list()
+for(r in 1:8){
+    idx.obs = date.df$date>as.Date(START.date)
+    data.1 = temperature.covariate[[r]][idx.obs]
+    data.2 = apply(matrix(unlist(lapply(model.selected,function(i){temperature.245.avg[[i]][[r]]})),ncol=length(model.selected),byrow=FALSE),1,mean)
+    data.3 = apply(matrix(unlist(lapply(model.selected,function(i){temperature.585.avg[[i]][[r]]})),ncol=length(model.selected),byrow=FALSE),1,mean)
+    data.temp = c(data.1, data.2, data.3)
+    date.temp = c(date.df[idx.obs,1],date.245,date.585)
+    data.type = c(rep("Obs",length(data.1)),
+                rep("SSP 2-4.5",length(data.2)),
+                rep("SSP 5-8.5",length(data.3)))
+    data.df = data.frame(season=getSeason(date.temp),tep=data.temp,type=data.type,year=getYear(date.temp))
+    data.df.avg <- aggregate(tep ~ season + year + type, data.df, mean)
+    risk = rep(1:2,nrow(data.df.avg));data.df.avg <- rbind(data.df.avg,data.df.avg)
+    data.df.avg$risk = risk
+    data.df.avg$season = as.numeric(factor(data.df.avg$season,season))
+    data.df.avg = merge(data.df.avg,subset(boot.result.df,region==r),by=c("season","risk"))
+    data.df.avg$range = sapply(1:nrow(data.df.avg),function(i){solve.h.BR(c(data.df.avg$shape[i],data.df.avg$lambda0[i],data.df.avg$lambda1[i]),temp=data.df.avg$tep[i],logval=TRUE)})
+    data.df.avg[,c("low","up")] = t(sapply(1:nrow(data.df.avg),function(i){solve.h.boot(data.df.avg$risk[i],data.df.avg$season[i],r,temp=data.df.avg$tep[i])}))
+    
+    data.df.avg$season = season[data.df.avg$season]
+    
+    p.list1[[r]] <- ggplot(subset(data.df.avg,risk==1 & type=="SSP 5-8.5"), aes(x=year, y=range, color=season)) + #geom_line(alpha=0.9,linewidth=1.5) + 
+        xlab(NULL) + ylab (NULL) + labs(color='Season') + geom_ribbon(aes(ymin=low,ymax=up),alpha=0.2,linewidth=1.5) + 
+        scale_color_manual(values=hcl.colors(4,"Dynamic")) + scale_linetype_manual(values=c("dotted","solid")) + 
+        ggtitle(paste0(region.name[r]," with risk functional 1")) +
+        theme(axis.text = element_text(size=16,face="bold"),
+                       plot.title = element_text(size=16,face="bold",hjust=0.5),
+                        axis.ticks =  element_line(size = 1.5),
+                        panel.border = element_rect(fill = "transparent", # Needed to add the border
+                                                    color = "black",            # Color of the border
+                                                    linewidth = 1),
+                        panel.background = element_rect(fill = "transparent")) + 
+        guides(colour = guide_legend(title.theme = element_text(size = 16, face = "bold"), label.theme = element_text(size = 16),override.aes = list(size = 2),keywidth = unit(1.5,"cm")),linetype = guide_legend(title.theme = element_text(size = 16, face = "bold"), label.theme = element_text(size = 16),override.aes = list(size = 2),,keywidth = unit(1.5,"cm")))
+
+    
+    p.list2[[r]] <- ggplot(subset(data.df.avg,risk==2 & type=="SSP 5-8.5"), aes(x=year, y=range, color=season)) + #geom_line(alpha=0.9,linewidth=1.5) + 
+        xlab(NULL) + ylab (NULL) + labs(color='Season') + geom_ribbon(aes(ymin=low,ymax=up),alpha=0.2,linewidth=1.5) + 
+        scale_color_manual(values=hcl.colors(4,"Dynamic")) + scale_linetype_manual(values=c("dotted","solid")) + 
+        ggtitle(paste0(region.name[r]," with risk functional 2")) +
+        theme(axis.text = element_text(size=16,face="bold"),
+                       plot.title = element_text(size=16,face="bold",hjust=0.5),
+                        axis.ticks =  element_line(size = 1.5),
+                        panel.border = element_rect(fill = "transparent", # Needed to add the border
+                                                    color = "black",            # Color of the border
+                                                    linewidth = 1),
+                        panel.background = element_rect(fill = "transparent")) + 
+        guides(colour = guide_legend(title.theme = element_text(size = 16, face = "bold"), label.theme = element_text(size = 16),override.aes = list(size = 2),keywidth = unit(1.5,"cm")),linetype = guide_legend(title.theme = element_text(size = 16, face = "bold"), label.theme = element_text(size = 16),override.aes = list(size = 2),,keywidth = unit(1.5,"cm")))
+}
+
+pdf("figures/tail_correlation_range_uncertainty.pdf",width = 20,height = 9,onefile = TRUE)
+ggarrange(plotlist=p.list1,nrow=2,ncol=4,common.legend=TRUE,legend="bottom")
+ggarrange(plotlist=p.list2,nrow=2,ncol=4,common.legend=TRUE,legend="bottom")
 dev.off()
 
 ##############################################################
