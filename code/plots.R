@@ -44,21 +44,22 @@ p1[[1]] <- p1[[1]] + theme(axis.text = element_text(size = 10),
         axis.title.y = element_text(size = 14),
         plot.title = element_text(hjust = 0.5, size = 14),
         legend.title = element_text(size = 14),
-        legend.position = "bottom")
+        legend.position = "none")
 p1[[2]] <- p1[[2]]  + theme(axis.text = element_text(size = 10),
         axis.title.x = element_text(size = 14),
         strip.text = element_text(size = 14),
         axis.title.y = element_text(size = 14),
         plot.title = element_text(hjust = 0.5, size = 14),
         legend.title = element_text(size = 14),
-        legend.position = "bottom")
+        legend.position = "none")
 p1[[3]] <- p1[[3]]  +  theme(axis.text = element_text(size = 10),
         axis.title.x = element_text(size = 14),
         strip.text = element_text(size = 14),
         axis.title.y = element_text(size = 14),
         plot.title = element_text(hjust = 0.5, size = 14),
         legend.title = element_text(size = 14),
-        legend.position = "bottom")
+        legend.position = "none")
+
 pdf(file="figures/boot_plot.pdf",width=16,height=4)
 p1[[1]]
 p1[[2]]
@@ -85,21 +86,21 @@ p2[[1]] <- p2[[1]] +   theme(axis.text = element_text(size = 10),
         axis.title.y = element_text(size = 14),
         plot.title = element_text(hjust = 0.5, size = 14),
         legend.title = element_text(size = 14),
-        legend.position = "bottom")
+        legend.position = "none")
 p2[[2]] <- p2[[2]] +   theme(axis.text = element_text(size = 10),
         axis.title.x = element_text(size = 14),
         strip.text = element_text(size = 14),
         axis.title.y = element_text(size = 14),
         plot.title = element_text(hjust = 0.5, size = 14),
         legend.title = element_text(size = 14),
-        legend.position = "bottom")
+        legend.position = "none")
 p2[[3]] <- p2[[3]] +   theme(axis.text = element_text(size = 10),
         axis.title.x = element_text(size = 14),
         strip.text = element_text(size = 14),
         axis.title.y = element_text(size = 14),
         plot.title = element_text(hjust = 0.5, size = 14),
         legend.title = element_text(size = 14),
-        legend.position = "bottom")
+        legend.position = "none")
 
 pdf(file="figures/boot_plot2.pdf",width=16,height=4)
 p2[[1]]
@@ -130,14 +131,14 @@ p.list[[1]] <- ggplot(est.df, aes(x = factor(region), y = nu, fill = risk)) +
   labs(title = "",
        x = "Region",
        y = bquote(nu),
-       fill = "Risk") +
-  theme(axis.text = element_text(size = 10),
-        axis.title.x = element_text(size = 14),
-        strip.text = element_text(size = 14),
-        axis.title.y = element_text(size = 14),
-        plot.title = element_text(hjust = 0.5, size = 14),
-        legend.title = element_text(size = 14),
-        legend.position = "bottom")
+       fill = "Risk") + 
+  theme(axis.text = element_text(size = 16,face="bold"),
+        axis.title.x = element_text(size = 16,face="bold"),
+        strip.text = element_text(size = 16,face="bold"),
+        axis.title.y = element_text(size = 16,face="bold"),
+        plot.title = element_text(hjust = 0.5, size = 16,face="bold"),
+        legend.title = element_text(size = 16),
+        legend.position = "none")
 
 p.list[[2]] <- ggplot(est.df, aes(x = factor(region), y = `lambda[0]`, fill = risk)) +
   geom_violin(position = position_dodge(width=0.75),draw_quantiles = c(0.025,0.975)) + 
@@ -146,14 +147,14 @@ p.list[[2]] <- ggplot(est.df, aes(x = factor(region), y = `lambda[0]`, fill = ri
   labs(title = "",
        x = "Region",
        y = bquote(lambda[0]),
-       fill = "Risk") +
-  theme(axis.text = element_text(size = 10),
-        axis.title.x = element_text(size = 14),
-        strip.text = element_text(size = 14),
-        axis.title.y = element_text(size = 14),
-        plot.title = element_text(hjust = 0.5, size = 14),
-        legend.title = element_text(size = 14),
-        legend.position = "bottom")
+       fill = "Risk") + 
+  theme(axis.text = element_text(size = 16,face="bold"),
+        axis.title.x = element_text(size = 16,face="bold"),
+        strip.text = element_text(size = 16,face="bold"),
+        axis.title.y = element_text(size = 16,face="bold"),
+        plot.title = element_text(hjust = 0.5, size = 16,face="bold"),
+        legend.title = element_text(size = 16),
+        legend.position = "none")
 
 p.list[[3]] <- ggplot(est.df, aes(x = factor(region), y = `lambda[1]`, fill = risk)) +
   geom_violin(position = position_dodge(width=0.75),draw_quantiles = c(0.05,0.95)) + 
@@ -163,15 +164,15 @@ p.list[[3]] <- ggplot(est.df, aes(x = factor(region), y = `lambda[1]`, fill = ri
        x = "Region",
        y = bquote(lambda[1]),
        fill = "Risk") +
-  theme(axis.text = element_text(size = 10),
-        axis.title.x = element_text(size = 14),
-        strip.text = element_text(size = 14),
-        axis.title.y = element_text(size = 14),
-        plot.title = element_text(hjust = 0.5, size = 14),
-        legend.title = element_text(size = 14),
-        legend.position = "bottom")
+  theme(axis.text = element_text(size = 16,face="bold"),
+        axis.title.x = element_text(size = 16,face="bold"),
+        strip.text = element_text(size = 16,face="bold"),
+        axis.title.y = element_text(size = 16,face="bold"),
+        plot.title = element_text(hjust = 0.5, size = 16,face="bold"),
+        legend.title = element_text(size = 16),
+        legend.position = "none")
 
-pdf(file="figures/boot_plot3.pdf",width=16,height=4,onefile = TRUE)
+pdf(file="figures/boot_plot3.pdf",width=4*4,height=4,onefile = TRUE)
 p.list[[1]]
 p.list[[2]]
 p.list[[3]]
@@ -224,21 +225,22 @@ for(r in 1:8){
         p <- p + theme(axis.text = element_text(size=16,face="bold"),
                        plot.title = element_text(size=16,face="bold",hjust=0.5),
                         axis.ticks =  element_line(linewidth = 1.5),
+                        legend.title = element_text(size = 16, face = "bold"),
                         panel.border = element_rect(fill = "transparent", # Needed to add the border
                                                     color = "black",            # Color of the border
                                                     linewidth = 1),
                         panel.background = element_rect(fill = "transparent")) 
-        p <- p + guides(colour = guide_legend(title.theme = element_text(size = 16, face = "bold"), label.theme = element_text(size = 16),override.aes = list(size = 2),keywidth = unit(1.5,"cm")),linetype = guide_legend(title.theme = element_text(size = 16, face = "bold"), label.theme = element_text(size = 16),override.aes = list(size = 2),,keywidth = unit(1.5,"cm")))
+        p <- p + guides(colour = guide_legend(title.theme = element_text(size = 16, face = "bold"), label.theme = element_text(size = 16,face="bold"),override.aes = list(size = 2),keywidth = unit(1.5,"cm")),linetype = guide_legend(title.theme = element_text(size = 16, face = "bold"), label.theme = element_text(size = 16, face="bold"),override.aes = list(size = 2),keywidth = unit(1.5,"cm")))
         p.list[[count]] <- p;count = count + 1
 }
   
-pdf("figures/temperature_covariate.pdf",width = 20,height = 9)
+pdf("figures/temperature_covariate.pdf",width = 16,height = 8)
 ggarrange(plotlist=p.list,nrow=2,ncol=4,common.legend=TRUE,legend="bottom")
 dev.off()
 save(p.list,file = paste0(DataPath,"plot_temperature_covariate_.RData"))
 
 ## for individual climate outputs ##
-pdf(paste0("figures/temperature_covariate_i.pdf"),width = 20,height = 9,onefile=TRUE)
+pdf(paste0("figures/temperature_covariate_i.pdf"),width = 16,height = 8,onefile=TRUE)
 for(i in model.selected){
     count = 1;p.list <- list()
     for(r in 1:8){
@@ -261,13 +263,13 @@ for(i in model.selected){
         p <- p + scale_color_manual(values=hcl.colors(4,"Dynamic")) + scale_linetype_manual(values=c("dotted","dashed","solid")) 
         p <- p + ggtitle(paste0(region.name[r],"; ",idx.models[i]))
         p <- p + theme(axis.text = element_text(size=16,face="bold"),
-                plot.title = element_text(size=16,face="bold",hjust=0.5),
+                plot.title = element_text(size=14,face="bold",hjust=0.5),
                 axis.ticks =  element_line(linewidth = 1.5),
                 panel.border = element_rect(fill = "transparent", # Needed to add the border
                                             color = "black",            # Color of the border
                                             linewidth = 1),
                 panel.background = element_rect(fill = "transparent")) 
-        p <- p + guides(colour = guide_legend(title.theme = element_text(size = 16, face = "bold"), label.theme = element_text(size = 16),override.aes = list(size = 2),keywidth = unit(1.5,"cm")),linetype = guide_legend(title.theme = element_text(size = 16, face = "bold"), label.theme = element_text(size = 16),override.aes = list(size = 2),,keywidth = unit(1.5,"cm")))
+        p <- p + guides(colour = guide_legend(title.theme = element_text(size = 16, face = "bold"), label.theme = element_text(size = 16,face="bold"),override.aes = list(size = 2),keywidth = unit(1.5,"cm")),linetype = guide_legend(title.theme = element_text(size = 16, face = "bold"), label.theme = element_text(size = 16,face="bold"),override.aes = list(size = 2),,keywidth = unit(1.5,"cm")))
         p.list[[count]] <- p;count = count + 1
     }
     show(ggarrange(plotlist=p.list,nrow=2,ncol=4,common.legend=TRUE,legend="bottom"))
@@ -335,25 +337,26 @@ for(r in 1:8){
     #p <- p + scale_color_manual(values=hcl.colors(4, "Berlin")) 
     p <- p + ggtitle(main)
     p <- p + theme(axis.text = element_text(size=16,face="bold"),
-                       plot.title = element_text(size=16,face="bold",hjust=0.5),
+                       plot.title = element_text(size=14,face="bold",hjust=0.5),
                         axis.ticks =  element_line(size = 1.5),
                         panel.border = element_rect(fill = "transparent", # Needed to add the border
                                                     color = "black",            # Color of the border
                                                     linewidth = 1),
                         panel.background = element_rect(fill = "transparent")) 
-    p <- p + guides(colour = guide_legend(title.theme = element_text(size = 16, face = "bold"), label.theme = element_text(size = 16),override.aes = list(size = 2),keywidth = unit(1.5,"cm")),linetype = guide_legend(title.theme = element_text(size = 16, face = "bold"), label.theme = element_text(size = 16),override.aes = list(size = 2),,keywidth = unit(1.5,"cm")))#if(count %% 4 != 0){p <- p + theme(legend.position="none")}
+    p <- p + guides(colour = guide_legend(title.theme = element_text(size = 16, face = "bold"), label.theme = element_text(size = 16,face="bold"),override.aes = list(size = 2),keywidth = unit(1.5,"cm")),linetype = guide_legend(title.theme = element_text(size = 16, face = "bold"), label.theme = element_text(size = 16,face="bold"),override.aes = list(size = 2),keywidth = unit(1.5,"cm")))#if(count %% 4 != 0){p <- p + theme(legend.position="none")}
     p.list[[count]] <- p;count = count + 1
     print(count)
 }
 
-pdf("figures/return_level_margins.pdf",width = 20,height = 9,onefile = TRUE)
+pdf("figures/return_level_margins.pdf",width = 16,height = 8,onefile = TRUE)
 ggarrange(plotlist=p.list,nrow=2,ncol=4,common.legend=TRUE,legend="bottom")
 dev.off()
+
 save(p.list,file = paste0(DataPath,"plot_return_level_margins.RData"))
 
 ## for individual climate outputs ##
 model.selected = c(1,3,4)
-pdf("figures/return_level_margins_i.pdf",width = 24,height = 10,onefile = TRUE)
+pdf("figures/return_level_margins_i.pdf",width = 18,height = 8,onefile = TRUE)
 for(i in model.selected){
 y.thres=0
 count = 1
@@ -414,13 +417,13 @@ p.list <- list()
         #p <- p + scale_color_manual(values=hcl.colors(4, "Berlin")) 
         p <- p + ggtitle(main)
         p <- p + theme(axis.text = element_text(size=16,face="bold"),
-                        plot.title = element_text(size=16,face="bold",hjust=0.5),
+                        plot.title = element_text(size=13,face="bold",hjust=0.5),
                             axis.ticks =  element_line(size = 1.5),
                             panel.border = element_rect(fill = "transparent", # Needed to add the border
                                                         color = "black",            # Color of the border
                                                         linewidth = 1),
                             panel.background = element_rect(fill = "transparent")) 
-        p <- p + guides(colour = guide_legend(title.theme = element_text(size = 16, face = "bold"), label.theme = element_text(size = 16),override.aes = list(size = 2),keywidth = unit(1.5,"cm")),linetype = guide_legend(title.theme = element_text(size = 16, face = "bold"), label.theme = element_text(size = 16),override.aes = list(size = 2),,keywidth = unit(1.5,"cm")))#if(count %% 4 != 0){p <- p + theme(legend.position="none")}
+        p <- p + guides(colour = guide_legend(title.theme = element_text(size = 16, face = "bold"), label.theme = element_text(size = 16,face="bold"),override.aes = list(size = 2),keywidth = unit(1.5,"cm")),linetype = guide_legend(title.theme = element_text(size = 16, face = "bold"), label.theme = element_text(size = 16,face="bold"),override.aes = list(size = 2),keywidth = unit(1.5,"cm")))#if(count %% 4 != 0){p <- p + theme(legend.position="none")}
         p.list[[count]] <- p;count = count + 1
         print(count)
     }
@@ -434,24 +437,25 @@ for(idx in 1:8){
     # sig2.pred <- e$results.gpd$sig2
     # shape.pred = 1/sig2.pred
     shape.pred = fitted(e$results.gpd)[1,2]
-    print(shape.pred)
-#    }
     set.seed(1234435)
     idx.list = sample(1:sum(station$group.id==region.id[idx]),2,replace = F,prob=apply(e$U,2,function(x){sum(!is.na(x))}))
+    print(idx.list)
     png(file = paste0("figures/qqplot_marginal_",idx,".png"),height=6,width=6*3,units="cm",res=300, pointsize=6)
-    par(mfrow=c(1,3),mar=c(3,4,3,1),mgp=c(2.5,2,0),cex.lab=3,cex.axis=3,cex.main=3)
-    theoretical.quantiles <- qgpd(e$U[,idx.list],loc=0,scale=1,shape=shape.pred)
+    par(mfrow=c(1,3),mar=c(3,4,3,1),mgp=c(2.5,2,0),cex.lab=3,cex.axis=3,cex.main=3,pty="s")
+    theoretical.quantiles <- qgpd(e$U,loc=0,scale=1,shape=shape.pred)
     empirical.quantiles <- qgpd(1:1000/(1+1000),loc=0,scale=1,shape=shape.pred)
     theoretical.quantiles <- split(theoretical.quantiles,col(theoretical.quantiles))
+    theoretical.all <- quantile(unlist(theoretical.quantiles),prob=1:1000/(1+1000),na.rm=T)
     theoretical.quantiles <- sapply(theoretical.quantiles,function(x) quantile(x,prob=1:1000/(1+1000),na.rm=T),simplify = F)
-    qqplot(unlist(theoretical.quantiles),empirical.quantiles,cex=1.5,pch=20,
-        xlab="",ylab="",main="All stations")
+    xlim = range(c(theoretical.all,empirical.quantiles)) + c(-0.1,0.1)
+    plot(theoretical.all,empirical.quantiles,cex=1.5,pch=20,
+        xlab="",ylab="",main="All stations",asp=1,xlim=xlim,ylim=xlim)
         #xlab="Theoretical quantiles",ylab="Empirical quantiles",main="All stations")
     abline(0,1,col=2,lwd=2)
     for(ind in 1:length(idx.list)){
-    qqplot(theoretical.quantiles[[ind]],empirical.quantiles,
-        cex=1.5,pch=20,
-        xlab="",ylab="",main=paste("Station",idx.list[ind]))
+    xlim = range(c(theoretical.quantiles[[idx.list[ind]]],empirical.quantiles)) + c(-0.1,0.1)
+    plot(theoretical.quantiles[[idx.list[ind]]],empirical.quantiles,
+        cex=1.5,pch=20,xlab="",ylab="",main=paste("Station",idx.list[ind]),asp=1,xlim=xlim,ylim=xlim)
     abline(0,1,col=2,lwd=2)
     }        
     dev.off() 
@@ -484,33 +488,33 @@ for(r in 1:8){
     p.list1[[r]] <- ggplot(subset(data.df.avg,risk==1), aes(x=year, y=range, group=interaction(season,type), color=season, linetype=type)) + geom_line(alpha=0.9,linewidth=1.5) + 
         xlab(NULL) + ylab (NULL) + labs(color='Season',linetype='Group') + 
         scale_color_manual(values=hcl.colors(4,"Dynamic")) + scale_linetype_manual(values=c("dotted","dashed","solid")) +
-        ggtitle(paste0(region.name[r]," with risk functional 1")) +
+        ggtitle(paste0(region.name[r],"; risk functional 1")) +
         theme(axis.text = element_text(size=16,face="bold"),
-                       plot.title = element_text(size=16,face="bold",hjust=0.5),
+                       plot.title = element_text(size=14,face="bold",hjust=0.5),
                         axis.ticks =  element_line(size = 1.5),
                         panel.border = element_rect(fill = "transparent", # Needed to add the border
                                                     color = "black",            # Color of the border
                                                     linewidth = 1),
                         panel.background = element_rect(fill = "transparent")) + 
-        guides(colour = guide_legend(title.theme = element_text(size = 16, face = "bold"), label.theme = element_text(size = 16),override.aes = list(size = 2),keywidth = unit(1.5,"cm")),linetype = guide_legend(title.theme = element_text(size = 16, face = "bold"), label.theme = element_text(size = 16),override.aes = list(size = 2),,keywidth = unit(1.5,"cm")))
+        guides(colour = guide_legend(title.theme = element_text(size = 16, face = "bold"), label.theme = element_text(size = 16,face="bold"),override.aes = list(size = 2),keywidth = unit(1.5,"cm")),linetype = guide_legend(title.theme = element_text(size = 16, face = "bold"), label.theme = element_text(size = 16,face="bold"),override.aes = list(size = 2),keywidth = unit(1.5,"cm")))
 
     
     p.list2[[r]] <- ggplot(subset(data.df.avg,risk==2), aes(x=year, y=range, group=interaction(season,type), color=season, linetype=type)) + geom_line(alpha=0.9,linewidth=1.5)  + 
         xlab(NULL) + ylab (NULL) +
         labs(color='Season',linetype='Group')  + 
         scale_color_manual(values=hcl.colors(4,"Dynamic")) + scale_linetype_manual(values=c("dotted","dashed","solid")) +
-        ggtitle(paste0(region.name[r]," with risk functional 2")) +
+        ggtitle(paste0(region.name[r],"; risk functional 2")) +
         theme(axis.text = element_text(size=16,face="bold"),
-                       plot.title = element_text(size=16,face="bold",hjust=0.5),
+                       plot.title = element_text(size=14,face="bold",hjust=0.5),
                         axis.ticks =  element_line(size = 1.5),
                         panel.border = element_rect(fill = "transparent", # Needed to add the border
                                                     color = "black",            # Color of the border
                                                     linewidth = 1),
                         panel.background = element_rect(fill = "transparent")) + 
-        guides(colour = guide_legend(title.theme = element_text(size = 16, face = "bold"), label.theme = element_text(size = 16),override.aes = list(size = 2),keywidth = unit(1.5,"cm")),linetype = guide_legend(title.theme = element_text(size = 16, face = "bold"), label.theme = element_text(size = 16),override.aes = list(size = 2),,keywidth = unit(1.5,"cm")))    
+        guides(colour = guide_legend(title.theme = element_text(size = 16, face = "bold"), label.theme = element_text(size = 16,face="bold"),override.aes = list(size = 2),keywidth = unit(1.5,"cm")),linetype = guide_legend(title.theme = element_text(size = 16, face = "bold"), label.theme = element_text(size = 16,face="bold"),override.aes = list(size = 2),keywidth = unit(1.5,"cm")))    
 }
 
-pdf("figures/tail_correlation_range.pdf",width = 20,height = 9,onefile = TRUE)
+pdf("figures/tail_correlation_range.pdf",width = 18,height = 8,onefile = TRUE)
 ggarrange(plotlist=p.list1,nrow=2,ncol=4,common.legend=TRUE,legend="bottom")
 ggarrange(plotlist=p.list2,nrow=2,ncol=4,common.legend=TRUE,legend="bottom")
 dev.off()
@@ -519,7 +523,7 @@ save(p.list1,p.list2,file = paste0(DataPath,"tail_correlation_range.RData"))
 
 ## for individual climate outputs ##
 load("data/dep.fit.boot.results3.RData")
-pdf("figures/tail_correlation_range_i.pdf",width = 24,height = 10,onefile = TRUE)
+pdf("figures/tail_correlation_range_i.pdf",width = 18,height = 8,onefile = TRUE)
 model.selected <- c(1,3,4)
 for(i in model.selected){
     count = 1;p.list1 <- list()
@@ -546,29 +550,29 @@ for(i in model.selected){
         p.list1[[r]] <- ggplot(subset(data.df.avg,risk==1), aes(x=year, y=range, group=interaction(season,type), color=season, linetype=type)) + geom_line(alpha=0.9,linewidth=1.5) + 
             xlab(NULL) + ylab (NULL) + labs(color='Season',linetype='Group') + 
             scale_color_manual(values=hcl.colors(4,"Dynamic")) + scale_linetype_manual(values=c("dotted","dashed","solid")) +
-            ggtitle(paste0(region.name[r]," with risk functional 1","; ",idx.models[i])) +
+            ggtitle(paste0(region.name[r],"; risk functional 1","; ",idx.models[i])) +
             theme(axis.text = element_text(size=16,face="bold"),
-                        plot.title = element_text(size=16,face="bold",hjust=0.5),
+                        plot.title = element_text(size=13,face="bold",hjust=0.5),
                             axis.ticks =  element_line(size = 1.5),
                             panel.border = element_rect(fill = "transparent", # Needed to add the border
                                                         color = "black",            # Color of the border
                                                         linewidth = 1),
                             panel.background = element_rect(fill = "transparent")) + 
-            guides(colour = guide_legend(title.theme = element_text(size = 16, face = "bold"), label.theme = element_text(size = 16),override.aes = list(size = 2),keywidth = unit(1.5,"cm")),linetype = guide_legend(title.theme = element_text(size = 16, face = "bold"), label.theme = element_text(size = 16),override.aes = list(size = 2),,keywidth = unit(1.5,"cm")))
+            guides(colour = guide_legend(title.theme = element_text(size = 16, face = "bold"), label.theme = element_text(size = 16,face="bold"),override.aes = list(size = 2),keywidth = unit(1.5,"cm")),linetype = guide_legend(title.theme = element_text(size = 16, face = "bold"), label.theme = element_text(size = 16,face="bold"),override.aes = list(size = 2),keywidth = unit(1.5,"cm")))
 
         
         p.list2[[r]] <- ggplot(subset(data.df.avg,risk==2), aes(x=year, y=range, group=interaction(season,type), color=season, linetype=type)) + geom_line(alpha=0.9,linewidth=1.5)  + xlab(NULL) + ylab (NULL) +
             labs(color='Season',linetype='Group')  + 
             scale_color_manual(values=hcl.colors(4,"Dynamic")) + scale_linetype_manual(values=c("dotted","dashed","solid")) +
-            ggtitle(paste0(region.name[r]," with risk functional 2","; " ,idx.models[i])) +
+            ggtitle(paste0(region.name[r],"; risk functional 2","; " ,idx.models[i])) +
             theme(axis.text = element_text(size=16,face="bold"),
-                        plot.title = element_text(size=16,face="bold",hjust=0.5),
+                        plot.title = element_text(size=13,face="bold",hjust=0.5),
                             axis.ticks =  element_line(size = 1.5),
                             panel.border = element_rect(fill = "transparent", # Needed to add the border
                                                         color = "black",            # Color of the border
                                                         linewidth = 1),
                             panel.background = element_rect(fill = "transparent")) + 
-            guides(colour = guide_legend(title.theme = element_text(size = 16, face = "bold"), label.theme = element_text(size = 16),override.aes = list(size = 2),keywidth = unit(1.5,"cm")),linetype = guide_legend(title.theme = element_text(size = 16, face = "bold"), label.theme = element_text(size = 16),override.aes = list(size = 2),,keywidth = unit(1.5,"cm")))    
+            guides(colour = guide_legend(title.theme = element_text(size = 16, face = "bold"), label.theme = element_text(size = 16,face="bold"),override.aes = list(size = 2),keywidth = unit(1.5,"cm")),linetype = guide_legend(title.theme = element_text(size = 16, face = "bold"), label.theme = element_text(size = 16,face="bold"),override.aes = list(size = 2),keywidth = unit(1.5,"cm")))    
     }
     show(ggarrange(plotlist=p.list1,nrow=2,ncol=4,common.legend=TRUE,legend="bottom"))
     show(ggarrange(plotlist=p.list2,nrow=2,ncol=4,common.legend=TRUE,legend="bottom"))
@@ -606,38 +610,38 @@ for(r in 1:8){
     data.df.avg[,c("low","up")] = t(sapply(1:nrow(data.df.avg),function(i){solve.h.boot(data.df.avg$risk[i],data.df.avg$season[i],r,temp=data.df.avg$tep[i])}))
     
     data.df.avg$season = season[data.df.avg$season]
-    
-    p.list1[[r]] <- ggplot(subset(data.df.avg,risk==1 & type=="SSP 5-8.5"), aes(x=year, y=range, color=season)) + #geom_line(alpha=0.9,linewidth=1.5) + 
-        xlab(NULL) + ylab (NULL) + labs(color='Season') + geom_ribbon(aes(ymin=low,ymax=up),alpha=0.2,linewidth=1.5) + 
-        scale_color_manual(values=hcl.colors(4,"Dynamic")) + scale_linetype_manual(values=c("dotted","solid")) + 
-        ggtitle(paste0(region.name[r]," with risk functional 1")) +
+    p.list1[[r]] <- ggplot(subset(data.df.avg,risk==1 & type=="SSP 5-8.5"), aes(x=year, y=range)) + geom_line(alpha=0.9,linewidth=1.5) + 
+        xlab(NULL) + ylab (NULL) + geom_ribbon(aes(ymin=low,ymax=up),alpha=0.3,linewidth=1.5) + facet_wrap(~ season,scales = "free",nrow=1,ncol=4,labeller = label_parsed) +
+        ggtitle(paste0(region.name[r],"; risk functional 1")) +
         theme(axis.text = element_text(size=16,face="bold"),
-                       plot.title = element_text(size=16,face="bold",hjust=0.5),
-                        axis.ticks =  element_line(size = 1.5),
-                        panel.border = element_rect(fill = "transparent", # Needed to add the border
-                                                    color = "black",            # Color of the border
-                                                    linewidth = 1),
-                        panel.background = element_rect(fill = "transparent")) + 
-        guides(colour = guide_legend(title.theme = element_text(size = 16, face = "bold"), label.theme = element_text(size = 16),override.aes = list(size = 2),keywidth = unit(1.5,"cm")),linetype = guide_legend(title.theme = element_text(size = 16, face = "bold"), label.theme = element_text(size = 16),override.aes = list(size = 2),,keywidth = unit(1.5,"cm")))
+                strip.text = element_text(size = 16),
+                plot.title = element_text(size=16,face="bold",hjust=0.5),
+                axis.ticks =  element_line(size = 1.5),
+                panel.border = element_rect(fill = "transparent", # Needed to add the border
+                                        color = "black",            # Color of the border
+                                        linewidth = 1),
+                panel.background = element_rect(fill = "transparent")) + 
+                guides(colour = guide_legend(title.theme = element_text(size = 16, face = "bold"), label.theme = element_text(size = 16),override.aes = list(size = 2),keywidth = unit(1.5,"cm")),linetype = guide_legend(title.theme = element_text(size = 16, face = "bold"), label.theme = element_text(size = 16),override.aes = list(size = 2),keywidth = unit(1.5,"cm")))
 
     
-    p.list2[[r]] <- ggplot(subset(data.df.avg,risk==2 & type=="SSP 5-8.5"), aes(x=year, y=range, color=season)) + #geom_line(alpha=0.9,linewidth=1.5) + 
-        xlab(NULL) + ylab (NULL) + labs(color='Season') + geom_ribbon(aes(ymin=low,ymax=up),alpha=0.2,linewidth=1.5) + 
-        scale_color_manual(values=hcl.colors(4,"Dynamic")) + scale_linetype_manual(values=c("dotted","solid")) + 
-        ggtitle(paste0(region.name[r]," with risk functional 2")) +
+    p.list2[[r]] <- ggplot(subset(data.df.avg,risk==2 & type=="SSP 5-8.5"), aes(x=year, y=range)) + geom_line(alpha=0.9,linewidth=1.5) + 
+        xlab(NULL) + ylab (NULL) + geom_ribbon(aes(ymin=low,ymax=up),alpha=0.3,linewidth=1.5) + facet_wrap(~ season,scales = "free",nrow=1,ncol=4,labeller = label_parsed) +
+        ggtitle(paste0(region.name[r],"; risk functional 2")) +
         theme(axis.text = element_text(size=16,face="bold"),
-                       plot.title = element_text(size=16,face="bold",hjust=0.5),
-                        axis.ticks =  element_line(size = 1.5),
-                        panel.border = element_rect(fill = "transparent", # Needed to add the border
-                                                    color = "black",            # Color of the border
-                                                    linewidth = 1),
-                        panel.background = element_rect(fill = "transparent")) + 
-        guides(colour = guide_legend(title.theme = element_text(size = 16, face = "bold"), label.theme = element_text(size = 16),override.aes = list(size = 2),keywidth = unit(1.5,"cm")),linetype = guide_legend(title.theme = element_text(size = 16, face = "bold"), label.theme = element_text(size = 16),override.aes = list(size = 2),,keywidth = unit(1.5,"cm")))
+                strip.text = element_text(size = 16),
+                plot.title = element_text(size=16,face="bold",hjust=0.5),
+                axis.ticks =  element_line(size = 1.5),
+                panel.border = element_rect(fill = "transparent", # Needed to add the border
+                                            color = "black",            # Color of the border
+                                            linewidth = 1),
+                panel.background = element_rect(fill = "transparent")) + 
+        guides(colour = guide_legend(title.theme = element_text(size = 16, face = "bold"), label.theme = element_text(size = 16,face="bold"),override.aes = list(size = 2),keywidth = unit(1.5,"cm")),linetype = guide_legend(title.theme = element_text(size = 16, face = "bold"), label.theme = element_text(size = 16,face="bold"),override.aes = list(size = 2),keywidth = unit(1.5,"cm")))
+
 }
 
-pdf("figures/tail_correlation_range_uncertainty.pdf",width = 20,height = 9,onefile = TRUE)
-ggarrange(plotlist=p.list1,nrow=2,ncol=4,common.legend=TRUE,legend="bottom")
-ggarrange(plotlist=p.list2,nrow=2,ncol=4,common.legend=TRUE,legend="bottom")
+pdf("figures/tail_correlation_range_uncertainty.pdf",width = 5*4,height = 3*8,onefile = TRUE)
+ggarrange(plotlist=p.list1,nrow=8,ncol=1,common.legend=TRUE,legend="bottom")
+ggarrange(plotlist=p.list2,nrow=8,ncol=1,common.legend=TRUE,legend="bottom")
 dev.off()
 
 ##############################################################
