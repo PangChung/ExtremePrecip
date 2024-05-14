@@ -429,7 +429,9 @@ p.list <- list()
 }
 dev.off()
 
+######################################
 ## plot qqplot for random locations ##
+######################################
 for(idx in 1:8){
     load(paste0(DataPath,"marginal_fit_0_",idx,".RData"),e<-new.env())
     # sig2.pred <- e$results.gpd$sig2
@@ -447,7 +449,7 @@ for(idx in 1:8){
     theoretical.quantiles <- sapply(theoretical.quantiles,function(x) quantile(x,prob=1:1000/(1+1000),na.rm=T),simplify = F)
     xlim = range(c(theoretical.all,empirical.quantiles)) + c(-0.1,0.1)
     plot(theoretical.all,empirical.quantiles,cex=1.5,pch=20,
-        xlab="",ylab="",main="All stations",asp=1,xlim=xlim,ylim=xlim)
+        xlab="",ylab="",main=paste0(region.name[idx],": Pooled"),asp=1,xlim=xlim,ylim=xlim)
         #xlab="Theoretical quantiles",ylab="Empirical quantiles",main="All stations")
     abline(0,1,col=2,lwd=2)
     for(ind in 1:length(idx.list)){
@@ -670,20 +672,18 @@ for(i in 1:length(simu)){
  data <- data.frame(x=loc[,1],y=loc[,2],z=pmin(simu[[i]],MaxLimits))
  pic1 <- ggplot(aes(x=x,y=y,fill=z),data=data) + geom_tile()
  pic1 <- pic1 + scale_fill_gradientn(name="Value",colors=hcl.colors(12,"BluYl",rev=TRUE,alpha=1),limits=c(0,MaxLimits))
- pic1 <- pic1 + theme(axis.text = element_text(size=10), 
-          axis.title.x = element_text(size=14), 
-          axis.title.y = element_text(size=14), 
-          plot.title = element_text(hjust = 0.5),aspect.ratio=1) + coord_fixed() 
+ pic1 <- pic1 + theme(axis.text = element_text(size=14,face="bold"), 
+          axis.title.x = element_text(size=16,face="bold"), 
+          axis.title.y = element_text(size=16,face="bold"), 
+          plot.title = element_text(hjust = 0.5,size=20,face="bold"),aspect.ratio=1,
+          legend.text = element_text(size = 14,face="bold"),legend.title=element_text(size=16,face="bold")) + coord_fixed() 
  pic[[i]] <- pic1 + ggtitle(
   label=bquote(paste("Tail-correlation range:", ~.(round(dep_range[i],1)),";",~lambda==.(exp(param_mat[i,2]))))
   )
 }
 
-
 pdf("figures/simulation.pdf",width=4.5*3,height=4,onefile=TRUE)
-combined_pic <- plot_grid(pic[[1]],pic[[2]],pic[[3]],
-nrow=1,rel_widths=c(1,1,1),label_y = expression(alpha==0.5),hjust=-1,align="vh")
-show(combined_pic)
+grid.arrange(grobs=pic,ncol=3)
 dev.off()
 
 save(pic,param_mat,vario,loc,simu,file="data/plot_simulation.RData")

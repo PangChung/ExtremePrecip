@@ -38,7 +38,9 @@ If box above is checked and if no simulated/synthetic data files are provided by
 <!-- If data are simulated using random number generation, please be sure to set the random number seed in the code you provide -->
 
 ## Abstract
-The data we used is daily precipitation data in two major river basins, the Danube river basin and the Mississippi river basin from the year 1965 to 2020 measured by.  
+The dataset consists of observed daily precipitation data in millimeters from 125 monitoring stations in the Danube river basin (Europe) and from 2229 monitoring stations in the Mississippi river basin (North America). The dataset is
+publicly available from the Global Historical Climatology Network1 (GHCN) for the period
+1965–2020.  
 
 <!--
 Provide a short (< 100 words), high-level description of the data
