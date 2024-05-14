@@ -38,9 +38,7 @@ If box above is checked and if no simulated/synthetic data files are provided by
 <!-- If data are simulated using random number generation, please be sure to set the random number seed in the code you provide -->
 
 ## Abstract
-The dataset consists of observed daily precipitation data in millimeters from 125 monitoring stations in the Danube river basin (Europe) and from 2229 monitoring stations in the Mississippi river basin (North America). The dataset is
-publicly available from the Global Historical Climatology Network1 (GHCN) for the period
-1965–2020.  
+The dataset consists of observed daily precipitation data in millimeters from 125 monitoring stations in the Danube river basin (Europe) and from 2229 monitoring stations in the Mississippi river basin (North America) over the period from 1965 to 2020. The temperature covariate used to fit the model in this project was derived from the ERA5-Land reanalysis data for the corresponding region we selected, which is a global land-surface dataset with quite a high spatial resolution of 9km, and the projected temperature covariate is derived from climate models outputs of the sixth Coupled Model Intercomparison Project (CMIP6), namely AWI, MIROC, and MPI.
 
 <!--
 Provide a short (< 100 words), high-level description of the data
@@ -57,6 +55,7 @@ If the data are publicly available, see the *Publicly available data* section. O
 ### Publicly available data
 
 - [x] Data are available online at:
+
 
 - [ ] Data are available as part of the paper’s supplementary material.
 
