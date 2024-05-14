@@ -36,8 +36,6 @@ geom_point(size=1,position=position_dodge2(width=0.5)) +
 geom_errorbar(aes(ymin=lambda1 - 1.96*sd.lambda1, ymax=lambda1 + 1.96*sd.lambda1), width=0.5,linewidth=1.5,position=position_dodge2(width=1)) +
 ggh4x::facet_grid2(~season,scales="free_y",independent="y", labeller = labeller(season = as_labeller(c("1" = "Winter", "2" = "Spring", "3" = "Summer", "4" = "Fall")))) + labs(color="risk functional",x="Region",y=expression(lambda[1])) + geom_hline(yintercept = 0, linetype="dashed", color = "black")
 
-p1[[3]]
-
 p1[[1]] <- p1[[1]] + theme(axis.text = element_text(size = 10),
         axis.title.x = element_text(size = 14),
         strip.text = element_text(size = 14),
