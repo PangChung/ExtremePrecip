@@ -9,3 +9,12 @@ settings.json
 *.out
 output_*.txt
 *.sh*.*
+
+# Don't ignore these RData files
+!data/dep.fit.boot.results3.RData
+!data/marginal_fit_quantiles.RData
+!data/temperature.RData
+!data/temperature_pred.RData
+!data/precip.RData
+!data/era5_geoinfo.RData
+!data/transformed_coordinates.RData
