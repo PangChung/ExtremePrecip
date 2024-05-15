@@ -10,7 +10,7 @@ load("data/temperature.RData")
 ## bootstrap.ind !=0 (fit the model with bootstrap data)
 ## idx.region = 1 2,...,8 
 ## njobs = 1 number of jobs that run in pallarel, set to 1. 
-idx.region = 1;bootstrap.ind = 1;njobs=1
+idx.region = 1;bootstrap.ind = 0;njobs=1
 init = c(-2,log(100),0);fixed=c(F,F,F)
 season = c("Winter" ,"Spring" ,"Summer" ,"Fall")
 computer="local"
