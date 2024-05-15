@@ -6,7 +6,7 @@ library(evgam)
 library(gridExtra)
 library(ggpubr)
 library(evd)
-DataPath <- "data/boot4/"
+DataPath <- "data/"
 load("data/dep.fit.boot.results3.RData")
 load("data/temperature.RData")
 load("data/temperature_pred.RData")
@@ -280,7 +280,7 @@ y.thres=0
 count = 1
 p.list <- list()
 for(r in 1:8){
-    load(paste0(DataPath,"marginal_fit_0_",r,".RData"),e<-new.env())
+    load(paste0(DataPath,"marginal_fit_0_",r,".RData"),e<-new.env()) 
     ### prepare the data frame to predict ###
     # print(r)
     # print(summary(e$results.gam))

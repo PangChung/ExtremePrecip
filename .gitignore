@@ -18,3 +18,4 @@ output_*.txt
 !data/precip.RData
 !data/era5_geoinfo.RData
 !data/transformed_coordinates.RData
+!data/plot_*.RData
