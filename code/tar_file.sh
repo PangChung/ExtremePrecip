@@ -1,8 +1,7 @@
 #!/bin/bash
-cd ~/Downloads/
+cd ~/data/temperature/
 
 tar -czvf temperature1950_1980.tar.gz temperature/
-
 
 rm temperature/*
 for i in {1981..2000}

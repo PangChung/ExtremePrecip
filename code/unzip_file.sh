@@ -1,6 +1,6 @@
 #!/bin/bash
 
-cd ~/Desktop/Temperatures/
+cd data/temperature/
 
 if [ -f "2t_day_era5-land_$1.nc" ]
 then

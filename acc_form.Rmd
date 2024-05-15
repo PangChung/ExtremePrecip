@@ -118,7 +118,7 @@ OPTIONAL: Provide any additional details that would be helpful in understanding 
 # Part 2: Code
 
 ## Abstract
-The code 
+The code contains all the code to process 
 <!--
 Provide a short (< 100 words), high-level description of the code. If necessary, more details can be provided in files that accompany the code. If no code is provided, please state this and say why (e.g., if the paper contains no computational work).
 -->
