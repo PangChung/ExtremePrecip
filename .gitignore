@@ -9,6 +9,7 @@ settings.json
 *.out
 output_*.txt
 *.sh*.*
+*.zip
 
 # Don't ignore these RData files
 !data/dep.fit.boot.results3.RData
