@@ -99,7 +99,7 @@ A data dictionary provides information that allows users to understand the meani
 
 - [x] Provided by authors in the following file(s):
 * data/dep.fit.boot.results3.RData: Fitted results from the bootstrap scheme for the dependence model.
-* data/marginal_fit_0_[1-8].RData: Results for the marginal fit in the eight subregions.
+* data/marginal_fit_quantiles.RData: Transformed margins based on the marginal fit. 
 * data/temperature.RData: The derived temperature covariate over the period 1965--2020.
 * data/temperature_pred.RData: The derived temperature covariate from the climate models over the period 2015--2100 under different shared socioeconomic pathways (SSP 2-4.5 or SSP 5-8.5).
 * data/precip.RData: The precipitation data for the eight subregions.
@@ -107,7 +107,7 @@ A data dictionary provides information that allows users to understand the meani
 * data/transformed_coordinates.RData: Transformed coordinates for the eight subregions, which transformed the latitude/longitude coordinate to the Eculidean coordinate.  
 - [ ] Data file(s) is(are) self-describing (e.g., netCDF files)
 - [x] Available at the following URL: 
-* Github: https://github.com/PangChung/ExtremePrecip
+* Github: https://github.com/PangChung/ExtremePrecip/
 
 ### Additional Information (optional)
 
