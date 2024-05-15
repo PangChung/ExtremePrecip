@@ -432,29 +432,25 @@ dev.off()
 ######################################
 ## plot qqplot for random locations ##
 ######################################
+load("data/marginal_fit_quantiles.RData")
 for(idx in 1:8){
-    load(paste0(DataPath,"marginal_fit_0_",idx,".RData"),e<-new.env())
-    # sig2.pred <- e$results.gpd$sig2
-    # shape.pred = 1/sig2.pred
-    shape.pred = fitted(e$results.gpd)[1,2]
     set.seed(1234435)
-    idx.list = sample(1:sum(station$group.id==region.id[idx]),2,replace = F,prob=apply(e$U,2,function(x){sum(!is.na(x))}))
+    idx.list = sample(1:sum(station$group.id==region.id[idx]),2,replace = F,prob=apply(theoretical.quantiles[[idx]],2,function(x){sum(!is.na(x))}))
     print(idx.list)
     png(file = paste0("figures/qqplot_marginal_",idx,".png"),height=6,width=6*3,units="cm",res=300, pointsize=6)
     par(mfrow=c(1,3),mar=c(3,4,3,1),mgp=c(2.5,2,0),cex.lab=3,cex.axis=3,cex.main=3,pty="s")
-    theoretical.quantiles <- qgpd(e$U,loc=0,scale=1,shape=shape.pred)
     empirical.quantiles <- qgpd(1:1000/(1+1000),loc=0,scale=1,shape=shape.pred)
-    theoretical.quantiles <- split(theoretical.quantiles,col(theoretical.quantiles))
-    theoretical.all <- quantile(unlist(theoretical.quantiles),prob=1:1000/(1+1000),na.rm=T)
-    theoretical.quantiles <- sapply(theoretical.quantiles,function(x) quantile(x,prob=1:1000/(1+1000),na.rm=T),simplify = F)
+    theoretical.quantiles[[idx]] <- split(theoretical.quantiles[[idx]],col(theoretical.quantiles[[idx]]))
+    theoretical.all <- quantile(unlist(theoretical.quantiles[[idx]]),prob=1:1000/(1+1000),na.rm=T)
+    theoretical.quantiles[[idx]] <- sapply(theoretical.quantiles[[idx]],function(x) quantile(x,prob=1:1000/(1+1000),na.rm=T),simplify = F)
     xlim = range(c(theoretical.all,empirical.quantiles)) + c(-0.1,0.1)
     plot(theoretical.all,empirical.quantiles,cex=1.5,pch=20,
         xlab="",ylab="",main=paste0(region.name[idx],": Pooled"),asp=1,xlim=xlim,ylim=xlim)
         #xlab="Theoretical quantiles",ylab="Empirical quantiles",main="All stations")
     abline(0,1,col=2,lwd=2)
     for(ind in 1:length(idx.list)){
-    xlim = range(c(theoretical.quantiles[[idx.list[ind]]],empirical.quantiles)) + c(-0.1,0.1)
-    plot(theoretical.quantiles[[idx.list[ind]]],empirical.quantiles,
+    xlim = range(c(theoretical.quantiles[[idx]][[idx.list[ind]]],empirical.quantiles)) + c(-0.1,0.1)
+    plot(theoretical.quantiles[[idx]][[idx.list[ind]]],empirical.quantiles,
         cex=1.5,pch=20,xlab="",ylab="",main=paste("Station",idx.list[ind]),asp=1,xlim=xlim,ylim=xlim)
     abline(0,1,col=2,lwd=2)
     }        
