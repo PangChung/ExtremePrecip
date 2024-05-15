@@ -55,16 +55,16 @@ If the data are publicly available, see the *Publicly available data* section. O
 ### Publicly available data
 
 - [x] Data are available online at:
-Climate model outputs and EAR5-Land Reanalysis data: https://www.copernicus.eu/en/access-data
-Precipitation observations: https://www.ncei.noaa.gov/products/land-based-station/global-historical-climatology-network-daily
-Watershed Boundary Dataset: https://www.usgs.gov/national-hydrography/watershed-boundary-dataset
-
+* Climate model outputs and EAR5-Land Reanalysis data: https://www.copernicus.eu/en/access-data
+* Precipitation observations: https://www.ncei.noaa.gov/products/land-based-station/global-historical-climatology-network-daily
+* Watershed Boundary Dataset: https://www.usgs.gov/national-hydrography/watershed-boundary-dataset
+* The data files after processing are stored on Github: https://github.com/PangChung/ExtremePrecip
 - [ ] Data are available as part of the paper’s supplementary material.
 
 - [ ] Data are publicly available by request, following the process described here:
 
 - [x] Data are or will be made available through some other mechanism, described here:
-We have save the data used in our analysis in the format of R data file (.RData), and we will host those data on Google drive. The link to download from Google drive will be provided upon email request.
+* We have saved the data used in our analysis in the format of R data file (.RData), and we host those data on Github[https://github.com/PangChung/ExtremePrecip], which are public accessible. However, the raw data that used to derive the temperature covariate will be only provided upon email request due to its large size. The email address is peng[dot]zhong[at]unsw[dot]edu[dot]au. 
 
 <!-- If data are available by request to the authors or some other data owner, please make sure to explain the process of requesting access to the data. -->
 
@@ -98,8 +98,16 @@ A data dictionary provides information that allows users to understand the meani
 -->
 
 - [x] Provided by authors in the following file(s):
+* data/dep.fit.boot.results3.RData: Fitted results from the bootstrap scheme for the dependence model.
+* data/marginal_fit_0_[1-8].RData: Results for the marginal fit in the eight subregions.
+* data/temperature.RData: The derived temperature covariate over the period 1965--2020.
+* data/temperature_pred.RData: The derived temperature covariate from the climate models over the period 2015--2100 under different shared socioeconomic pathways (SSP 2-4.5 or SSP 5-8.5).
+* data/precip.RData: The precipitation data for the eight subregions.
+* data/era5_geoinfo.RData: Shape files for the eight subregions 
+* data/transformed_coordinates.RData: Transformed coordinates for the eight subregions, which transformed the latitude/longitude coordinate to the Eculidean distance (km).  
 - [ ] Data file(s) is(are) self-describing (e.g., netCDF files)
-- [ ] Available at the following URL: 
+- [x] Available at the following URL: 
+* Github: https://github.com/PangChung/ExtremePrecip
 
 ### Additional Information (optional)
 

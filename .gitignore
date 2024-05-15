@@ -9,3 +9,7 @@ settings.json
 *.out
 output_*.txt
 *.sh*.*
+code/archived/Dependence_Model_Fit.R
+code/archived/extra_functions.R
+code/archived/kriging.R
+code/archived/main.R
