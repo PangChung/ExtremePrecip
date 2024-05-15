@@ -322,7 +322,7 @@ for(r in 1:8){
     prob.exceed.pred <- predict.gam(e$results.bin,newdata=data.pred,type="response")
     gpd.pred <- predict(e$results.gpd,newdata=data.pred)
     scale.gpd.pred = exp(gpd.pred[,1]);shape.gpd.pred = gpd.pred[1,2]
-    return.level = (1-1/(100*365)) 
+    return.level = (1-1/(100*91)) 
     prob.gpd <- (return.level - (1-prob.exceed.pred))/prob.exceed.pred
 
     return.value <- y.thres + quantile.pred + qgpd(prob.gpd,loc=0,scale=scale.gpd.pred,shape=shape.gpd.pred)
@@ -402,7 +402,7 @@ p.list <- list()
         prob.exceed.pred <- predict.gam(e$results.bin,newdata=data.pred,type="response")
         gpd.pred <- predict(e$results.gpd,newdata=data.pred)
         scale.gpd.pred = exp(gpd.pred[,1]);shape.gpd.pred = gpd.pred[1,2]
-        return.level = (1-1/(100*365)) 
+        return.level = (1-1/(100*91)) 
         prob.gpd <- (return.level - (1-prob.exceed.pred))/prob.exceed.pred
 
         return.value <- y.thres + quantile.pred + qgpd(prob.gpd,loc=0,scale=scale.gpd.pred,shape=shape.gpd.pred)
