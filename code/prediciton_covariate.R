@@ -16,14 +16,14 @@ for (arg in args) eval(parse(text = arg))
 
 ## extract the prediciton covariates for Mississippi region ##
 
-load("data/temperatures-mississippi.RData")
+load("data/temperature/temperatures-mississippi.RData")
 str(xyt[models=="AWI" & periods=="historical"])
 str(xyt[models=="MIROC" & periods=="historical"])
 str(xyt[models=="NorESM" & periods=="historical"])
 str(xyt[models=="MPI" & periods=="historical"])
 str(xyt[models=="CNRM" & periods=="historical"])
 
-load("data/temperatures-danube.RData")
+load("data/temperature/temperatures-danube.RData")
 str(xyt[models=="AWI" & periods=="historical"])
 str(xyt[models=="MIROC" & periods=="historical"])
 str(xyt[models=="NorESM" & periods=="historical"])
@@ -32,7 +32,7 @@ str(xyt[models=="CNRM" & periods=="historical"])
 
 ## AWI, NorESM, MIROC has the highest spatial resolution ##
 
-load("data/temperatures-mississippi.RData")
+load("data/temperature/temperatures-mississippi.RData")
 idx.models = c("AWI","NorESM","MIROC","MPI","CNRM")
 locate.idx.list <- idx.grid.list <- list()
 for(idx in 1:5){
@@ -47,7 +47,7 @@ for(idx in 1:5){
     idx.grid.list[[idx]] = list(miss=idx.grid,danube=NULL)
 }
 
-load("data/temperatures-danube.RData")
+load("data/temperature/temperatures-danube.RData")
 idx.models = c("AWI","NorESM","MIROC","MPI","CNRM")
 for(idx in 1:5){
     i = which(models==idx.models[idx] & periods=="historical") ## select the model
@@ -61,7 +61,7 @@ for(idx in 1:5){
     idx.grid.list[[idx]]$danube = idx.grid
 }
 
-load("data/temperatures-danube.RData")
+load("data/temperature/temperatures-danube.RData")
 temperature.hist <- temperature.245 <- temperature.585 <- list()
 for(idx in 1:5){
     i = which(models==idx.models[idx] & periods=="historical")
@@ -80,7 +80,7 @@ for(idx in 1:5){
     temperature.585[[idx]][[1]] = rowMeans(matrix(unlist(lapply(1:dim(temperatures[[i]])[3],function(j){temperatures[[i]][,,j][idx.temperature]})),ncol=nrow(idx.temperature),byrow=TRUE))
 }
 
-load("data/temperatures-mississippi.RData")
+load("data/temperature/temperatures-mississippi.RData")
 for(idx.region in 2:length(region.id)){
     for(idx in 1:5){
         i = which(models==idx.models[idx] & periods=="historical")

@@ -11,7 +11,7 @@ for (arg in args) eval(parse(text = arg)) #input is the year
 ## prepare the data and files ##
 filename1 = paste0("data/temperature/2t_day_era5-land_",year,".nc") # Mississippi region
 filename2 = paste0("data/temperature/temp_EUROPE/",year,"_daily_temp.nc") ## Danube region
-file2save = paste0("data/temperature_",year,".RData")
+file2save = paste0("data/temperature/temperature_",year,".RData")
 data1 <- nc_open(filename1)
 data2 <- nc_open(filename2)
 #################################################

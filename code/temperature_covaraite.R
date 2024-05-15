@@ -3,7 +3,7 @@ library(lubridate)
 library(dplyr)
 source("code/utility.R")
 load("data/era5_geoinfo.RData")
-files <- list.files(path="data/",pattern="temperature_\\d+",full.names=TRUE)
+files <- list.files(path="data/temperature/",pattern="temperature_\\d+",full.names=TRUE)
 date <- seq(as.Date("1950-01-01"), as.Date("2020-12-31"),1)
 
 temperature <- list(Danube=NULL,Miss1=NULL,Miss2=NULL,Miss3=NULL,
