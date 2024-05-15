@@ -1,3 +1,4 @@
+## main code to fit the model to the original data (bootstrap.ind == 0) or to the bootstrap data (bootstrap.ind != 0) ##
 rm(list=ls())
 t0 <- proc.time()
 args <- commandArgs(TRUE)

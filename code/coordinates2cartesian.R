@@ -1,3 +1,4 @@
+## code to transform the latitude/longtitude to euclidean coordinates ##
 rm(list=ls())
 load("data/precip.RData")
 library(sp)

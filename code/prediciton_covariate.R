@@ -1,3 +1,4 @@
+## code to generate the temperature covaraite for the prediction from the climate models ##
 rm(list=ls())
 args <- commandArgs(TRUE)
 load("data/era5_geoinfo.RData")

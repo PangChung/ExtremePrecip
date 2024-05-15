@@ -118,7 +118,7 @@ OPTIONAL: Provide any additional details that would be helpful in understanding 
 # Part 2: Code
 
 ## Abstract
-The code contains all the code to process 
+The code contains all the code to process the raw data (upon request) and generate all the figures and tables in the main manuscript and the supplemental material from the .RData files provided. The R script file code/bootstrap.R is used to fit the marginal model as well as the dependence model when the variable bootstrap.ind $=$ 0, otherwise, it will fit the marginal model together with the dependence model to the bootstrap data when the variable bootstrap.ind $!=$ 0. One can use the bash script code/bootstrap.sh to fit model in parallel on a computer clusters or HPC system running PBS (a HPC management software). To generate all the figures, one can use and follow the R script code/plots.R.
 <!--
 Provide a short (< 100 words), high-level description of the code. If necessary, more details can be provided in files that accompany the code. If no code is provided, please state this and say why (e.g., if the paper contains no computational work).
 -->
@@ -148,25 +148,30 @@ Check all that apply
 - [ ] Other (please specify): 
 
 ### Supporting software requirements
-
+de Fondeville R, Belzile L (2023). _mvPot: Multivariate Peaks-over-Threshold Modelling for Spatial Extreme Events_. R package version 0.1.6,<https://CRAN.R-project.org/package=mvPot>.
+Youngman BD (2022). “evgam: An R Package for Generalized Additive Extreme Value Models.” _Journal of Statistical Software_, *103*(3), 1-26. doi:10.18637/jss.v103.i03 <https://doi.org/10.18637/jss.v103.i03>.
 <!--
 Please cite all software packages in the References Section in similar fashion to paper citations, citing packages that are foundational to the research outcome (including packages that implement methods to which you compare your methods). You may elect to not cite packages used for supporting purposes. For R packages, note that running `citation('name_of_package')` often shows how the package authors wish to be cited. 
 -->
 
 #### Version of primary software used
-
+R version 4.3.2
+OpenPBS 23.06.06
 <!--
 (e.g., R version 3.6.0)
 -->
 
 #### Libraries and dependencies used by the code
-
+evgam_1.0.0
+mgcv_1.9-0
+mvPotST_0.0.0.9000 (a spatial-temporal version of mvPot 0.1.6, located at code/archived/mvPotST/mvPotST_0.0.0.9000.tar.gz in the Github repository.)
+ggplot2_3.5.0
 <!--
 Include version numbers (e.g., version numbers for any R or Python packages used)
 -->
 
 ### Supporting system/hardware requirements (optional)
-
+Access to HPC with OpenPBS management software. 
 <!--
 OPTIONAL: System/hardware requirements including operating system with version number, access to cluster, GPUs, etc.
 -->
@@ -176,12 +181,12 @@ OPTIONAL: System/hardware requirements including operating system with version n
 - [ ] No parallel code used
 - [ ] Multi-core parallelization on a single machine/node
     - Number of cores used: 
-- [ ] Multi-machine/multi-node parallelization 
-    - Number of nodes and cores used: 
+- [x] Multi-machine/multi-node parallelization 
+    - Number of nodes and cores used: 56 nodes with 16 cores on each nodes
 
 ### License
 
-- [ ] MIT License (default)
+- [x] MIT License (default)
 - [ ] BSD 
 - [ ] GPL v3.0
 - [ ] Creative Commons
@@ -195,7 +200,11 @@ OPTIONAL: By default, submitted code will be published on the JASA GitHub reposi
 -->
 
 # Part 3: Reproducibility workflow
-
+* First, one need to specify the working directory, which should be *~/ExtremePrecip/* in our case
+* Then, one need to install the packages mvPotST as well as other packages listed in the R script files.
+* Run the marginal fit and the dependence model fit via the following code, *Rscript code/bootstrap.R "idx.region=1;bootstrap.ind=0;computer=\"local\""*. Here we fit the model for the region 1 (Danube) by setting *idx.region=1*. 
+* Generate the plots using the code in *code/plots.R*, in some cases, one can directly load the plots into memory by load the R Data file data/plot_\<name of the plot\>.RData
+* Other R scripts are used to pre-process the raw data (provided upon request). 
 <!--
 The materials provided should provide a straightforward way for reviewers and readers to reproduce analyses with as few steps as possible. 
 -->

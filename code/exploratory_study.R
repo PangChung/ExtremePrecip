@@ -1,3 +1,4 @@
+## code to generate the heatmaps for the precipitation data ##
 rm(list=ls())
 load("data/precip.RData")
 load("data/temperature.RData")

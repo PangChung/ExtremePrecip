@@ -1,3 +1,4 @@
+## code to extract the precipitation data from raw files for each subregion ##
 library(sf)
 load("data/data.Rdata")
 source("code/utility.R")

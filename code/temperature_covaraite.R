@@ -1,3 +1,4 @@
+## code to generate the temperature covaraite after extracting the temperature data using code extrect_temperature.R ##
 library(lubridate)
 library(dplyr)
 source("code/utility.R")

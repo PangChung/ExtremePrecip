@@ -1,3 +1,4 @@
+## code to extract the temperature covariate from the ERA5-Land reanalysis data ##
 args <- commandArgs(TRUE)
 source("code/utility.R")
 library(ncdf4)
