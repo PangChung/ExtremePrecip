@@ -432,6 +432,12 @@ dev.off()
 ######################################
 ## plot qqplot for random locations ##
 ######################################
+est.shape <- c()
+for(r in 1:8){
+    load(paste0(DataPath,"boot4/marginal_fit_0_",r,".RData"),e<-new.env()) 
+    print(est.shape[r] <- e$data.df.gpd$est.shape.gpd[1])
+}
+
 load("data/marginal_fit_quantiles.RData")
 for(idx in 1:8){
     set.seed(1234435)
