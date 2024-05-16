@@ -10,6 +10,8 @@ settings.json
 output_*.txt
 *.sh*.*
 *.zip
+*/.DS_Store
+.DS_Store
 
 # Don't ignore these RData files
 !data/dep.fit.boot.results3.RData
