@@ -24,10 +24,10 @@ library(RColorBrewer)
 p1.list <- p2.list <- list()
 mean.func <- function(x,y=TRUE){
     n <- sum(!is.na(x))
-    if(y){
+    if(y & n>=36){
         return(mean(x,na.rm=TRUE))
     }
-    if(!y){
+    if(!y & n>=5){
         return(mean(x,na.rm=TRUE))
     }
     return(NA)
@@ -44,14 +44,15 @@ for(idx in c(1:length(region.id))){
             year=rep(year(date),nD),
             yday=rep(yday(date),nD),
             id = rep(1:nD,each=length(date)))
-    #idx.valid = !is.na(idx.data$precip) & idx.data$precip < 1000
-    #idx.data = idx.data[idx.valid, ]
+    idx.valid = !is.na(idx.data$precip) & idx.data$precip < 1000
+    idx.data = idx.data[idx.valid, ]
     mean.year <- aggregate(idx.data$precip,by=list(idx.data$year,idx.data$id),FUN=mean.func,y=TRUE)
     mean.day <- aggregate(idx.data$precip,by=list(idx.data$yday,idx.data$id),FUN=mean.func,y=FALSE)  
     mean.day$elev <- idx.elev[mean.day$Group.2]
     names(mean.day) <- c("day","ID","precip","elev")
     mean.year$elev <- idx.elev[mean.year$Group.2]
     names(mean.year) <- c("year","ID","precip","elev")
+
     color_breaks = quantile(mean.year$precip,seq(1,10,length.out = 9)/10,na.rm=TRUE)+1
     main = paste0("Yearly average: ",idx.region.name)
 
@@ -67,7 +68,7 @@ for(idx in c(1:length(region.id))){
         axis.ticks =  element_line(size = 2),
         panel.border = element_rect(fill = "transparent", # Needed to add the border
                                     color = "transparent",            # Color of the border
-                                    linewidth = 0.5)) + guides(fill = guide_colourbar(barheight = unit(1, "cm"), barwidth = unit(6, "cm"), title.theme = element_text(size = 14, face = "bold"), label.theme = element_text(size = 14)))
+                                    linewidth = 0.5)) + guides(fill = guide_colourbar(barheight = unit(0.5, "cm"), barwidth = unit(5, "cm"), title.theme = element_text(size = 14, face = "bold"), label.theme = element_text(size = 14)))
 
     color_breaks = quantile(mean.day$precip,seq(1,10,length.out = 9)/10,na.rm=TRUE)+1    
     main = paste0("Daily average: ",idx.region.name)
@@ -84,13 +85,13 @@ for(idx in c(1:length(region.id))){
             legend.position = "bottom",
             panel.border = element_rect(fill = "transparent", # Needed to add the border
                                     color = "transparent",            # Color of the border
-                                    linewidth = 0.5)) + guides(fill = guide_colourbar(barheight = unit(1, "cm"), barwidth = unit(6, "cm"), title.theme = element_text(size = 14, face = "bold"), label.theme = element_text(size = 14)))
+                                    linewidth = 0.5)) + guides(fill = guide_colourbar(barheight = unit(0.5, "cm"), barwidth = unit(5, "cm"), title.theme = element_text(size = 14, face = "bold"), label.theme = element_text(size = 14)))
     p1.list[[idx]] <- p1; p2.list[[idx]] <- p2
 }
 
 pdf("figures/heatmaps.pdf",width = 16 ,height = 8,onefile = TRUE)
-ggarrange(plotlist=p1.list,nrow=2,ncol=4,common.legend=TRUE,legend="bottom")
-ggarrange(plotlist=p2.list,nrow=2,ncol=4,common.legend=TRUE,legend="bottom")
+ggarrange(plotlist=p1.list,nrow=2,ncol=4,common.legend=FALSE)
+ggarrange(plotlist=p2.list,nrow=2,ncol=4,common.legend=FALSE)
 dev.off()  
 
 save(p1.list,p2.list,file="data/plot_heatmaps.RData")
