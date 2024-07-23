@@ -75,7 +75,7 @@ for(idx in c(1:length(region.id))){
     p2 <- ggplot(mean.day) + geom_tile(aes(x=day,y=ID,fill=precip)) 
     p2 <- p2 + scale_y_continuous(name=NULL,breaks=seq(1,nD,length.out=5),
     labels=as.character(idx.elev[order(idx.elev)][seq(1,nD,length.out=5)]),
-    limits=c(0,nD))
+    limits=c(0,nD)) + scale_x_continuous(name=NULL,breaks=seq(15,350,length.out=12),labels=c("J","F","M","A","M","J","J","A","S","O","N","D"))
     p2 <- p2 + scale_fill_gradientn(name=NULL,colours=brewer.pal(length(color_breaks),"BuPu"),breaks=ceiling(exp(seq(0,log1p(max(color_breaks)),length.out=5))-1),
     limits=c(0,max(color_breaks)), trans="log1p") 
     p2 <- p2 + xlab(NULL) + ylab(NULL) + ggtitle(main) +
