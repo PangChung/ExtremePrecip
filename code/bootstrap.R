@@ -27,8 +27,8 @@ library(evd)
 library(mgcv)
 library(evgam)
 
-file.marginal = paste0(DataPath,"/data/marginal_fit_1_",bootstrap.ind,"_",idx.region,".RData")
-file2save = paste0(DataPath,"/data/fit_bootstrap_1_",bootstrap.ind,"_",idx.region,".RData")
+file.marginal = paste0(DataPath,"/data/marginal_fit_",bootstrap.ind,"_",idx.region,".RData")
+file2save = paste0(DataPath,"/data/fit_bootstrap_",bootstrap.ind,"_",idx.region,".RData")
 if(file.exists(file2save)) {stop("fit is already done")}
 ncores = floor(detectCores()/njobs)
 if(idx.region==2 | idx.region==7){ncores=ncores*2}
