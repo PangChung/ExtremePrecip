@@ -16,9 +16,9 @@ season = c("Winter" ,"Spring" ,"Summer" ,"Fall")
 computer="local"
 for (arg in args) eval(parse(text = arg))
 switch(computer,
-    "ws" = {DataPath<-"~/Desktop/ExtremePrecip";.libPaths("/home/z3536974/R/x86_64-pc-linux-gnu-library/4.2")},
-    "hpc" = {DataPath<-"/srv/scratch/z3536974/";.libPaths("../src")},
-    "local" = {DataPath<-"~/Documents/Github/ExtremePrecip"}
+    "ws" = {DataPath<-"your data saving path on workstation";.libPaths("your lib path on your workstation")},
+    "hpc" = {DataPath<-"your data saving path on hpc";.libPaths("your lib path on hpc")},
+    "local" = {DataPath<-""}
 )
 library(parallel)
 library(lubridate)
