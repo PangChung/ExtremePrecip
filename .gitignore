@@ -12,6 +12,7 @@ output_*.txt
 *.zip
 */.DS_Store
 .DS_Store
+acc_form.*
 
 # Don't ignore these RData files
 !data/dep.fit.boot.results3.RData
@@ -22,4 +23,3 @@ output_*.txt
 !data/era5_geoinfo.RData
 !data/transformed_coordinates.RData
 !data/plot_*.RData
-!acc_form.*
