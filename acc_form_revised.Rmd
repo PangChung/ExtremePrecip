@@ -1,5 +1,7 @@
 ---
-output: pdf_document
+output: 
+    pdf_document:
+        keep_tex: true
 ---
 
 <!--HOW TO COMPLETE THIS FORM:-->
@@ -182,7 +184,8 @@ Please cite all software packages in the References Section in similar fashion t
 
 #### Libraries and dependencies used by the code
 * `R` packages:
-    + `mvPotST` (a spatial-temporal version of `mvPot` version 0.1.6, located at `code/archived/mvPotST/mvPotST_0.0.0.9000.tar.gz` in the Github repository.)
+    + `mvPotST` (a spatial-temporal version of `mvPot` version 0.1.6,  
+    located at `code/archived/mvPotST/mvPotST_0.0.0.9000.tar.gz` in the Github repository.)
     + `evgam` version 1.0.0
     + `mgcv` version 1.9-0
     + `evd` version 2.3-6.1  
@@ -262,14 +265,14 @@ Indicate where the materials (generally including the code, unless in a separate
 Check all that apply
 -->
 - [ ] Single master code file 
-- [x] Wrapper (shell) script(s)
-- [ ] Self-contained R Markdown file, Jupyter notebook, or other literate programming approach
+- [ ] Wrapper (shell) script(s)
+- [x] Self-contained R Markdown file, Jupyter notebook, or other literate programming approach
 - [ ] Text file (e.g., a readme-style file) that documents workflow
 - [ ] Makefile
 - [ ] Other (more detail in *Instructions* below)
 
 ### Instructions
-Download the Github repository to your local machine, and see the R markdown file `ResultsReproduction.Rmd` to learn how to reproduce the results and all the figures presented in the manuscript.
+Download the Github repository to your local machine, and see the `R` markdown file `ResultsReproduction.Rmd` to learn how to reproduce the results and all the figures presented in the manuscript.
 <!--
 Describe how to use the materials provided to reproduce analyses in the manuscript. Additional details can be provided in file(s) accompanying the reproducibility materials. If no workflow is provided, please state this and say why (e.g., if the paper contains no computational work).
 -->
