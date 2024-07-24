@@ -15,10 +15,8 @@ date = seq(START.date,END.date, 1)
 
 ### plot the summaries ### 
 library(ggplot2)
-library(cowplot)
-library(dplyr)
+library(ggpubr)
 library(lubridate)
-library(viridis)
 library(RColorBrewer)
 
 p1.list <- p2.list <- list()
