@@ -191,20 +191,23 @@ data}\label{non-publicly-available-data}
   \item
     \texttt{precip}: Lists of lists, raw data of the precipitation in
     millimeters (mm) in 8 subregions. This is the response variable used
-    in the marginal fit and depdence fit.
+    in the marginal fit and dependence fit.
   \item
     \texttt{region.name}: a vector, names of the 8 subregions
   \item
-    \texttt{region.id}: a vecotr, regional ID number that corresponding
-    to the regional number in the shape files.
+    \texttt{region.id}: a vector, regional ID number that corresponding
+    to the regional number in the shapefiles.
   \item
-    \texttt{station}: a data frame, contains geograhical information
+    \texttt{station}: a data frame, contains geographical information
     about the monitoring stations, where the precipitation data were
-    recorded. ``X'' column is latitude degrees, ``Y'' column is the
-    longitude in degrees, ``start'' column is the start measuring year,
-    ``end'' is the last measureing year, ``elev'' is the elevation of
-    the monitoring stations in meters, and ``group.id'' corresponds to
-    the region.id for identifiying each of the 8 subregions.\\
+    recorded. The
+    \texttt{X\textquotesingle{}\textquotesingle{}\ column\ is\ latitude\ degrees,\ the}Y'\,'
+    column is the longitude in degrees, the
+    \texttt{start\textquotesingle{}\textquotesingle{}\ column\ is\ the\ start\ measuring\ year,\ the}end'\,'
+    is the last measuring year, the
+    \texttt{elev\textquotesingle{}\textquotesingle{}\ is\ the\ elevation\ of\ the\ monitoring\ stations\ in\ meters,\ and\ the}group.id'\,'
+    corresponds to the region.id for identifying each of the 8
+    subregions.
   \item
     \texttt{START.date\ and\ END.date}: dates, between which the data
     were used in our analysis.
@@ -223,8 +226,8 @@ data}\label{non-publicly-available-data}
     temperature covariate (30 day moving averages) used in marginal
     modeling and dependence modeling.
   \item
-    \texttt{temperature}: list of vectors,daily spatial temperature
-    avarages in Celsius degree, used only during data preprocessing.
+    \texttt{temperature}: list of vectors, daily spatial temperature
+    avarages in Celsius degrees, used only during data preprocessing.
   \item
     \texttt{loc\_df}: geographical information about the locations of
     the ERA5-Land temperature data, used only during data preprocessing.
@@ -247,7 +250,7 @@ data}\label{non-publicly-available-data}
   \item
     \texttt{temperature.245.avg\ and\ temperature.585.avg}: lists of
     list, each list contains the derived temperature covariate in
-    Celsius degree from one climate model for future projections before
+    Celsius degrees from one climate model for future projections before
     realign with the temperature covariate derived from the ERA5-Land
     data under SSP 2-4.5 (or SSP 5-8.5). SSP 2-4.5 is denoted by 245,
     and the same goes for SSP 5-8.5.\\
@@ -283,7 +286,7 @@ data}\label{non-publicly-available-data}
     nonparametric boostrap estimates, named by jack.\\
   \end{itemize}
 \item
-  \texttt{data/era5\_geoinfo.RData}: Shape files for the eight
+  \texttt{data/era5\_geoinfo.RData}: Shapefiles for the eight
   subregions, which contains \texttt{R} objects:
 
   \begin{itemize}
@@ -536,7 +539,7 @@ The workflow is available:
 \tightlist
 \item[$\square$]
   Single master code file
-\item[$\boxtimes$]
+\item[$\square$]
   Wrapper (shell) script(s)
 \item[$\boxtimes$]
   Self-contained R Markdown file, Jupyter notebook, or other literate
@@ -551,9 +554,10 @@ The workflow is available:
 
 \subsubsection{Instructions}\label{instructions}
 
-Download the Github repository to your local machine, and see the R
-markdown file \texttt{ResultsReproduction.Rmd} to learn how to reproduce
-the results and all the figures presented in the manuscript.
+Download the Github repository to your local machine, and see the
+\texttt{R} markdown file \texttt{ResultsReproduction.Rmd} to learn how
+to reproduce the results and all the figures presented in the
+manuscript.
 
 \subsubsection{Expected run-time}\label{expected-run-time}
 

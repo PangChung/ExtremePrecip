@@ -1,6 +1,6 @@
 # Fdb version 4
-["pdflatex"] 1721794317 "/Users/zhongp/Documents/GitHub/ExtremePrecip/acc_form_revised.tex" "acc_form_revised.pdf" "acc_form_revised" 1721794318 0
-  "/Users/zhongp/Documents/GitHub/ExtremePrecip/acc_form_revised.tex" 1721794317 18036 35f6100c8a95dafd5099e5ffc7e82693 ""
+["pdflatex"] 1721795377 "/Users/zhongp/Documents/GitHub/ExtremePrecip/acc_form_revised.tex" "acc_form_revised.pdf" "acc_form_revised" 1721795378 0
+  "/Users/zhongp/Documents/GitHub/ExtremePrecip/acc_form_revised.tex" 1721795375 18222 32485ec2378f51251711b48f75b40ab1 ""
   "/usr/local/texlive/2023/texmf-dist/fonts/enc/dvips/lm/lm-ec.enc" 1254269338 2375 baa924870cfb487815765f9094cf3728 ""
   "/usr/local/texlive/2023/texmf-dist/fonts/enc/dvips/lm/lm-ts1.enc" 1254269338 3031 6c4d3515bf7115d8518af1c9ab97ca44 ""
   "/usr/local/texlive/2023/texmf-dist/fonts/map/fontname/texfonts.map" 1577235249 3524 cb3e574dea2d1052e39280babc910dc8 ""
@@ -28,6 +28,7 @@
   "/usr/local/texlive/2023/texmf-dist/fonts/tfm/public/lm/rm-lmr5.tfm" 1254269338 11804 aefb10c002e6492c25236524a447f969 ""
   "/usr/local/texlive/2023/texmf-dist/fonts/tfm/public/lm/rm-lmr7.tfm" 1254269338 11852 5a9022f105fd1ee2797df861e79ae9a0 ""
   "/usr/local/texlive/2023/texmf-dist/fonts/tfm/public/lm/ts1-lmr10.tfm" 1254269338 1556 b86d923e6b2f9aab2e313098a95cb0b8 ""
+  "/usr/local/texlive/2023/texmf-dist/fonts/tfm/public/lm/ts1-lmtt10.tfm" 1254269338 1316 dd0a7a35fa2a1c1134451c343bdcaa45 ""
   "/usr/local/texlive/2023/texmf-dist/fonts/type1/public/amsfonts/symbols/msam10.pfb" 1248133631 31764 459c573c03a4949a528c2cc7f557e217 ""
   "/usr/local/texlive/2023/texmf-dist/fonts/type1/public/lm/lmbx10.pfb" 1255129361 121021 1bf809ce4a594679006bd72263eba59b ""
   "/usr/local/texlive/2023/texmf-dist/fonts/type1/public/lm/lmbx12.pfb" 1255129361 116908 1fca96723793882c2e0160350c192fc8 ""
@@ -99,6 +100,7 @@
   "/usr/local/texlive/2023/texmf-dist/tex/latex/lm/t1lmr.fd" 1616454256 1867 996fe743d88a01aca041ed22cc10e1bb ""
   "/usr/local/texlive/2023/texmf-dist/tex/latex/lm/t1lmtt.fd" 1616454256 2682 555da1faa2e266801e4b221d01a42cb5 ""
   "/usr/local/texlive/2023/texmf-dist/tex/latex/lm/ts1lmr.fd" 1616454256 1914 884882d7ebb0fd65cea93fca77ff6f5a ""
+  "/usr/local/texlive/2023/texmf-dist/tex/latex/lm/ts1lmtt.fd" 1616454256 2739 a9185ca78909337213035903c24903f2 ""
   "/usr/local/texlive/2023/texmf-dist/tex/latex/microtype/microtype-pdftex.def" 1678741534 48246 c3eed060aba663f58af3ff756e83f2bd ""
   "/usr/local/texlive/2023/texmf-dist/tex/latex/microtype/microtype.cfg" 1678741534 26842 05a01d67d23e805520393a049533b8c0 ""
   "/usr/local/texlive/2023/texmf-dist/tex/latex/microtype/microtype.sty" 1678741534 98531 f79ec363f3014ada2cb766715926ecc9 ""
@@ -116,8 +118,8 @@
   "/usr/local/texlive/2023/texmf-var/fonts/map/pdftex/updmap/pdftex.map" 1687785959 4623355 b8cad38412faebe1ce5b780a45db67bd ""
   "/usr/local/texlive/2023/texmf-var/web2c/pdftex/pdflatex.fmt" 1687785954 7883453 5009ab78d36439a6fa1032a384f23a10 ""
   "/usr/local/texlive/2023/texmf.cnf" 1678822455 577 1b2b1af17af2508fb20dd85783af4050 ""
-  "acc_form_revised.aux" 1721794318 13042 f69e1681783de5a9f86f3ac4a5f30a97 "pdflatex"
-  "acc_form_revised.tex" 1721794317 18036 35f6100c8a95dafd5099e5ffc7e82693 ""
+  "acc_form_revised.aux" 1721795378 13042 d7cf6ca69d72dfcb4ec6144756ae1560 "pdflatex"
+  "acc_form_revised.tex" 1721795375 18222 32485ec2378f51251711b48f75b40ab1 ""
   (generated)
   "acc_form_revised.aux"
   "acc_form_revised.log"
