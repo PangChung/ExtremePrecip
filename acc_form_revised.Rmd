@@ -1,7 +1,7 @@
 ---
 output: 
     pdf_document:
-        keep_tex: true
+        keep_tex: false
 ---
 
 <!--HOW TO COMPLETE THIS FORM:-->
