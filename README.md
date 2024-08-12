@@ -31,7 +31,7 @@ We have saved the data used in our marginal modeling and dependence modeling in 
 * `data/transformed_coordinates.RData`: Transformed coordinates for the eight subregions, which transformed the latitude/longitude coordinate to the Euclidean coordinate and contains `R` objects:  
     + `loc.trans.list`: list of matrices: transformed coordinates for each of the 8 subregions in meters. 
 
-![Subregions of the two river basins.](/figures/precip_loc.pdf)
+![Subregions of the two river basins.](/figures/precip_loc.png)
 
 The objective of this project is to modeling the precipitation data in Mississippi river basin and Danube river basins and use the temperature covariate derived as described above to study the dynamic changes in the marginal and dependence structure of the precipitation data, i.e., the marginal return level and the spatial extent of the extreme precipitation events.  
 
