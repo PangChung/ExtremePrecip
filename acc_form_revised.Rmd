@@ -57,7 +57,7 @@ If the data are publicly available, see the *Publicly available data* section. O
 ### Publicly available data
 
 - [x] Data are available online at:
-* Climate model outputs and EAR5-Land Reanalysis data: https://www.copernicus.eu/en/access-data
+* Climate model outputs and ERA5-Land Reanalysis data: https://www.copernicus.eu/en/access-data
 * Precipitation observations: https://www.ncei.noaa.gov/products/land-based-station/global-historical-climatology-network-daily
 * Watershed Boundary Dataset: https://www.usgs.gov/national-hydrography/watershed-boundary-dataset
 * The data files for plots are stored in Github repository: https://github.com/PangChung/ExtremePrecip/
@@ -66,7 +66,7 @@ If the data are publicly available, see the *Publicly available data* section. O
 - [ ] Data are publicly available by request, following the process described here:
 
 - [x] Data are or will be made available through some other mechanism, described here:
-* We have saved the data used in our marginal modeling and dependence modeling in the format of R data file (.RData), and we host those data on Github[https://github.com/PangChung/ExtremePrecip] under the folder ``data'', which are publicly accessible. Though the raw data of the EAR5-Land Reanalysis data from which we derived the temperature covariate in Celsius degree can be downloaded from the website https://www.copernicus.eu/en/access-data, this raw data will be provided upon email request as the size of it is hundreds of gigabytes and it will take great efforts for someone to download directly from the Copernicus website. The email address is peng[dot]zhong[at]unsw[dot]edu[dot]au. 
+* We have saved the data used in our marginal modeling and dependence modeling in the format of R data file (.RData), and we host those data on Github[https://github.com/PangChung/ExtremePrecip] under the folder ``data'', which are publicly accessible. Though the raw data of the ERA5-Land Reanalysis data from which we derived the temperature covariate in Celsius degree can be downloaded from the website https://www.copernicus.eu/en/access-data, this raw data will be provided upon email request as the size of it is hundreds of gigabytes and it will take great efforts for someone to download directly from the Copernicus website. The email address is peng[dot]zhong[at]unsw[dot]edu[dot]au. 
 
 <!-- If data are available by request to the authors or some other data owner, please make sure to explain the process of requesting access to the data. -->
 
